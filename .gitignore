@@ -12,3 +12,9 @@ logs
 results
 
 npm-debug.log
+andlabs-lounge-lib/.settings
+andlabs-lounge-lib/bin
+andlabs-lounge-lib/gen
+andlabs-lounge/.settings
+andlabs-lounge/bin
+andlabs-lounge/gen
