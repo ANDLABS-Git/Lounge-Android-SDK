@@ -3,7 +3,10 @@ package andlabs.lounge;
 import andlabs.lounge.service.LoungeService;
 import andlabs.lounge.service.LoungeServiceDef;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.os.RemoteException;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -21,7 +24,7 @@ public class LoungeConsoleActivity extends Activity {
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			Log.v("LoungeConsoleActivity", "ServiceConnection.onServiceDisconnected():");
-
+			mLoungeService = null;
 		}
 
 
@@ -52,24 +55,48 @@ public class LoungeConsoleActivity extends Activity {
 
 
 	@Override
+	protected void onStart() {
+		Log.v("LoungeConsoleActivity", "onStart():");
+		super.onStart();
+		// bind to the Lounge Service
+		Intent serviceIntent = new Intent(this, LoungeService.class);
+        Handler handler = new Handler() {
+            
+            @Override
+            public void handleMessage(Message msg) {
+        		Log.v("LoungeConsoleActivity", "onStart(): Handler.handleMessage(): msg = " + msg);
+            }
+        };
+        serviceIntent.putExtra("client-messenger", new Messenger(handler));
+		bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE);
+	}
+
+
+	@Override
 	protected void onResume() {
 		Log.v("LoungeConsoleActivity", "onResume():");
 		super.onResume();
-		// bind to the Lounge Service
-		Intent serviceIntent = new Intent(this, LoungeService.class);
-		bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE);
 	}
 
 
 	@Override
 	protected void onPause() {
 		Log.v("LoungeConsoleActivity", "onPause():");
+		super.onPause();
+	}
+
+
+	@Override
+	protected void onStop() {
+		Log.v("LoungeConsoleActivity", "onStop():");
 		try {
-			mLoungeService.disconnect();
+			if (mLoungeService != null) {
+				mLoungeService.disconnect();
+			}
 		} catch (RemoteException e) {
 			Log.e("LoungeConsoleActivity", "onPause(): caught exception while disconnecting", e);
 		}
 		unbindService(mServiceConnection);
-		super.onPause();
+		super.onStop();
 	}
 }
