@@ -21,8 +21,31 @@ public class LoungeController {
 	Messenger mMessenger = new Messenger(new Handler() {
 
 		@Override
-		public void handleMessage(Message msg) {
-			Log.v("LoungeController", "getClientMessenger(): Handler.handleMessage(): msg = " + msg);
+		public void handleMessage(Message message) {
+			Log.v("LoungeController", "Handler.handleMessage(): message = " + message);
+			switch (message.what) {
+
+				case 42:
+					Log.v("LoungeController", "Handler.handleMessage(): Universal Answer ;-)");
+					break;
+
+				case 1:
+					Log.v("LoungeController", "Handler.handleMessage(): Server connected ... process login");
+					try {
+						mLoungeService.login("John Doe");
+					} catch (RemoteException e) {
+						Log.e("LoungeController", "Handler.handleMessage(): caught exception while processing login", e);
+					}
+					break;
+
+				case 2:
+					Log.v("LoungeController", "Handler.handleMessage(): Login okay. Getting list of players: " + message.getData());
+					break;
+
+				default:
+					Log.v("LoungeController", "Handler.handleMessage(): message = " + message);
+
+			}
 		}
 	});
 
@@ -52,6 +75,7 @@ public class LoungeController {
 
 
 	public void bindServiceTo(Context pContext) {
+		Log.v("LoungeController", "bindServiceTo()");
 		Intent serviceIntent = new Intent(pContext, LoungeService.class);
 		serviceIntent.putExtra("client-messenger", mMessenger);
 		pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
@@ -59,12 +83,13 @@ public class LoungeController {
 
 
 	public void unbindServiceFrom(Context pContext) {
+		Log.v("LoungeController", "unbindServiceFrom()");
 		try {
 			if (mLoungeService != null) {
 				mLoungeService.disconnect();
 			}
 		} catch (RemoteException e) {
-			Log.e("LoungeController", "unbindService(): caught exception while disconnecting", e);
+			Log.e("LoungeController", "unbindServiceFrom(): caught exception while disconnecting", e);
 		}
 		pContext.unbindService(mServiceConnection);
 	}
