@@ -1,8 +1,9 @@
+#!/bin/env node
+
 // Copyright (c) 2013 All Right Reserved, 
 // Author: Robert Weindl
 // E-Mail: robert.weindl@blackstack.net
 
-#!/bin/env node
 //  lounge-server v.0.0.1
 var express 	= require('express');
 var fs 			= require('fs');
@@ -41,8 +42,8 @@ var LoungeServer = function() {
      */
     self.setupVariables = function() {
 		// mongodbAddress for nodejitsu:
-        // self.mongodbAddress = 'mongodb://nodejitsu:4226bafd5bb734c192f0700b7b2e114c@linus.mongohq.com:10092/nodejitsudb7687973685';
-		self.mongodbAddress = 'mongodb://127.0.0.1:27017/lounge'
+        self.mongodbAddress = 'mongodb://nodejitsu:4226bafd5bb734c192f0700b7b2e114c@linus.mongohq.com:10092/nodejitsudb7687973685';
+		//self.mongodbAddress = 'mongodb://127.0.0.1:27017/lounge'
     };
  
  
@@ -862,9 +863,9 @@ var LoungeServer = function() {
         // Start the app on the specific interface (and port).
         self.http.listen(8080, "127.0.0.1", function() 
 		{
-            console.log(8080, "127.0.0.1", '%s: Node server started...');
-            //console.log('%s: Node server started on %s:%d ...',
-            //            Date(Date.now() ), self.ipaddress, self.port);
+            //console.log(8080, "127.0.0.1", '%s: Node server started...');
+            console.log('%s: Node server started on %s:%d ...',
+                        Date(Date.now() ), self.ipaddress, self.port);
         });
     };
 };   /*  LoungeServer */
