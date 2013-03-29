@@ -64,15 +64,9 @@ public class LoungeConsoleActivity extends Activity {
 		Log.v("LoungeConsoleActivity", "onStart():");
 		super.onStart();
 		// bind to the Lounge Service
+		LoungeController loungeController = new LoungeController();
 		Intent serviceIntent = new Intent(this, LoungeService.class);
-        Handler handler = new Handler() {
-            
-            @Override
-            public void handleMessage(Message msg) {
-        		Log.v("LoungeConsoleActivity", "onStart(): Handler.handleMessage(): msg = " + msg);
-            }
-        };
-        serviceIntent.putExtra("client-messenger", new Messenger(handler));
+        serviceIntent.putExtra("client-messenger", loungeController.getClientMessenger());
 		bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE);
 	}
 
