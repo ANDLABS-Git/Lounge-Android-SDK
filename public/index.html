@@ -1,0 +1,396 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de">
+	<head>
+		<!-- Meta Information -->
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+
+		<!-- Title -->
+		<title>lounge_test</title>
+
+		<!-- Cascading Stylesheet -->
+		<style type="text/css" media="screen, projection">
+			@import "css/style.css";			
+		</style>
+		
+		<!-- JQuery -->
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		
+		<!-- Setup the socket.io functionality -->
+		<script src="/socket.io/socket.io.js"></script>
+		
+		<script type="text/javascript" language="javascript" >
+			/**
+			 *	Validates a parameter.
+			 */
+		    var validateParameter = function(value)
+		    {
+		   		return ("undefined" === typeof value) ? "" : value;
+		    };
+
+			
+			//var socket = io.connect('http://lounge-andlabs.rhcloud.com', {transports: ["websocket"]});
+			var socket = io.connect();
+
+			/**
+			*	This method is used for the chat functionality.
+			*/
+			socket.on('login', function(payload)
+			{
+				if ('' !== validateParameter(payload) &&
+					'' !== validateParameter(payload.result))
+				{
+					if (payload.result)
+					{
+						if ('' !== validateParameter(payload.playerList))
+						{
+							$.each(payload.playerList, function(key, value) 
+							{
+								$.each(value, function(key, value)
+								{
+									if ('playerID' === key)
+									{
+										if ('' !== validateParameter(value))
+										{
+						  					$('#user_connected').append('<div class="user">' + value + '</div>');
+										}
+									}	
+								});
+							});
+							
+							$('input#username').remove();							
+							$('input#login').remove();			  
+							
+							// Decide status open/running/				
+							var logoutButton = $('<button/>',
+						    {
+						        text: 'Logout',
+						        click: function () 
+								{ 					
+								}
+						    });
+					
+							$("form#login").append(logoutButton);
+						}
+					}
+					else
+					{
+						var description = payload.description;
+						if ('' !== validateParameter(description))
+						{
+							alert(description);
+						}					
+					}
+				}
+			});
+			
+			/**
+			*	This method gets called if a user authenticated successful.	
+			*/
+			socket.on('addPlayer', function(payload) 
+			{
+				if ('' !== validateParameter(payload) && 
+					'' !== validateParameter(payload.playerID))
+				{
+	  				$('#user_connected').append('<div class="user">' + payload.playerID + '</div>');
+				}
+			});
+
+			/**
+			*	This method gets called if a user did a logout.	
+			*/
+			socket.on('delPlayer', function(payload)
+			{
+				if ('' !== validateParameter(payload) && 
+					'' !== validateParameter(payload.playerID))
+				{
+					$(".user:contains('" + payload.playerID + "')").remove();
+				}
+			});
+
+			/**
+			*	This method is used for the chat callback.
+			*/
+			socket.on('chat', function(payload) 
+			{
+				if ('' !== validateParameter(payload) &&
+					'' !== validateParameter(payload.result))
+				{
+					if (payload.result)
+					{
+						$('#message').val('');
+					}
+					else
+					{
+						if ('' !== validateParameter(payload.description))
+						{
+							alert(payload.description);
+						}
+					}
+				}				
+			});
+			
+			/**
+			 *	This method is used to add a chat message.
+			 */
+			socket.on('addChatMessage', function(payload) 
+			{
+				if ('' !== validateParameter(payload) &&
+					'' !== validateParameter(payload.playerID) &&
+					'' !== validateParameter(payload.message))
+				{
+					$('#chat_messages').append('<div class="message">' + payload.playerID + ": " + payload.message + '</div>');
+				}				
+			});
+			
+			
+			/**
+			 *	This method is used for the join callback.
+			 */
+			socket.on('join', function(payload)
+			{
+				if ('' !== validateParameter(payload) &&
+					'' !== validateParameter(payload.result) &&
+					'' !== validateParameter(payload.description))
+				{
+					if (payload.result)
+					{
+						if ('create' === payload.description)
+						{
+							$("input#matchGameID").val('');
+							$("input#matchGameName").val('');
+							$("input#matchMaximumPlayer").val('');
+						}
+						else if ('join' == payload.description)
+						{
+							alert("join");
+						}
+						else
+						{
+							alert('Wrong description for the success routine.');
+						}
+					}
+					else
+					{
+						if ('' !== validateParameter(payload.description))
+						{
+							alert(payload.description);
+						}
+					}
+				}				
+			});
+			
+			/**
+			 *	This method is called after a user creates a Match.
+			 */
+			socket.on('joinMatch', function(payload)
+			{			
+				if ('' !== validateParameter(payload) &&
+					'' !== validateParameter(payload.gameID) &&
+					'' !== validateParameter(payload.gameName) &&
+					'' !== validateParameter(payload.matchID) &&
+				 	'' !== validateParameter(payload.totalSpots))
+				{
+					// Decide status open/running/				
+					var joinMatchButton = $('<button/>',
+				    {
+				        text: 'Test',
+						gameID: payload.gameID,
+				        click: function () 
+						{ 					
+							socket.emit('join', { gameID: payload.gameID, matchID: payload.matchID });
+						}
+				    });
+					
+					$("ul.match").append("<li>" + payload.gameID+ "</b><br>" + payload.gameName + "<br>total Spots:" + payload.totalSpots + "<br></li>");	
+					$("ul.match").append(joinMatchButton);
+				}
+			});
+			
+			socket.on('addRunningMatch', function(payload)
+			{
+				if ('' !== validateParameter(payload) &&
+					'' !== validateParameter(payload.gameID) &&
+					'' !== validateParameter(payload.matchID) &&
+					'' !== validateParameter(payload.gameName) &&
+					'' !== validateParameter(payload.playerIDs))
+				{						
+					$("#runningMatchesList").append('<li>GameID: ' + payload.gameID + '<br>MatchID: ' + payload.matchID + '<br>GameName: ' + payload.gameName + '<br> Player: <div class=' + payload.matchID + '></div></li>')
+					
+					$.each(payload.playerIDs, function(key, value) {
+						$('.' + payload.matchID).append(value.playerID + ' ');
+					});
+				}		
+			});
+			
+			/**
+			 *	This method is called after a user joins a match.
+			 */
+			socket.on('joinMatch', function(payload)
+			{
+				
+			});
+			
+			/**
+			 *	This method is the user callback after the attempt of a match move.
+			 */
+			socket.on('move', function(payload)
+			{
+				
+			});
+			
+			/**
+			 *	This method is called after a user did a match move.
+			 */
+			socket.on('moveMatch', function(payload)
+			{
+				
+			});
+			
+			/**
+			 *	This is the callback after an user updates a match status.
+			 */
+			socket.on('update', function(payload)
+			{
+				
+			});
+			
+			/**
+			 *	This method is called after an user updates the status of a match
+			 */
+			socket.on('updateMatch', function(payload)
+			{
+				
+			});
+			
+			/**
+			 *	This is the callback if the user is performing a checkIn.
+			 */
+			socket.on('checkIn', function(payload)
+			{
+				
+			});
+			
+			/**
+			 *	This method is called after an user did a checkIn.
+			 */
+			socket.on('updateCheckIn', function(payload)
+			{
+				
+			});
+		</script>
+		
+		<!-- JQuery declaration -->
+		<script type="text/javascript" language="javascript" >
+			$(function()
+			{								
+				// Login button.
+				$("input#login").click(function() 
+				{
+					var username = $("input#username").val();
+					socket.emit('login', { playerID: username });
+					return false;
+				});
+
+				// Chat send message button.
+				$("input#chat").click(function() 
+				{
+					var message = $("textarea#message").val();
+					socket.emit('chat', { message: message });
+					return false;
+				});				
+								
+				// Create a new match.
+				$("input#matchCreateSubmit").click(function()
+				{					
+					var gameID = $("input#matchGameID").val();
+					var gameName = $("input#matchGameName").val();
+					var maximumPlayers = $("input#matchMaximumPlayer").val();
+					
+					socket.emit('join', { gameID: gameID, gameName: gameName, maximumPlayers: maximumPlayers });
+					return false;
+				});			
+			});
+		</script>
+	</head>
+<body>
+
+	<div id="wrapper">
+		<div id="header"><h1><strong>LOUNGE</strong> // android web debug client v0.4</h1>
+			<form id="login">
+				<!-- Login functionality -->
+				<input id="username" type="text" value="username" />
+				<input id="login" type="submit" value="login" />
+			</form>
+		</div>
+
+
+		<!-- //BOX1 -->
+		<div id="box">
+			<div id="box_cont" style="background-color: rgb(144, 71, 44);">
+				<ul class="match">
+					<!-- Listelement --> 
+					<li>
+						<div id="joinbutton">Join</div>
+						<b>Player Name A</b><br>
+						Gamename
+					</li>
+					<!-- Listelement end--> 
+					<!-- Listelement --> 
+					<li>
+						<div id="joinbutton">Join</div>
+						<b>Player Name A</b><br>
+						Gamename
+					</li>
+					<!-- Listelement end--> 
+				</ul>
+			</div>
+			<form class="match">
+				<input id="matchGameID" type="text" value="gameID" />
+				<input id="matchGameName" type="text" value="gameName" />
+				<input id="matchMaximumPlayer" type="text" value="maximumPlayers" />
+				<input id="matchCreateSubmit" type="submit" value="Create Match" />
+			</form>
+		</div>
+		
+		<!-- Chat container -->
+		<div id="box" style="margin-left: 20px;">
+			<div id="box_cont" style="background-color: rgb(21, 68, 82);">
+				<strong>Chat</strong> 
+				<div id="chat_messages">
+				</div>
+			</div>
+
+			<form>
+				<textarea id="message">chattext here</textarea>
+				<input id="chat" type="submit" value="send" />
+			</form>
+		</div>
+
+		<!-- //BOX3 -->
+		<div id="box" style="margin-left: 20px;">
+			<div id="box_cont" style="background-color: rgb(21, 95, 64);">
+				<ul id="runningMatchesList">
+					<!-- Listelement --> 
+					<li>
+						GameID: <strong>12345678</strong><br>
+						Game: <strong>thatgamemon!</strong><br>
+						Players: <strong>yo, gangsta, pibbedipit</strong><br>
+					</li>
+					<!-- Listelement end--> 
+				</ul>	
+			</div>
+			<div id="box_bottom"> Output / Server Log</div>
+		</div>
+		
+		<!-- Login container -->
+		<div id="box" style="margin-left: 20px;">		
+			<div id="box_cont" style="background-color: rgb(146, 139, 21);">
+				<strong>Players logged in</strong> 
+				<div id="user_connected">
+				</div>
+			</div>		
+		</div>		
+	</div>	
+</body>
+</html>
