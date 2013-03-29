@@ -32,28 +32,23 @@ public class LoungeController {
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			Log.v("LoungeConsoleActivity", "ServiceConnection.onServiceDisconnected():");
+			Log.v("LoungeController", "ServiceConnection.onServiceDisconnected():");
 			mLoungeService = null;
 		}
 
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.v("LoungeConsoleActivity", "ServiceConnection.onServiceConnected():");
+			Log.v("LoungeController", "ServiceConnection.onServiceConnected():");
 			mLoungeService = LoungeServiceDef.Stub.asInterface(service);
 			try {
 				mLoungeService.connect();
 			} catch (RemoteException e) {
-				Log.e("LoungeConsoleActivity", "ServiceConnection.onServiceConnected(): caught exception while connecting", e);
+				Log.e("LoungeController", "ServiceConnection.onServiceConnected(): caught exception while connecting", e);
 			}
 		}
 
 	};
-
-
-	public ServiceConnection getServiceConnection() {
-		return mServiceConnection;
-	}
 
 
 	public void bindServiceTo(Context pContext) {
