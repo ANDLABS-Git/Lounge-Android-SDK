@@ -21,6 +21,13 @@ public class LoungeService extends Service {
 	private IBinder mServiceBinder = new LoungeServiceDef.Stub() {
 
 		@Override
+		public void connect() throws RemoteException {
+			Log.v("LoungeService", "LoungeServiceDef.Stub.connect():");
+			createSocketIO();
+		}
+
+
+		@Override
 		public void disconnect() throws RemoteException {
 			Log.v("LoungeService", "Binder.disconnect():");
 			mSocketIO.disconnect();
@@ -55,7 +62,6 @@ public class LoungeService extends Service {
 	public void onCreate() {
 		Log.v("LoungeService", "onCreate():");
 		super.onCreate();
-		createSocketIO();
 	}
 
 

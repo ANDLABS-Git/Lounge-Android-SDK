@@ -32,6 +32,11 @@ public class LoungeConsoleActivity extends Activity {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			Log.v("LoungeConsoleActivity", "ServiceConnection.onServiceConnected():");
 			mLoungeService = LoungeServiceDef.Stub.asInterface(service);
+			try {
+				mLoungeService.connect();
+			} catch (RemoteException e) {
+				Log.e("LoungeConsoleActivity", "ServiceConnection.onServiceConnected(): caught exception while connecting", e);
+			}
 		}
 
 	};
