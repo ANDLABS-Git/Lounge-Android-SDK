@@ -427,7 +427,7 @@ var LoungeServer = function() {
 														if (!('undefined' === typeof s))
 														{
 															// Send the chat message to the user.
-															s.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants });
+															s.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: "created", playerIDs: match.participants });
 														}
 													});
 												}

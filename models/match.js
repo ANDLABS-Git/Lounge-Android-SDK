@@ -52,7 +52,7 @@ MatchSchema.statics.create = function(data, userID, callback)
 		
 		if (data.maximumPlayers > 1)
 		{
-			status = "open";
+			status = "join";
 		}
 		else if (data.maximumPlayers === 1)
 		{
@@ -150,7 +150,7 @@ MatchSchema.statics.join = function(data, userID, callback)
 					}
 					else if (emptySpots > 0)
 					{
-						status = "open";
+						status = "join";
 					}
 					else
 					{
@@ -306,7 +306,7 @@ MatchSchema.statics.update = function(data, userID, callback)
 MatchSchema.statics.allMatches = function(callback)
 {
 	mongoose.models['Match'].find()
-	.where('status').in(['open', 'running'])
+	.where('status').in(['join', 'running', 'close'])
 	.populate('participants', 'playerID')
 	.exec(function(err, allMatches)
 	{
