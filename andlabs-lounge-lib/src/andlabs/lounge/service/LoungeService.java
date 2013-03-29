@@ -1,9 +1,5 @@
 package andlabs.lounge.service;
 
-import java.net.MalformedURLException;
-
-import io.socket.IOCallback;
-import io.socket.SocketIO;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,30 +12,6 @@ import android.util.Log;
 public class LoungeService extends Service {
 
 	private Messenger mMessenger;
-	private SocketIO mSocketIO;
-	private IOCallback mSocketIOCallback;
-	private IBinder mServiceBinder = new LoungeServiceDef.Stub() {
-
-		@Override
-		public void connect() throws RemoteException {
-			Log.v("LoungeService", "LoungeServiceDef.Stub.connect():");
-			createSocketIO();
-		}
-
-
-		@Override
-		public void disconnect() throws RemoteException {
-			Log.v("LoungeService", "Binder.disconnect():");
-			mSocketIO.disconnect();
-		}
-
-
-		@Override
-		public void chat(String message) throws RemoteException {
-			// TODO Auto-generated method stub
-
-		}
-	};
 
 
 	@Override
@@ -54,7 +26,7 @@ public class LoungeService extends Service {
 		} catch (RemoteException e) {
 			Log.e("LoungeService", "caught exception while sending message", e);
 		}
-		return mServiceBinder;
+		return new LoungeServiceImpl();
 	}
 
 
@@ -76,18 +48,6 @@ public class LoungeService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.v("LoungeService", "onStartCommand():");
 		return super.onStartCommand(intent, flags, startId);
-	}
-
-
-	private void createSocketIO() {
-		try {
-			mSocketIO = new SocketIO("http://lounge-server.jit.su/");
-			mSocketIOCallback = new SocketIOCallback(mSocketIO);
-			mSocketIO.connect(mSocketIOCallback);
-		} catch (MalformedURLException e) {
-			Log.e("LoungeService", "caught exception while creating/connecting SocketIO", e);
-		}
-
 	}
 
 }
