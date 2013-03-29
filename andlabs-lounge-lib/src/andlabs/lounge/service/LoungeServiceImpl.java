@@ -5,14 +5,33 @@ import io.socket.SocketIO;
 
 import java.net.MalformedURLException;
 
+import android.os.Bundle;
+import android.os.Message;
+import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
 
 public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
+	private Messenger mMessenger;
 	private SocketIO mSocketIO;
 	private IOCallback mSocketIOCallback;
+
+
+	public LoungeServiceImpl(Messenger pMessenger) {
+		super();
+		mMessenger = pMessenger;
+		try {
+			Message message = new Message();
+			message.what = 42;
+			message.setData(Bundle.EMPTY);
+			mMessenger.send(message);
+		} catch (RemoteException e) {
+			Log.e("LoungeServiceImpl", "caught exception while sending message", e);
+		}
+
+	}
 
 
 	@Override

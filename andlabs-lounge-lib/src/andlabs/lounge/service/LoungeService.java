@@ -18,15 +18,7 @@ public class LoungeService extends Service {
 	public IBinder onBind(Intent intent) {
 		Log.v("LoungeService", "onBind(): arg0 = " + intent);
 		mMessenger = intent.getParcelableExtra("client-messenger");
-		try {
-			Message message = new Message();
-			message.what = 42;
-			message.setData(Bundle.EMPTY);
-			mMessenger.send(message);
-		} catch (RemoteException e) {
-			Log.e("LoungeService", "caught exception while sending message", e);
-		}
-		return new LoungeServiceImpl();
+		return new LoungeServiceImpl(mMessenger);
 	}
 
 
