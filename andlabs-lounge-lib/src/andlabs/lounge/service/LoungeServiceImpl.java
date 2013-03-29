@@ -11,6 +11,7 @@ import java.util.Arrays;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Messenger;
@@ -26,7 +27,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 		@Override
 		public void onMessage(JSONObject arg0, IOAcknowledge arg1) {
-			Log.d("LoungeService", String.format("IOCallback.onMessage(): arg0 = %s", arg0));
+			Log.d("LoungeServiceImpl", String.format("IOCallback.onMessage(): arg0 = %s", arg0));
 
 		}
 
@@ -40,41 +41,57 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 		@Override
 		public void onError(SocketIOException arg0) {
-			Log.e("LoungeService", String.format("IOCallback.onError(): caught exception while connecting"), arg0);
+			Log.e("LoungeServiceImpl", String.format("IOCallback.onError(): caught exception while connecting"), arg0);
 
 		}
 
 
 		@Override
 		public void onDisconnect() {
-			Log.d("LoungeService", String.format("IOCallback.onDisconnect():"));
+			Log.d("LoungeServiceImpl", String.format("IOCallback.onDisconnect():"));
 
 		}
 
 
 		@Override
 		public void onConnect() {
-			Log.d("LoungeService", String.format("IOCallback.onConnect():"));
+			Log.d("LoungeServiceImpl", String.format("IOCallback.onConnect():"));
 			try {
-				mSocketIO.emit("login", new JSONObject().put("playerID", "kodra"));
-			} catch (JSONException e) {
-				Log.e("LoungeService", "caught exception while sending login", e);
+				Message message = new Message();
+				message.what = 1;
+				message.setData(Bundle.EMPTY);
+				mMessenger.send(message);
+			} catch (RemoteException e) {
+				Log.e("LoungeServiceImpl", "caught exception while sending message", e);
 			}
 		}
 
 
 		@Override
 		public void on(String arg0, IOAcknowledge arg1, Object... arg2) {
-			Log.d("LoungeService", String.format("IOCallback.on(): arg0 = %s, arg1 = %s, arg2 = %s", arg0, arg1, Arrays.toString(arg2)));
-			
+			Log.v("LoungeServiceImpl", String.format("IOCallback.on(): arg0 = %s, arg1 = %s, arg2 = %s", arg0, arg1, Arrays.toString(arg2)));
+			if ("login".equals(arg0)) {
+				Log.v("LoungeServiceImpl", String.format("IOCallback.on(): sending login confirmation"));
+				try {
+					Message message = new Message();
+					message.what = 2;
+					Bundle bundle = new Bundle();
+					bundle.putString("JSON", arg2[0].toString());
+					message.setData(bundle);
+					mMessenger.send(message);
+				} catch (RemoteException e) {
+					Log.e("LoungeServiceImpl", "caught exception while sending login confirmation message", e);
+				}
+			}
 		}
 
 	};
 
 
-	public LoungeServiceImpl(Messenger pMessenger) {
+	public LoungeServiceImpl(Intent intent) {
 		super();
-		mMessenger = pMessenger;
+		Log.v("LoungeServiceImpl", "LoungeServiceImpl():");
+		mMessenger = intent.getParcelableExtra("client-messenger");
 		try {
 			Message message = new Message();
 			message.what = 42;
@@ -89,7 +106,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 	@Override
 	public void connect() throws RemoteException {
-		Log.v("LoungeService", "LoungeServiceDef.Stub.connect():");
+		Log.v("LoungeServiceImpl", "connect():");
 		try {
 			mSocketIO = new SocketIO("http://lounge-server.jit.su/");
 			mSocketIO.connect(mSocketIOCallback);
@@ -101,9 +118,20 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 	@Override
 	public void disconnect() throws RemoteException {
-		Log.v("LoungeService", "LoungeServiceDef.Stub.disconnect():");
+		Log.v("LoungeServiceImpl", "disconnect():");
 		if (mSocketIO != null) {
 			mSocketIO.disconnect();
+		}
+	}
+
+
+	@Override
+	public void login(String playerId) throws RemoteException {
+		Log.v("LoungeServiceImpl", "login(): playerId = " + playerId);
+		try {
+			mSocketIO.emit("login", new JSONObject().put("playerID", playerId));
+		} catch (JSONException e) {
+			Log.e("LoungeService", "caught exception while sending login", e);
 		}
 	}
 

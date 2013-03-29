@@ -6,6 +6,8 @@ interface LoungeServiceDef {
 
 	void disconnect();
 
+	void login(in String playerId);
+
 	void chat(in String message);
 
 }
