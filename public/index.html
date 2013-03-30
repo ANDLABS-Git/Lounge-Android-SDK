@@ -34,6 +34,39 @@
 			var socket = io.connect();
 
 			/**
+			 *	This method is called after the socket.io connection was successful established.
+			 */
+			socket.on('connect', function()
+			{
+				// Display the login user interface.
+				// Add the username input.
+				var usernameInput = $('<input/>',
+				{
+					id: 'username',
+					value: 'username',
+					type: 'text',
+				});
+				$("div#authentification").append(usernameInput);
+				
+				// Add the input button.								
+				var inputButton = $('<input/>',
+			    {
+					id: 'login',
+			        value: 'Login',
+					type: 'submit',
+			        click: function() 
+					{
+						var username = $("input#username").val();
+						socket.emit('login', { playerID: username });
+						return false;												
+					}
+			    });
+				
+				// Add the username input and the login button.
+				$("div#authentification").append(inputButton);				
+			});
+			
+			/**
 			 *	This method is used for the chat functionality.
 			 */
 			socket.on('login', function(payload)
@@ -61,8 +94,7 @@
 							});						
 
 							// Remove the username and login button.
-							$('input#username').remove();							
-							$('input#login').remove();			  
+							$('div#authentification').empty();			  
 							
 							// Add the Logout Button.								
 							var logoutButton = $('<input/>',
@@ -77,12 +109,76 @@
 								}
 						    });
 					
-							$("form#login").append(logoutButton);
+							$("div#authentification").append(logoutButton);
 							
-							// TODO: Add the create match functionality.
+							// Add the create match functionality.
+							var matchGameInput =  $('<input/>',
+						    {
+								id: 'matchGameID',
+						        value: 'gameID',
+								type: 'text'								
+						    });
 							
-							// TODO: Add the chat functionality.
+							$('div#createMatch').append(matchGameInput);
 							
+							var matchGameNameInput =  $('<input/>',
+						    {
+								id: 'matchGameName',
+						        value: 'gameName',
+								type: 'text'								
+						    });
+							
+							$('div#createMatch').append(matchGameNameInput);
+							
+							var matchMaximumPlayerInput =  $('<input/>',
+						    {
+								id: 'matchMaximumPlayer',
+						        value: 2,
+								type: 'text'								
+						    });
+							
+							$('div#createMatch').append(matchMaximumPlayerInput);		
+							
+							var matchCreateSubmit =  $('<input/>',
+						    {
+								id: 'matchCreateSubmit',
+						        value: 'Create Match',
+								type: 'submit',
+						        click: function () 
+								{
+									var gameID = $("input#matchGameID").val();
+									var gameName = $("input#matchGameName").val();
+									var maximumPlayers = $("input#matchMaximumPlayer").val();
+					
+									socket.emit('join', { gameID: gameID, gameName: gameName, maximumPlayers: maximumPlayers });
+									return false;														
+								}														
+						    });
+							
+							$('div#createMatch').append(matchCreateSubmit);	
+											
+							// Add the chat functionality.							
+							var chatMessageInput =  $('<input/>',
+						    {
+								id: 'chatMessage',
+						        value: 'chattext here',
+								type: 'text'								
+						    });							
+							$('div#createChatMessage').append(chatMessageInput);		
+							
+							var chatMessageSubmit =  $('<input/>',
+						    {
+								id: 'chatMessageSubmit',
+						        value: 'Send',
+								type: 'submit',
+						        click: function () 
+								{
+									var message = $("input#chatMessage").val();
+									socket.emit('chat', { message: message });
+									return false;													
+								}														
+						    });						
+							$('div#createChatMessage').append(chatMessageSubmit);														
 						}
 					}
 					else
@@ -97,6 +193,39 @@
 			});		
 			
 			/**
+   			 *	This method is called after the user was disconnected.
+			 */
+			socket.on('disconnect', function () 
+			{	
+				// Reconnect to the server.
+				socket.socket.connect();
+				
+				// Remove the logout button.
+				$('div#authentification').empty();
+				
+				// Remove all open games.
+				$('ul#openMatchesList').empty();
+				
+				// Remove all chat messages.
+				$('div#chat_messages').empty();
+				
+				// Remove all running games.
+				$('ul#runningMatchesList').empty();
+				
+				// Remove all online user.
+				$('div#user_connected').empty();
+				
+				// Remove the create match functionality.
+				$('div#createMatch').empty();
+				
+				// Remove the chat functionality.
+				$('div#createChatMessage').empty();
+				
+				// TODO: Close the inspection window of an running match.				
+			});
+			
+			
+			/**
 			 *	This method gets called if a user authenticated successful.	
 			 */
 			socket.on('addPlayer', function(payload) 
@@ -106,64 +235,6 @@
 				{
 	  				$('#user_connected').append('<div class="user">' + payload.playerID + '</div>');
 				}
-			});
-
-			/**
-   			 *	This method is called after the user was disconnected.
-			 */
-			socket.on('disconnect', function () 
-			{	
-				// Reconnect to the server.
-				socket.socket.connect();
-				
-				// Remove the logout button.
-				$('input#logout').remove();							
-				
-				// Remove all open games.
-				$('ul#openMatchesList').empty();
-				
-				// Remove all chat messages.
-				$('div#chat_messages').empty();
-				
-				// Remove all running games.
-				
-				// Remove all online user.
-				$('div#user_connected').empty();
-				
-				// Remove the create match functionality.
-				
-				// Remove the chat functionality.
-				
-				// Add the login functionality
-				// Remove the username and login button.
-				$('input#username').remove();							
-				$('input#login').remove();			  
-				
-				// Generate the username input.
-				var usernameInput = $('<input/>',
-				{
-					id: 'username',
-					value: 'username',
-					type: 'text',
-				});
-				$("form#login").append(usernameInput);
-				
-				// Generate the input button.								
-				var inputButton = $('<input/>',
-			    {
-					id: 'login',
-			        value: 'Login',
-					type: 'submit',
-			        click: function() 
-					{
-						var username = $("input#username").val();
-						socket.emit('login', { playerID: username });
-						return false;												
-					}
-			    });
-				
-				// Add the username input and the login button.
-				$("form#login").append(inputButton);
 			});
 
 			/**
@@ -350,50 +421,14 @@
 			{
 				
 			});
-		</script>
-		
-		<!-- JQuery startup declaration -->
-		<script type="text/javascript" language="javascript" >
-			$(function()
-			{								
-				// Login button.
-				$("input#login").click(function() 
-				{
-					var username = $("input#username").val();
-					socket.emit('login', { playerID: username });
-					return false;
-				});
-
-				// Chat send message button.
-				$("input#chat").click(function() 
-				{
-					var message = $("textarea#message").val();
-					socket.emit('chat', { message: message });
-					return false;
-				});				
-								
-				// Create a new match.
-				$("input#matchCreateSubmit").click(function()
-				{					
-					var gameID = $("input#matchGameID").val();
-					var gameName = $("input#matchGameName").val();
-					var maximumPlayers = $("input#matchMaximumPlayer").val();
-					
-					socket.emit('join', { gameID: gameID, gameName: gameName, maximumPlayers: maximumPlayers });
-					return false;
-				});			
-			});
-		</script>
+		</script>		
 	</head>
 <body>
 
 	<div id="wrapper">
 		<div id="header"><h1><strong>Lounge Server</strong> - Android Web Debug Client v0.7</h1>
-			<form id="login">
-				<!-- Login Form -->
-				<input id="username" type="text" value="username" />
-				<input id="login" type="submit" value="Login" />
-			</form>
+			<div id="authentification">
+			</div>
 		</div>
 
 
@@ -417,12 +452,8 @@
 					<!-- Listelement end--> 
 				</ul>
 			</div>
-			<form class="match">
-				<input id="matchGameID" type="text" value="gameID" />
-				<input id="matchGameName" type="text" value="gameName" />
-				<input id="matchMaximumPlayer" type="text" value="maximumPlayers" />
-				<input id="matchCreateSubmit" type="submit" value="Create Match" />
-			</form>
+			<div id="createMatch">
+			</div>
 		</div>
 		
 		<!-- Chat container -->
@@ -432,10 +463,8 @@
 				<div id="chat_messages">
 				</div>
 			</div>
-			<form>
-				<textarea id="message">chattext here</textarea>
-				<input id="chat" type="submit" value="send" />
-			</form>
+			<div id="createChatMessage">
+			</div>
 		</div>
 
 		<!-- //BOX3 -->
