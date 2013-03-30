@@ -34,7 +34,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 		@Override
 		public void onMessage(String arg0, IOAcknowledge arg1) {
-			Log.d("LoungeService", String.format("IOCallback.onMessage(): arg0 = %s", arg0));
+			Log.d("LoungeServiceImpl", String.format("IOCallback.onMessage(): arg0 = %s", arg0));
 
 		}
 
@@ -81,6 +81,19 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 					mMessenger.send(message);
 				} catch (RemoteException e) {
 					Log.e("LoungeServiceImpl", "caught exception while sending login confirmation message", e);
+				}
+			}
+			if ("joinMatch".equals(arg0)) {
+				Log.v("LoungeServiceImpl", String.format("IOCallback.on(): sending login confirmation"));
+				try {
+					Message message = new Message();
+					message.what = 3;
+					Bundle bundle = new Bundle();
+					bundle.putString("JSON", arg2[0].toString());
+					message.setData(bundle);
+					mMessenger.send(message);
+				} catch (RemoteException e) {
+					Log.e("LoungeServiceImpl", "caught exception while sending joinMathch message", e);
 				}
 			}
 		}

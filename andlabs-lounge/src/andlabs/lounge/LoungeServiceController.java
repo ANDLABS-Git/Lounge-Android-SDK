@@ -1,5 +1,8 @@
 package andlabs.lounge;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import andlabs.lounge.service.LoungeService;
 import andlabs.lounge.service.LoungeServiceDef;
 import android.annotation.SuppressLint;
@@ -17,6 +20,8 @@ import android.util.Log;
 
 public class LoungeServiceController {
 
+	private LoungeServiceCallback mLoungeServiceCallback;
+
 	@SuppressLint("HandlerLeak")
 	Messenger mMessenger = new Messenger(new Handler() {
 
@@ -26,7 +31,9 @@ public class LoungeServiceController {
 			switch (message.what) {
 
 				case 42:
-					Log.v("LoungeServiceController", "Handler.handleMessage(): Universal Answer ;-)");
+					if (mLoungeServiceCallback != null) {
+						mLoungeServiceCallback.theAnswerIs42();
+					}
 					break;
 
 				case 1:
@@ -40,6 +47,28 @@ public class LoungeServiceController {
 
 				case 2:
 					Log.v("LoungeServiceController", "Handler.handleMessage(): Login okay. Getting list of players: " + message.getData());
+					if (mLoungeServiceCallback != null) {
+						try {
+							JSONObject payload = new JSONObject(message.getData().getString("JSON"));
+							mLoungeServiceCallback.onLogin(payload);
+						} catch (JSONException e) {
+							Log.e("LoungeServiceController", "Handler.handleMessage(): caught exception while parsing JSON", e);
+							mLoungeServiceCallback.onError(e.getMessage());
+						}
+					}
+					break;
+
+				case 3:
+					Log.v("LoungeServiceController", "Handler.handleMessage(): Getting list of players for a game: " + message.getData());
+					if (mLoungeServiceCallback != null) {
+						try {
+							JSONObject payload = new JSONObject(message.getData().getString("JSON"));
+							mLoungeServiceCallback.onJoinMatch(payload);
+						} catch (JSONException e) {
+							Log.e("LoungeServiceController", "Handler.handleMessage(): caught exception while parsing JSON", e);
+							mLoungeServiceCallback.onError(e.getMessage());
+						}
+					}
 					break;
 
 				default:
@@ -79,6 +108,18 @@ public class LoungeServiceController {
 		Intent serviceIntent = new Intent(pContext, LoungeService.class);
 		serviceIntent.putExtra("client-messenger", mMessenger);
 		pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+	}
+
+
+	public void registerCallback(LoungeServiceCallback pLoungeServiceCallback) {
+		Log.v("LoungeServiceController", "registerCallback()");
+		mLoungeServiceCallback = pLoungeServiceCallback;
+	}
+
+
+	public void unregisterCallback(LoungeServiceCallback pLoungeServiceCallback) {
+		Log.v("LoungeServiceController", "unregisterCallback()");
+		mLoungeServiceCallback = null;
 	}
 
 
