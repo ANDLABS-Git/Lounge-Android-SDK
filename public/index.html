@@ -87,7 +87,7 @@
 									{
 										if ('' !== validateParameter(value))
 										{
-						  					$('#user_connected').append('<div class="user">' + value + '</div>');
+						  					$('div#connectedPlayer').append('<div class="user" playerID="' + value + '">' + value + '</div>');
 										}
 									}	
 								});
@@ -213,7 +213,7 @@
 				$('ul#runningMatchesList').empty();
 				
 				// Remove all online user.
-				$('div#user_connected').empty();
+				$('div#connectedPlayer').empty();
 				
 				// Remove the create match functionality.
 				$('div#createMatch').empty();
@@ -233,10 +233,10 @@
 				if ('' !== validateParameter(payload) && 
 					'' !== validateParameter(payload.playerID))
 				{
-	  				$('#user_connected').append('<div class="user">' + payload.playerID + '</div>');
+  					$('div#connectedPlayer').append('<div class="user" playerID="' + payload.playerID + '">' + payload.playerID + '</div>');
 				}
 			});
-
+			
 			/**
 			 *	This method gets called if a user did a logout.	
 			 */
@@ -245,7 +245,7 @@
 				if ('' !== validateParameter(payload) && 
 					'' !== validateParameter(payload.playerID))
 				{
-					$(".user:contains('" + payload.playerID + "')").remove();
+					$(".user[playerID = '" + payload.playerID + "']").remove();
 				}
 			});
 
@@ -435,6 +435,7 @@
 		<!-- //BOX1 -->
 		<div id="box">
 			<div id="box_cont" style="background-color: rgb(144, 71, 44);">
+				<strong>Open Matches.</strong> 
 				<ul id="openMatchesList">
 					<!-- Listelement --> 
 					<li>
@@ -470,6 +471,7 @@
 		<!-- //BOX3 -->
 		<div id="box" style="margin-left: 20px;">
 			<div id="box_cont" style="background-color: rgb(21, 95, 64);">
+				<strong>Running matches.</strong> 
 				<ul id="runningMatchesList">
 					<!-- Listelement --> 
 					<li>
@@ -486,8 +488,8 @@
 		<!-- Login container -->
 		<div id="box" style="margin-left: 20px;">		
 			<div id="box_cont" style="background-color: rgb(146, 139, 21);">
-				<strong>Players logged in</strong> 
-				<div id="user_connected">
+				<strong>Players logged in.</strong> 
+				<div id="connectedPlayer">
 				</div>
 			</div>		
 		</div>		
