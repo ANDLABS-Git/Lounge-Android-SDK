@@ -7,7 +7,7 @@ import android.view.Menu;
 
 public class LoungeConsoleActivity extends Activity {
 
-	LoungeServiceController mLoungeController = new LoungeServiceController();
+	LoungeLobbyController mLoungeLobbyController = new LoungeLobbyController();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class LoungeConsoleActivity extends Activity {
 		Log.v("LoungeConsoleActivity", "onStart():");
 		super.onStart();
 		// bind to the Lounge Service
-		mLoungeController.bindServiceTo(this);
+		mLoungeLobbyController.bindServiceTo(this);
 	}
 
 
@@ -52,7 +52,7 @@ public class LoungeConsoleActivity extends Activity {
 	@Override
 	protected void onStop() {
 		Log.v("LoungeConsoleActivity", "onStop():");
-		mLoungeController.unbindServiceFrom(this);
+		mLoungeLobbyController.unbindServiceFrom(this);
 		super.onStop();
 	}
 }
