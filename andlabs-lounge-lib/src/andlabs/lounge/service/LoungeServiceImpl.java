@@ -23,6 +23,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 	private Messenger mMessenger;
 	private SocketIO mSocketIO;
+	private GPCController gpcController;
 	private IOCallback mSocketIOCallback = new IOCallback() {
 
 		@Override
@@ -68,52 +69,23 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 
 		@Override
-		public void on(String arg0, IOAcknowledge arg1, Object... arg2) {
-			Log.v("LoungeServiceImpl", String.format("IOCallback.on(): arg0 = %s, arg1 = %s, arg2 = %s", arg0, arg1, Arrays.toString(arg2)));
-			if ("login".equals(arg0)) {
-				Log.v("LoungeServiceImpl", String.format("IOCallback.on(): sending login confirmation"));
-				try {
-					Message message = new Message();
-					message.what = 2;
-					Bundle bundle = new Bundle();
-					bundle.putString("JSON", arg2[0].toString());
-					message.setData(bundle);
-					mMessenger.send(message);
-				} catch (RemoteException e) {
-					Log.e("LoungeServiceImpl", "caught exception while sending login confirmation message", e);
-				}
-			}
-			if ("joinMatch".equals(arg0)) {
-				Log.v("LoungeServiceImpl", String.format("IOCallback.on(): sending login confirmation"));
-				try {
-					Message message = new Message();
-					message.what = 3;
-					Bundle bundle = new Bundle();
-					bundle.putString("JSON", arg2[0].toString());
-					message.setData(bundle);
-					mMessenger.send(message);
-				} catch (RemoteException e) {
-					Log.e("LoungeServiceImpl", "caught exception while sending joinMathch message", e);
-				}
-			}
+		public void on(String verb, IOAcknowledge arg1, Object... payload) {
+			Log.v("LoungeServiceImpl", String.format("IOCallback.on(): arg0 = %s, arg1 = %s, arg2 = %s", verb, arg1, Arrays.toString(payload)));
+			//The interpretation of the Server Response is handled in a own class
+			gpcController.processServerResponse(verb, payload);
 		}
+
+
+	
 
 	};
 
 
+
 	public LoungeServiceImpl(Intent intent) {
 		super();
-		Log.v("LoungeServiceImpl", "LoungeServiceImpl():");
-		mMessenger = intent.getParcelableExtra("client-messenger");
-		try {
-			Message message = new Message();
-			message.what = 42;
-			message.setData(Bundle.EMPTY);
-			mMessenger.send(message);
-		} catch (RemoteException e) {
-			Log.e("LoungeServiceImpl", "caught exception while sending message", e);
-		}
-
+		gpcController=new GPCController(intent);
+		
 	}
 
 
