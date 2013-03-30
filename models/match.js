@@ -188,6 +188,76 @@ MatchSchema.statics.join = function(data, userID, callback)
 };
 
 /**
+ *	Allows a user to change the match status.
+ *	@param data A json object containing all match relevant information. (gameID, matchID, status)
+ *	@param userID The id of the user who is updating the match status.
+ *	@return callback(error, match)
+ */
+MatchSchema.statics.update = function(data, userID, callback)
+{
+	if ('' !== validateParameter(data) &&
+		'' !== validateParameter(data.gameID) &&
+		'' !== validateParameter(data.matchID) &&
+		'' !== validateParameter(data.status) &&
+		'' !== validateParameter(userID)) 
+	{
+		// Verify a correct status was delivered.
+		if (!('open' === payload.status ||
+			'running' === payload.status ||
+			'close' === payload.status))
+		{
+			return callback(null, null);
+		}
+		
+		mongoose.models['Match'].findOne({ gameID: data.gameID, _id: data.matchID }, function(err, match)
+		{
+			if (err) { return callback(err, null); }
+			
+			if (match)
+			{
+				// Check if user has the right to update the match status.
+				containsUserID = false;
+				match.participants.forEach(function(uID)
+				{
+					if (String(uID) === String(userID))
+					{
+						containsUserID = true;
+					}
+				});
+		
+				if (true === containsUserID)
+				{
+					match.status = data.status;
+					match.save(function(err)
+					{
+						if (err) { return callback(err, null); }
+						mongoose.models['Match'].findOne({ _id: match._id})
+						.populate('participants', 'playerID')
+						.exec(function(err, match)
+						{
+							if (err) { return callback(err, null); }
+							return callback(null, match);
+						});
+					});
+				}
+				else
+				{
+					return callback(null, null);
+				}
+			}
+			else
+			{
+				return callback(null, null);
+			}
+		});
+	}
+	else
+	{
+		return callback(null, null);
+	}
+};
+
+/**
  *	Allows a user to move.
  *	@param data A json object containing all match relevant information. (gameID, matchID, move)
  *	@param userID The id of the user who is moving.
@@ -243,61 +313,6 @@ MatchSchema.statics.move = function(data, userID, callback)
 	}	
 };
 
-/**
- *	Allows a user to change the match status.
- *	@param data A json object containing all match relevant information. (gameID, matchID, status)
- *	@param userID The id of the user who is updating the match status.
- *	@return callback(error, match)
- */
-MatchSchema.statics.update = function(data, userID, callback)
-{
-	if ('' !== validateParameter(data) &&
-		'' !== validateParameter(data.gameID) &&
-		'' !== validateParameter(data.matchID) &&
-		'' !== validateParameter(data.status) &&
-		'' !== validateParameter(userID)) 
-	{
-		mongoose.models['Match'].findOne({ gameID: data.gameID, _id: data.matchID }, function(err, match)
-		{
-			if (err) { return callback(err, null); }
-			
-			if (match)
-			{
-				// Check if user has the right to update the match status.
-				containsUserID = false;
-				match.participants.forEach(function(uID)
-				{
-					if (String(uID) === String(userID))
-					{
-						containsUserID = true;
-					}
-				});
-		
-				if (true === containsUserID)
-				{
-					match.status = data.status;
-					match.save(function(err)
-					{
-						if (err) { return callback(err, null); }
-						return callback(null, match);
-					});
-				}
-				else
-				{
-					return callback(null, null);
-				}
-			}
-			else
-			{
-				return callback(null, null);
-			}
-		});
-	}
-	else
-	{
-		return callback(null, null);
-	}
-};
 
 /**
  *	All open games with empty spaces

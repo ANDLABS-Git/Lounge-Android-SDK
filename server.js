@@ -255,7 +255,7 @@ var LoungeServer = function() {
 									{										
 										allMatches.forEach(function (match)
 										{
-											socket.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants })
+											socket.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants });
 										});
 									}
 								});
@@ -477,7 +477,7 @@ var LoungeServer = function() {
 														if (!('undefined' === typeof s))
 														{
 															// Send the chat message to the user.
-															s.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants });
+															s.emit('updateMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants });
 														}
 													});
 												}
@@ -512,6 +512,95 @@ var LoungeServer = function() {
 				else
 				{
 					socket.emit('join', { result: false, description: 'No payload sent.' });
+					return;
+				}
+			});
+			
+			/**
+			 *	Handle a match status update.
+			 */
+			socket.on('update', function(payload)
+			{
+				// Validate the payload.
+				if ('' !== self.validateParameter(payload))
+				{
+					// Determine if the user creates a match or joins a match.
+					if ('' !== self.validateParameter(payload.gameID) &&
+						'' !== self.validateParameter(payload.matchID) &&
+						'' !== self.validateParameter(payload.status))
+					{
+						// Verify a correct status was delivered.
+						if (!('open' === payload.status ||
+							'running' === payload.status ||
+							'close' === payload.status))
+						{
+							socket.emit('update', { result: false, description: 'Wrong status was delivered.' });
+							return;
+						}
+						
+						// Identify the user sending the update.
+						User.userForSocket(socket, function(err, user)
+						{
+							if (err)
+							{
+								socket.emit('update', { result: false, description: err });
+								return;
+							}
+							else
+							{
+								if (user)
+								{
+									Match.update(payload, user._id, function(err, match)
+									{
+										if (err) 
+										{
+											socket.emit('update', { result: false, description: err });
+										}
+										else
+										{
+											if (match)
+											{
+												socket.emit('update', { result: true });
+											
+												// Inform all online player about the new match status.
+												onlineUsers.forEach(function (u)
+												{
+													// Identify the socket for a specific user.
+													var s = self.io.sockets.sockets[u.socketID];
+						
+													// Validate the socket.
+													if (!('undefined' === typeof s))
+													{
+														// Send the chat message to the user.
+														s.emit('updateMatch', { gameID: match.gameID, matchID: match._id, status: match.status });
+													}
+												});
+											}
+											else
+											{
+												socket.emit('update', { result: false, description: 'Cannot update the match status.' });
+												return;
+											}
+										}
+									});							
+								}
+								else
+								{
+									socket.emit('update', { result: false, description: 'Cannot determine user.' });
+									return;									
+								}
+							}
+						});
+					} 
+					else
+					{
+						socket.emit('update', { result: false, description: 'No gameID, matchID or status was specified.' });
+						return;
+					}
+				}
+				else
+				{
+					socket.emit('update', { result: false, description: 'No payload sent.' });
 					return;
 				}
 			});
@@ -592,86 +681,6 @@ var LoungeServer = function() {
 				else
 				{
 					socket.emit('move', { result: false, description: 'No payload sent.' });
-					return;
-				}
-			});
-			
-			/**
-			 *	Handle a match status update.
-			 */
-			socket.on('update', function(payload)
-			{
-				// Validate the payload.
-				if ('' !== self.validateParameter(payload))
-				{
-					// Determine if the user creates a match or joins a match.
-					if ('' !== self.validateParameter(payload.gameID) &&
-						'' !== self.validateParameter(payload.matchID) &&
-						'' !== self.validateParameter(payload.status))
-					{
-						// Identify the user sending the update.
-						User.userForSocket(socket, function(err, user)
-						{
-							if (err)
-							{
-								socket.emit('update', { result: false, description: err });
-								return;
-							}
-							else
-							{
-								if (user)
-								{
-									Match.update(payload, user._id, function(err, match)
-									{
-										if (err) 
-										{
-											socket.emit('update', { result: false, description: err });
-										}
-										else
-										{
-											if (match)
-											{
-												socket.emit('update', { result: true });
-											
-												// Inform all online player about the new match status.
-												onlineUsers.forEach(function (u)
-												{
-													// Identify the socket for a specific user.
-													var s = self.io.sockets.sockets[u.socketID];
-						
-													// Validate the socket.
-													if (!('undefined' === typeof s))
-													{
-														// Send the chat message to the user.
-														s.emit('updateMatch', { gameID: match.gameID, matchID: match._id, status: match.status });
-													}
-												});
-											}
-											else
-											{
-												socket.emit('update', { result: false, description: 'Cannot update the match status.' });
-												return;
-											}
-										}
-									});							
-								}
-								else
-								{
-									socket.emit('update', { result: false, description: 'Cannot determine user.' });
-									return;									
-								}
-							}
-						});
-					} 
-					else
-					{
-						socket.emit('update', { result: false, description: 'No gameID, matchID or status was specified.' });
-						return;
-					}
-				}
-				else
-				{
-					socket.emit('update', { result: false, description: 'No payload sent.' });
 					return;
 				}
 			});
