@@ -313,7 +313,6 @@ MatchSchema.statics.move = function(data, userID, callback)
 	}	
 };
 
-
 /**
  *	All open games with empty spaces
  *	@return callback(error, emptyGames)
@@ -336,45 +335,6 @@ MatchSchema.statics.allMatches = function(callback)
 		}
 	});
 
-};
-
-/**
- *	All running games
- *	@return callback(error, runningGames)
- */
-MatchSchema.statics.allRunningGames = function(callback)
-{
-	mongoose.models['Match'].find({ status: 'running'}, function(err, runningMatches)
-	{
-		if (err) { return callback(err, null); }
-		
-		// Create the array with all matches.
-		var matches = [];
-		
-		runningMatches.forEach(function(match)
-		{
-			mongoose.models['Match'].find({ _id: match._id})
-			.populate('participants', 'playerID')
-			.exec(function(err, match)
-			{
-				if (err) { return callback(err, null); }
-				return callback(null, match);
-			});
-		});
-	});
-};
-
-/**
- *	All close games
- *	@return callback(error, closeGames)
- */
-MatchSchema.statics.allCloseGames = function(callback)
-{
-	mongoose.models['Match'].find({ status: 'close' }, function(err, closeGames)
-	{
-		if (err) { return callback(err, null); }
-		return callback(null, closeGames);
-	});
 };
 
 /**
