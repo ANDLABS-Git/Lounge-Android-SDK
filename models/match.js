@@ -293,7 +293,14 @@ MatchSchema.statics.move = function(data, userID, callback)
 					match.save(function(err)
 					{
 						if (err) { return callback(err, null); }
-						return callback(null, match);
+						mongoose.models['Match'].findOne({ _id: match._id})
+						.populate('participants', 'socketID')
+						.exec(function(err, match)
+						{
+							if (err) { return callback(err, null); }
+							return callback(null, match);
+						});
+
 					});
 				}
 				else
@@ -314,7 +321,57 @@ MatchSchema.statics.move = function(data, userID, callback)
 };
 
 /**
- *	All open games with empty spaces
+ *	Allows a user to receive the last move.
+ *	@param data A json object containing all match relevant information. (gameID, matchID)
+ *	@param userID The id of the user who is moving.
+ *	@return callback(error, match)
+ */
+MatchSchema.statics.lastMove = function(data, userID, callback)
+{
+	if ('' !== validateParameter(data) &&
+		'' !== validateParameter(data.gameID) &&
+		'' !== validateParameter(data.matchID) &&
+		'' !== validateParameter(userID)) 
+	{
+		mongoose.models['Match'].findOne({ gameID: data.gameID, _id: data.matchID }, function(err, match)
+		{
+			if (err) { return callback(err, null); }
+			
+			if (match)
+			{
+				// Check if user has the right to update the match move.
+				containsUserID = false;
+				match.participants.forEach(function(uID)
+				{
+					if (String(uID) === String(userID))
+					{
+						containsUserID = true;
+					}
+				});
+		
+				if (true === containsUserID)
+				{
+					return callback(null, match);
+				}
+				else
+				{
+					return callback(null, null);
+				}
+			}
+			else
+			{
+				return callback(null, null);
+			}
+		});
+	}
+	else
+	{
+		return callback(null, null);
+	}	
+};
+
+/**
+ *	All matches with status join, running or close
  *	@return callback(error, emptyGames)
  */
 MatchSchema.statics.allMatches = function(callback)
@@ -334,7 +391,6 @@ MatchSchema.statics.allMatches = function(callback)
 			return callback(null, null);
 		}
 	});
-
 };
 
 /**

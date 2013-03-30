@@ -203,6 +203,11 @@ var LoungeServer = function() {
 		// Setup the socket.io instance variable.
 		self.io = require('socket.io').listen(self.http, { log: true });
 		
+		// Set the timeout.
+		self.io.set('heartbeat interval', 5);
+		self.io.set('heartbeat timeout', 10);
+		self.io.set('close timeout', 20);
+		
 		// Initialize the socket routes.
 		self.io.sockets.on('connection', function (socket) 
 		{	
@@ -606,87 +611,7 @@ var LoungeServer = function() {
 			});
 			
 			/**
-			 *	Handle a match move.
-			 */
-			socket.on('move', function(payload)
-			{
-				// Validate the payload.
-				if ('' !== self.validateParameter(payload))
-				{
-					// Determine if the user creates a match or joins a match.
-					if ('' !== self.validateParameter(payload.gameID) &&
-						'' !== self.validateParameter(payload.matchID) &&
-						'' !== self.validateParameter(payload.move))
-					{
-						// Identify the user sending the update.
-						User.userForSocket(socket, function(err, user)
-						{
-							if (err)
-							{
-								socket.emit('move', { result: false, description: err });
-								return;
-							}
-							else
-							{
-								if (user)
-								{
-									Match.update(payload, user._id, function(err, match)
-									{
-										if (err) 
-										{
-											socket.emit('move', { result: false, description: err });
-										}
-										else
-										{
-											if (match)
-											{
-												socket.emit('move', { result: true });
-											
-												// Inform all online player about the new match status.
-												onlineUsers.forEach(function (u)
-												{
-													// Identify the socket for a specific user.
-													var s = self.io.sockets.sockets[u.socketID];
-						
-													// Validate the socket.
-													if (!('undefined' === typeof s))
-													{
-														// Send the chat message to the user.
-														s.emit('moveMatch', { gameID: match.gameID, matchID: match._id, status: match.move });
-													}
-												});
-											}
-											else
-											{
-												socket.emit('move', { result: false, description: 'Cannot update the match move.' });
-												return;
-											}
-										}
-									});							
-								}
-								else
-								{
-									socket.emit('move', { result: false, description: 'Cannot determine user.' });
-									return;									
-								}
-							}
-						});
-					} 
-					else
-					{
-						socket.emit('move', { result: false, description: 'No gameID, matchID or move was specified.' });
-						return;
-					}
-				}
-				else
-				{
-					socket.emit('move', { result: false, description: 'No payload sent.' });
-					return;
-				}
-			});
-			
-			/**
-			 *	Handle a user checkIn.
+			 *	Handle the checkIn of an user.
 			 */
 			socket.on('checkIn', function(payload)
 			{
@@ -721,7 +646,7 @@ var LoungeServer = function() {
 										if (!('undefined' === typeof s))
 										{
 											// Send the chat message to the user.
-											s.emit('updateCheckIn', { gameID: user.gameID, matchID: user.matchID, playerID: user.playerID });
+											s.emit('checkInUser', { gameID: user.gameID, matchID: user.matchID, playerID: user.playerID });
 										}
 									});
 								}
@@ -743,6 +668,151 @@ var LoungeServer = function() {
 				{
 					socket.emit('checkIn', { result: false, description: 'No payload sent.' });
 					return;
+				}
+			});			
+			
+			/**
+			 *	Handle a match move.
+			 */
+			socket.on('move', function(payload)
+			{
+				// Validate the payload.
+				if ('' !== self.validateParameter(payload))
+				{
+					// Determine if the user creates a match or joins a match.
+					if ('' !== self.validateParameter(payload.gameID) &&
+						'' !== self.validateParameter(payload.matchID) &&
+						'' !== self.validateParameter(payload.move))
+					{
+						// Identify the user sending the update.
+						User.userForSocket(socket, function(err, user)
+						{
+							if (err)
+							{
+								socket.emit('move', { result: false, description: err });
+								return;
+							}
+							else
+							{
+								if (user)
+								{
+									Match.move(payload, user._id, function(err, match)
+									{
+										if (err) 
+										{
+											socket.emit('move', { result: false, description: err });
+										}
+										else
+										{
+											if (match)
+											{
+												socket.emit('move', { result: true });
+											
+												// Inform all online player about the new match status.
+												match.participants.forEach(function (u)
+												{
+													// Identify the socket for a specific user.
+													var s = self.io.sockets.sockets[u.socketID];
+						
+													// Validate the socket.
+													if (!('undefined' === typeof s))
+													{
+														// Send the chat message to the user.
+														s.emit('moveMatch', { gameID: match.gameID, matchID: match._id, move: match.move });
+													}
+												});
+											}
+											else
+											{
+												socket.emit('move', { result: false, description: 'Cannot update the match move.' });
+												return;
+											}
+										}
+									});							
+								}
+								else
+								{
+									socket.emit('move', { result: false, description: 'Cannot determine user.' });
+									return;									
+								}
+							}
+						});
+					} 
+					else
+					{
+						socket.emit('move', { result: false, description: 'No gameID, matchID or move was specified.' });
+						return;
+					}
+				}
+				else
+				{
+					socket.emit('move', { result: false, description: 'No payload sent.' });
+					return;
+				}
+			});
+			
+			/**
+			 *	Handle 
+			 */
+			socket.on('lastMove', function(payload)
+			{
+				// Validate the payload.
+				if ('' !== self.validateParameter(payload))
+				{
+					// Determine if the user creates a match or joins a match.
+					if ('' !== self.validateParameter(payload.gameID) &&
+						'' !== self.validateParameter(payload.matchID))
+					{
+						// Identify the user sending the update.
+						User.userForSocket(socket, function(err, user)
+						{
+							if (err)
+							{
+								socket.emit('lastMove', { result: false, description: err });
+								return;
+							}
+							else
+							{
+								if (user)
+								{
+									Match.lastMove(payload, user._id, function(err, match)
+									{
+										if (err) 
+										{
+											socket.emit('lastMove', { result: false, description: err });
+										}
+										else
+										{
+											if (match)
+											{
+												socket.emit('lastMove', { result: true, move: match.move });
+											}
+											else
+											{
+												socket.emit('lastMove', { result: false, description: 'Cannot receive the last move.' });
+												return;
+											}
+										}
+									});							
+								}
+								else
+								{
+									socket.emit('lastMove', { result: false, description: 'Cannot determine user.' });
+									return;									
+								}
+							}
+						});
+					}
+					else
+					{
+						socket.emit('lastMove', { result: false, description: 'No gameID or matchID was specified.' });
+						return;		
+					}
+				}
+				else
+				{
+					socket.emit('lastMove', { result: false, description: 'No payload sent.' });
+					return;						
 				}
 			});
 			
@@ -867,14 +937,14 @@ var LoungeServer = function() {
      */
     self.start = function() 
 	{
-		// TODO: MongoDB Reset all user to offline and clear all sockets.		
+		// MongoDB set all user to offline and clear all sockets.		
+		User.update({isOnline: true}, {isOnline: false, socketID: ''}, {multi: true}, function(err) { if (err) { console.log(err); } });
 		
         // Start the app on the specific interface (and port).
         self.http.listen(8080, "127.0.0.1", function() 
 		{
-            //console.log(8080, "127.0.0.1", '%s: Node server started...');
-            console.log('%s: Node server started on %s:%d ...',
-                        Date(Date.now() ), self.ipaddress, self.port);
+            //console.log('Node server started on IP 127.0.0.1, Port 8080...');
+            console.log('%s: Node server started...', Date(Date.now()));
         });
     };
 };   /*  LoungeServer */

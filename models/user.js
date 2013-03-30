@@ -203,23 +203,53 @@ UserSchema.statics.checkIn = function(data, socket, callback)
 	if ('' !== validateParameter(data) &&
 		'' !== validateParameter(data.gameID) &&
 		'' !== validateParameter(data.matchID) &&
-		'' !== validateParameter(socket))
+		'' !== validateParameter(socket) &&
+		'' !== validateParameter(socket.id))
 	{
-		mongoose.models['User'].findOne({ socketID: socketID, isOnline: true }, function(err, user)
+		mongoose.models['User'].findOne({ socketID: socket.id, isOnline: true }, function(err, user)
 		{
 			if (err) { return callback(err, null); }
 		
 			if (user)
 			{
-				// Store the new location.
-				user.gameID = data.gameID;
-				user.matchID = data.matchID;
-				
-				user.save(function(err)
+				mongoose.models['Match'].findOne({ gameID: data.gameID, _id: data.matchID }, function(err, match)
 				{
 					if (err) { return callback(err, null); }
-					return callback(null, user);
-				});				
+			
+					if (match)
+					{
+						// Check if the user is part of the game and has the right to checkIn
+						containsUserID = false;
+						match.participants.forEach(function(uID)
+						{
+							if (String(uID) === String(user._id))
+							{
+								containsUserID = true;
+							}
+						});
+						
+						if (true === containsUserID)
+						{
+							// Store the new location.
+							user.gameID = data.gameID;
+							user.matchID = data.matchID;
+				
+							user.save(function(err)
+							{
+								if (err) { return callback(err, null); }
+								return callback(null, user);
+							});			
+						}
+						else
+						{
+							return callback(null, null);
+						}
+					}
+					else
+					{
+						return callback(null, null);
+					}
+				});			
 			}
 			else
 			{
