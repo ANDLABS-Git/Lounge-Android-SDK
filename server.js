@@ -201,12 +201,7 @@ var LoungeServer = function() {
 	self.initializeSocketIO = function() 
 	{
 		// Setup the socket.io instance variable.
-		self.io = require('socket.io').listen(self.http, { log: true });
-		
-		// Set the timeout.
-		// self.io.set('heartbeat interval', 5);
-		// self.io.set('heartbeat timeout', 10);
-		// self.io.set('close timeout', 20);
+		self.io = require('socket.io').listen(self.http, { log: true });		
 		
 		// Initialize the socket routes.
 		self.io.sockets.on('connection', function (socket) 
