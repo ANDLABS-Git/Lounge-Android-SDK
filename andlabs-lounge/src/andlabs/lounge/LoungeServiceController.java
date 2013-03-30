@@ -15,35 +15,35 @@ import android.os.RemoteException;
 import android.util.Log;
 
 
-public class LoungeController {
+public class LoungeServiceController {
 
 	@SuppressLint("HandlerLeak")
 	Messenger mMessenger = new Messenger(new Handler() {
 
 		@Override
 		public void handleMessage(Message message) {
-			Log.v("LoungeController", "Handler.handleMessage(): message = " + message);
+			Log.v("LoungeServiceController", "Handler.handleMessage(): message = " + message);
 			switch (message.what) {
 
 				case 42:
-					Log.v("LoungeController", "Handler.handleMessage(): Universal Answer ;-)");
+					Log.v("LoungeServiceController", "Handler.handleMessage(): Universal Answer ;-)");
 					break;
 
 				case 1:
-					Log.v("LoungeController", "Handler.handleMessage(): Server connected ... process login");
+					Log.v("LoungeServiceController", "Handler.handleMessage(): Server connected ... process login");
 					try {
 						mLoungeService.login("John Doe");
 					} catch (RemoteException e) {
-						Log.e("LoungeController", "Handler.handleMessage(): caught exception while processing login", e);
+						Log.e("LoungeServiceController", "Handler.handleMessage(): caught exception while processing login", e);
 					}
 					break;
 
 				case 2:
-					Log.v("LoungeController", "Handler.handleMessage(): Login okay. Getting list of players: " + message.getData());
+					Log.v("LoungeServiceController", "Handler.handleMessage(): Login okay. Getting list of players: " + message.getData());
 					break;
 
 				default:
-					Log.v("LoungeController", "Handler.handleMessage(): message = " + message);
+					Log.v("LoungeServiceController", "Handler.handleMessage(): message = " + message);
 
 			}
 		}
@@ -55,19 +55,19 @@ public class LoungeController {
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			Log.v("LoungeController", "ServiceConnection.onServiceDisconnected():");
+			Log.v("LoungeServiceController", "ServiceConnection.onServiceDisconnected():");
 			mLoungeService = null;
 		}
 
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.v("LoungeController", "ServiceConnection.onServiceConnected():");
+			Log.v("LoungeServiceController", "ServiceConnection.onServiceConnected():");
 			mLoungeService = LoungeServiceDef.Stub.asInterface(service);
 			try {
 				mLoungeService.connect();
 			} catch (RemoteException e) {
-				Log.e("LoungeController", "ServiceConnection.onServiceConnected(): caught exception while connecting", e);
+				Log.e("LoungeServiceController", "ServiceConnection.onServiceConnected(): caught exception while connecting", e);
 			}
 		}
 
@@ -75,7 +75,7 @@ public class LoungeController {
 
 
 	public void bindServiceTo(Context pContext) {
-		Log.v("LoungeController", "bindServiceTo()");
+		Log.v("LoungeServiceController", "bindServiceTo()");
 		Intent serviceIntent = new Intent(pContext, LoungeService.class);
 		serviceIntent.putExtra("client-messenger", mMessenger);
 		pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
@@ -83,13 +83,13 @@ public class LoungeController {
 
 
 	public void unbindServiceFrom(Context pContext) {
-		Log.v("LoungeController", "unbindServiceFrom()");
+		Log.v("LoungeServiceController", "unbindServiceFrom()");
 		try {
 			if (mLoungeService != null) {
 				mLoungeService.disconnect();
 			}
 		} catch (RemoteException e) {
-			Log.e("LoungeController", "unbindServiceFrom(): caught exception while disconnecting", e);
+			Log.e("LoungeServiceController", "unbindServiceFrom(): caught exception while disconnecting", e);
 		}
 		pContext.unbindService(mServiceConnection);
 	}

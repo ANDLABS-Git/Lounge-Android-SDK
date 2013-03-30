@@ -7,7 +7,7 @@ import android.view.Menu;
 
 public class LoungeConsoleActivity extends Activity {
 
-	LoungeController mLoungeController = new LoungeController();
+	LoungeServiceController mLoungeController = new LoungeServiceController();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
