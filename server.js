@@ -42,8 +42,8 @@ var LoungeServer = function() {
      */
     self.setupVariables = function() {
 		// mongodbAddress for nodejitsu:
-        self.mongodbAddress = 'mongodb://nodejitsu:4226bafd5bb734c192f0700b7b2e114c@linus.mongohq.com:10092/nodejitsudb7687973685';
-		//self.mongodbAddress = 'mongodb://127.0.0.1:27017/lounge'
+        //self.mongodbAddress = 'mongodb://nodejitsu:4226bafd5bb734c192f0700b7b2e114c@linus.mongohq.com:10092/nodejitsudb7687973685';
+		self.mongodbAddress = 'mongodb://127.0.0.1:27017/lounge'
     };
  
  
@@ -204,9 +204,9 @@ var LoungeServer = function() {
 		self.io = require('socket.io').listen(self.http, { log: true });
 		
 		// Set the timeout.
-		self.io.set('heartbeat interval', 5);
-		self.io.set('heartbeat timeout', 10);
-		self.io.set('close timeout', 20);
+		// self.io.set('heartbeat interval', 5);
+		// self.io.set('heartbeat timeout', 10);
+		// self.io.set('close timeout', 20);
 		
 		// Initialize the socket routes.
 		self.io.sockets.on('connection', function (socket) 
@@ -222,79 +222,104 @@ var LoungeServer = function() {
 					return;
 				}
 				
-				var data = {playerID: payload.playerID, password: payload.playerID}
+				var data = {playerID: payload.playerID, password: payload.playerID};			
 				
-				// Authenticate the user.
-				User.authenticate(data, socket, function(err, user)
+				User.findOne({ playerID: payload.playerID }, function(err, userInstance)
 				{
 					if (err)
 					{
 						socket.emit('login', { result: false, description: err }); 
 						return;
 					}
-				
-					if (user)
-					{						
-						User.onlineUsers(function(err, onlineUsers)
+					
+					// Disconnect the old socket for the user.
+					if (userInstance)
+					{
+						if ('' !== self.validateParameter(userInstance.socketID))
 						{
-							if (err)
+							// Identify the socket for a specific user.
+							var s = self.io.sockets.sockets[userInstance.socketID];
+							// Validate the socket.
+							if (!('undefined' === typeof s))
 							{
-								socket.emit('login', { result: false, description: err });
-								return;
+								// Send the chat message to the user.
+								s.disconnect();
 							}
-							
-							if (onlineUsers)
-							{
-								// Send the new user all online users.
-								socket.emit('login', { result: true, playerList: onlineUsers });
-							
-								// Send the new user all open games.
-								Match.allMatches(function (err, allMatches)
-								{
-									if (err) 
-									{
-										// TODO: Handle Error!
-									}
-									
-									if (allMatches)
-									{										
-										allMatches.forEach(function (match)
-										{
-											socket.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants });
-										});
-									}
-								});
-								
-								// Send the new authenticated user to all already online users.						
-								onlineUsers.forEach(function (u)
-								{
-									// The new user should not 
-									if (socket.id !== u.socketID)
-									{
-										// Identify the socket for a specific user.
-										var s = self.io.sockets.sockets[u.socketID];
-								
-										// Validate the socket.
-										if (!('undefined' === typeof s))
-										{
-											// Send the chat message to the user.
-											s.emit('addPlayer', { playerID: user.playerID });
-										}
-									}
-								});
-							}
-							else
-							{
-								socket.emit('login', { result: false, description: "Cannot find online user." });
-								return;
-							}
-						});
-					} 
-					else
-					{					
-						// Inform the user that the authentication was not successfull.
-						socket.emit('login', { result: false, description: "There was a problem in the login functionality." });
+						}
 					}
+					
+					// Authenticate the user.
+					User.authenticate(data, socket, function(err, user)
+					{
+						if (err)
+						{
+							socket.emit('login', { result: false, description: err }); 
+							return;
+						}
+				
+						if (user)
+						{						
+							User.onlineUsers(function(err, onlineUsers)
+							{
+								if (err)
+								{
+									socket.emit('login', { result: false, description: err });
+									return;
+								}
+							
+								if (onlineUsers)
+								{
+									// Send the new user all online users.
+									socket.emit('login', { result: true, playerList: onlineUsers });
+							
+									// Send the new user all open games.
+									Match.allMatches(function (err, allMatches)
+									{
+										if (err) 
+										{
+											// TODO: Handle Error!
+										}
+									
+										if (allMatches)
+										{										
+											allMatches.forEach(function (match)
+											{
+												socket.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants });
+											});
+										}
+									});
+								
+									// Send the new authenticated user to all already online users.						
+									onlineUsers.forEach(function (u)
+									{
+										// The new user should not 
+										if (socket.id !== u.socketID)
+										{
+											// Identify the socket for a specific user.
+											var s = self.io.sockets.sockets[u.socketID];
+								
+											// Validate the socket.
+											if (!('undefined' === typeof s))
+											{
+												// Send the chat message to the user.
+												s.emit('addPlayer', { playerID: user.playerID });
+											}
+										}
+									});
+								}
+								else
+								{
+									socket.emit('login', { result: false, description: "Cannot find online user." });
+									return;
+								}
+							});
+						} 
+						else
+						{					
+							// Inform the user that the authentication was not successfull.
+							socket.emit('login', { result: false, description: "There was a problem in the login functionality." });
+						}
+					});	
 				});
 			});
 			
@@ -753,7 +778,7 @@ var LoungeServer = function() {
 			
 			/**
 			 *	Handle 
-			 */
+			 */	
 			socket.on('lastMove', function(payload)
 			{
 				// Validate the payload.
@@ -823,22 +848,25 @@ var LoungeServer = function() {
 			{
 				// Deauthenticate the user.
 				User.deauthenticate(socket, function(err, user)
-				{					
+				{				
 					if (user)
 					{						
 						// Iterate all online user and inform about the logout of an user.
 						User.onlineUsers(function(err, onlineUsers)
-						{
-							onlineUsers.forEach(function (u)
-							{
-								var socket = self.io.sockets.sockets[u.socketID];
-								
-								// Validate the socket.
-								if (!('undefined' === typeof s))
+						{											
+							if (onlineUsers)
+							{				
+								onlineUsers.forEach(function (u)
 								{
-									socket.emit('delPlayer', { playerID: user.playerID });
-								}
-							});
+									var socket = self.io.sockets.sockets[u.socketID];
+	
+									// Validate the socket.
+									if (!('undefined' === typeof socket))
+									{
+										socket.emit('delPlayer', { playerID: user.playerID });
+									}
+								});
+							}
 						});					
 					}
 				});				
@@ -943,8 +971,8 @@ var LoungeServer = function() {
         // Start the app on the specific interface (and port).
         self.http.listen(8080, "127.0.0.1", function() 
 		{
-            //console.log('Node server started on IP 127.0.0.1, Port 8080...');
-            console.log('%s: Node server started...', Date(Date.now()));
+            console.log('Node server started on IP 127.0.0.1, Port 8080...');
+            //console.log('%s: Node server started...', Date(Date.now()));
         });
     };
 };   /*  LoungeServer */

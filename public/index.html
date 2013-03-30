@@ -6,15 +6,14 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 
 		<!-- Title -->
-		<title>lounge_test</title>
+		<title>Lounge Server</title>
 
 		<!-- Cascading Stylesheet -->
 		<style type="text/css" media="screen, projection">
-			@import "css/style.css";			
+			@import "css/global.css";			
 		</style>
 		
-		<!-- JQuery -->
-		<!-- <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script> -->
+		<!-- Setup jQuery -->
 		<script src ="./js/jquery-1.9.1.min.js"></script>
 		
 		<!-- Setup the socket.io functionality -->
@@ -29,13 +28,14 @@
 		   		return ("undefined" === typeof value) ? "" : value;
 		    };
 
-			
-			//var socket = io.connect('http://lounge-andlabs.rhcloud.com', {transports: ["websocket"]});
+			/**
+			 *	Establishing a socket io connection.
+			 */
 			var socket = io.connect();
 
 			/**
-			*	This method is used for the chat functionality.
-			*/
+			 *	This method is used for the chat functionality.
+			 */
 			socket.on('login', function(payload)
 			{
 				if ('' !== validateParameter(payload) &&
@@ -45,6 +45,7 @@
 					{
 						if ('' !== validateParameter(payload.playerList))
 						{
+							// Initialize Player List.
 							$.each(payload.playerList, function(key, value) 
 							{
 								$.each(value, function(key, value)
@@ -57,21 +58,31 @@
 										}
 									}	
 								});
-							});
-							
+							});						
+
+							// Remove the username and login button.
 							$('input#username').remove();							
 							$('input#login').remove();			  
 							
-							// Decide status open/running/				
-							var logoutButton = $('<button/>',
+							// Add the Logout Button.								
+							var logoutButton = $('<input/>',
 						    {
-						        text: 'Logout',
+								id: 'logout',
+						        value: 'Logout',
+								type: 'submit',
 						        click: function () 
-								{ 					
+								{
+									socket.emit('logout');
+									return false;														
 								}
 						    });
 					
 							$("form#login").append(logoutButton);
+							
+							// TODO: Add the create match functionality.
+							
+							// TODO: Add the chat functionality.
+							
 						}
 					}
 					else
@@ -83,11 +94,11 @@
 						}					
 					}
 				}
-			});
+			});		
 			
 			/**
-			*	This method gets called if a user authenticated successful.	
-			*/
+			 *	This method gets called if a user authenticated successful.	
+			 */
 			socket.on('addPlayer', function(payload) 
 			{
 				if ('' !== validateParameter(payload) && 
@@ -98,10 +109,60 @@
 			});
 
 			/**
-			*	This method gets called if a user did a logout.	
-			*/
+   			 *	This method is called after the user was disconnected.
+			 */
+			socket.on('disconnect', function () 
+			{	
+				alert('disc');
+				
+				// Reconnect to the server.
+				socket.socket.connect();
+				
+				// Remove the logout button.
+				$('input#logout').remove();							
+				
+				// Remove the create match functionality.
+				
+				// Remove the chat functionality.
+				
+				// Add the login functionality
+				// Remove the username and login button.
+				$('input#username').remove();							
+				$('input#login').remove();			  
+				
+				// Generate the username input.
+				var usernameInput = $('<input/>',
+				{
+					id: 'username',
+					value: 'username',
+					type: 'text',
+				});
+				$("form#login").append(usernameInput);
+				
+				// Generate the input button.								
+				var inputButton = $('<input/>',
+			    {
+					id: 'login',
+			        value: 'Login',
+					type: 'submit',
+			        click: function() 
+					{
+						var username = $("input#username").val();
+						socket.emit('login', { playerID: username });
+						return false;												
+					}
+			    });
+				
+				// Add the username input and the login button.
+				$("form#login").append(inputButton);
+			});
+
+			/**
+			 *	This method gets called if a user did a logout.	
+			 */
 			socket.on('delPlayer', function(payload)
 			{
+				alert(payload.playerID);
 				if ('' !== validateParameter(payload) && 
 					'' !== validateParameter(payload.playerID))
 				{
@@ -110,8 +171,8 @@
 			});
 
 			/**
-			*	This method is used for the chat callback.
-			*/
+			 *	This method is used for the chat callback.
+			 */
 			socket.on('chat', function(payload) 
 			{
 				if ('' !== validateParameter(payload) &&
@@ -208,6 +269,7 @@
 				}
 			});
 			
+			/*
 			socket.on('addRunningMatch', function(payload)
 			{
 				if ('' !== validateParameter(payload) &&
@@ -223,14 +285,7 @@
 					});
 				}		
 			});
-			
-			/**
-			 *	This method is called after a user joins a match.
-			 */
-			socket.on('joinMatch', function(payload)
-			{
-				
-			});
+*/
 			
 			/**
 			 *	This method is the user callback after the attempt of a match move.
@@ -275,13 +330,21 @@
 			/**
 			 *	This method is called after an user did a checkIn.
 			 */
-			socket.on('updateCheckIn', function(payload)
+			socket.on('checkInUser', function(payload)
+			{
+				
+			});
+			
+			/**
+			 *	User receives the last move for a specific matchID.
+			 */
+			socket.on('lastMove', function(payload)
 			{
 				
 			});
 		</script>
 		
-		<!-- JQuery declaration -->
+		<!-- JQuery startup declaration -->
 		<script type="text/javascript" language="javascript" >
 			$(function()
 			{								
@@ -317,11 +380,11 @@
 <body>
 
 	<div id="wrapper">
-		<div id="header"><h1><strong>LOUNGE</strong> // android web debug client v0.6</h1>
+		<div id="header"><h1><strong>Lounge Server</strong> - Android Web Debug Client v0.7</h1>
 			<form id="login">
-				<!-- Login functionality -->
+				<!-- Login Form -->
 				<input id="username" type="text" value="username" />
-				<input id="login" type="submit" value="login" />
+				<input id="login" type="submit" value="Login" />
 			</form>
 		</div>
 
