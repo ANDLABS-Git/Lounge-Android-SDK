@@ -1,6 +1,10 @@
 package andlabs.lounge.lobby;
 
+import java.util.List;
+
 import andlabs.lounge.lobby.R;
+import andlabs.lounge.lobby.model.ChatMessage;
+import andlabs.lounge.lobby.model.LobbyListElement;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
@@ -9,6 +13,29 @@ import android.view.Menu;
 public class LoungeConsoleActivity extends Activity {
 
 	LoungeLobbyController mLoungeLobbyController = new LoungeLobbyController();
+
+	LoungeLobbyCallback mLoungeLobbyCallback = new LoungeLobbyCallback() {
+		
+		@Override
+		public void onLobbyDataUpdated(List<LobbyListElement> data) {
+			// TODO Auto-generated method stub
+			LoungeConsoleActivity.this.runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+		}
+		
+		
+		@Override
+		public void onChatDataUpdated(List<ChatMessage> data) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +67,14 @@ public class LoungeConsoleActivity extends Activity {
 	protected void onResume() {
 		Log.v("LoungeConsoleActivity", "onResume():");
 		super.onResume();
+		mLoungeLobbyController.registerCallback(mLoungeLobbyCallback);
 	}
 
 
 	@Override
 	protected void onPause() {
 		Log.v("LoungeConsoleActivity", "onPause():");
+		mLoungeLobbyController.unregisterCallback(mLoungeLobbyCallback);
 		super.onPause();
 	}
 

@@ -41,7 +41,9 @@ public class LoungeLobbyController {
 		@Override
 		public void onStateUpdate(ArrayList<Game> pGames) {
 			Log.v("LoungeLobbyController", "LoungeServiceCallback.onStateUpdate(): " + pGames);
-			
+			ArrayList<LobbyListElement> data = new ArrayList<LobbyListElement>();
+			// TODO populate data from the pGames object
+			mLoungeLobbyCallback.onLobbyDataUpdated(data);
 		}
 
 		@Override
