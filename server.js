@@ -586,7 +586,7 @@ var LoungeServer = function() {
 											if (match)
 											{
 												socket.emit('update', { result: true });
-											
+																						
 												// Iterate all online user and inform about the match creation.
 												User.onlineUsers(function(err, onlineUsers)
 												{
@@ -607,7 +607,7 @@ var LoungeServer = function() {
 															if (!('undefined' === typeof s))
 															{
 																// Send the chat message to the user.
-																s.emit('updateMatch', { gameID: match.gameID, matchID: match._id, status: match.status });
+																s.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants });
 															}
 														});
 													}

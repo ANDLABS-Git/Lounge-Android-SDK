@@ -406,7 +406,7 @@
 						var inspectGameSubmit = $('<input/>',
 					    {
 							class: 'inspectGameSubmit',
-					        text: 'inspectGame',
+					        value: 'inspectMatch',
 							matchID: payload.matchID,
 							type: 'submit',
 					        click: function () 
@@ -416,6 +416,42 @@
 								
 								// Display the new inspectGame div
 								$('#wrapper').append('<div id="box" class="inspectGame" matchID="' + payload.matchID + '" style="margin-left: 20px;"><div id="box_cont" style="background-color: rgb(23, 200, 200);"></div></div>');
+								
+								// Create a button to close the current inspected match window.
+								var closeInspectMatchWindowSubmit = $('<input/>', 
+								{
+									class: 'closeInspectMatchWindowSubmit',
+									value: 'closeMatchWindow',
+									type: 'submit',
+									click: function ()
+									{
+										// Remove the old inspectGame div.
+										$('.inspectGame').remove();
+										
+										// CheckIn the user.
+										socket.emit('checkIn', { gameID: "andlabs.lounge.lobby", matchID: "andlabs.lounge.lobby" });
+									}
+								});
+								
+								// Add the button to the inspectMatchBox.
+								$('.inspectGame[matchID = "' + payload.matchID + '"] #box_cont').append(closeInspectMatchWindowSubmit);
+								
+								// Create a button to close the current inspected match.
+								var closeInspectMatchSubmit = $('<input/>', 
+								{
+									class: 'closeInspectMatchSubmit',
+									value: 'closeMatch/Finish',
+									type: 'submit',
+									click: function ()
+									{
+										// CheckIn the user.
+										socket.emit('update', { gameID: payload.gameID, matchID: payload.matchID, status: "close" });
+									}
+								});
+								
+								// Add the button to the inspectMatchBox.
+								$('.inspectGame[matchID = "' + payload.matchID + '"] #box_cont').append(closeInspectMatchSubmit);
+								
 								
 								// Update the user status.
 								socket.emit('checkIn', {gameID: payload.gameID, matchID: payload.matchID});
@@ -454,7 +490,7 @@
 						}
 					}
 					else if ('close' === payload.status)
-					{
+					{	
 						// Remove the entry in the open games box.
 						$(".openMatch[matchID = '" + payload.matchID + "']").remove();
 						
@@ -462,7 +498,13 @@
 						$(".runningMatch[matchID = '" + payload.matchID + "']").remove();
 						
 						// Remove the game div if it is currently visible
-						$(".inspectGame[matchID  = '" + payload.matchID + "']").remove();
+						if ($(".inspectGame[matchID  = '" + payload.matchID + "']").length > 0 )
+						{
+							$(".inspectGame[matchID  = '" + payload.matchID + "']").remove();
+							
+							// CheckIn to Lobby.
+							socket.emit('checkIn', { gameID: "andlabs.lounge.lobby", matchID: "andlabs.lounge.lobby" });							
+						}
 					}					
 				}
 			});

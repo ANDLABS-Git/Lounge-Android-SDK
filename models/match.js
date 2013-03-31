@@ -202,9 +202,9 @@ MatchSchema.statics.update = function(data, userID, callback)
 		'' !== validateParameter(userID)) 
 	{
 		// Verify a correct status was delivered.
-		if (!('open' === payload.status ||
-			'running' === payload.status ||
-			'close' === payload.status))
+		if (!('open' === data.status ||
+			'running' === data.status ||
+			'close' === data.status))
 		{
 			return callback(null, null);
 		}
