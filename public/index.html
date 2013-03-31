@@ -87,7 +87,7 @@
 									{
 										if ('' !== validateParameter(value))
 										{
-						  					$('div#connectedPlayer').append('<div class="user" playerID="' + value + '">' + value + '</div>');
+						  					$('div#connectedPlayer').append('<div class="player" playerID="' + value + '">' + value + '</div>');
 										}
 									}	
 								});
@@ -160,7 +160,7 @@
 							// Add the chat functionality.							
 							var chatMessageInput =  $('<input/>',
 						    {
-								id: 'chatMessage',
+								id: 'chatMessageInput',
 						        value: 'chattext here',
 								type: 'text'								
 						    });							
@@ -173,7 +173,7 @@
 								type: 'submit',
 						        click: function () 
 								{
-									var message = $("input#chatMessage").val();
+									var message = $("input#chatMessageInput").val();
 									socket.emit('chat', { message: message });
 									return false;													
 								}														
@@ -207,7 +207,7 @@
 				$('ul#openMatchesList').empty();
 				
 				// Remove all chat messages.
-				$('div#chat_messages').empty();
+				$('div#chatMessages').empty();
 				
 				// Remove all running games.
 				$('ul#runningMatchesList').empty();
@@ -224,7 +224,6 @@
 				// TODO: Close the inspection window of an running match.				
 			});
 			
-			
 			/**
 			 *	This method gets called if a user authenticated successful.	
 			 */
@@ -233,7 +232,7 @@
 				if ('' !== validateParameter(payload) && 
 					'' !== validateParameter(payload.playerID))
 				{
-  					$('div#connectedPlayer').append('<div class="user" playerID="' + payload.playerID + '">' + payload.playerID + '</div>');
+  					$('div#connectedPlayer').append('<div class="player" playerID="' + payload.playerID + '">' + payload.playerID + '</div>');
 				}
 			});
 			
@@ -245,7 +244,7 @@
 				if ('' !== validateParameter(payload) && 
 					'' !== validateParameter(payload.playerID))
 				{
-					$(".user[playerID = '" + payload.playerID + "']").remove();
+					$(".player[playerID = '" + payload.playerID + "']").remove();
 				}
 			});
 
@@ -259,7 +258,7 @@
 				{
 					if (payload.result)
 					{
-						$('#message').val('');
+						$('#chatMessageInput').val('');
 					}
 					else
 					{
@@ -280,11 +279,10 @@
 					'' !== validateParameter(payload.playerID) &&
 					'' !== validateParameter(payload.message))
 				{
-					$('#chat_messages').append('<div class="message">' + payload.playerID + ": " + payload.message + '</div>');
+					$('#chatMessages').append('<div class="chatMessage">' + payload.playerID + ": " + payload.message + '</div>');
 				}				
 			});
-			
-			
+						
 			/**
 			 *	This method is used for the join callback.
 			 */
@@ -461,7 +459,7 @@
 		<div id="box" style="margin-left: 20px;">
 			<div id="box_cont" style="background-color: rgb(21, 68, 82);">
 				<strong>Chat</strong> 
-				<div id="chat_messages">
+				<div id="chatMessages">
 				</div>
 			</div>
 			<div id="createChatMessage">
