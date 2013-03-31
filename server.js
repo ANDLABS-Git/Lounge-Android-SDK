@@ -829,7 +829,7 @@ var LoungeServer = function() {
 										{
 											if (match)
 											{
-												socket.emit('lastMove', { result: true, move: match.move });
+												socket.emit('lastMove', { result: true, gameID: match.gameID, matchID: match.matchID, move: match.move });
 											}
 											else
 											{
@@ -985,7 +985,7 @@ var LoungeServer = function() {
     self.start = function() 
 	{
 		// MongoDB set all user to offline and clear all sockets.		
-		User.update({isOnline: true}, {isOnline: false, socketID: ''}, {multi: true}, function(err) { if (err) { console.log(err); } });
+		User.update({"socketID":{$ne:''}}, {socketID: ''}, {multi: true}, function(err) { if (err) { console.log(err); } });
 		
         // Start the app on the specific interface (and port).
         self.http.listen(8080, "127.0.0.1", function() 

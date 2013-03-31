@@ -377,7 +377,7 @@ MatchSchema.statics.lastMove = function(data, userID, callback)
 MatchSchema.statics.allMatches = function(callback)
 {
 	mongoose.models['Match'].find()
-	.where('status').in(['join', 'running', 'close'])
+	.where('status').in(['join', 'running'])
 	.populate('participants', 'playerID')
 	.exec(function(err, allMatches)
 	{

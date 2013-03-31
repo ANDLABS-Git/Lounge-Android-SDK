@@ -456,8 +456,8 @@
 								// Update the user status.
 								socket.emit('checkIn', {gameID: payload.gameID, matchID: payload.matchID});
 								
-								// Receive last move.								
-//								alert("inspect... remove old inspect div, show new inspect div, update user status, receive lastMove, ")
+								// Receive last move.
+								socket.emit('lastMove', { gameID: payload.gameID, matchID: payload.matchID });
 							}
 					    });						
 						
@@ -507,7 +507,7 @@
 						}
 					}					
 				}
-			});
+			});	
 		
 			/**
 			 *	This method is the user callback after the attempt of a match move.
@@ -530,23 +530,15 @@
 			 */
 			socket.on('update', function(payload)
 			{
-				
-			});
-			
-			/**
-			 *	This method is called after an user updates the status of a match
-			 */
-			socket.on('updateMatch', function(payload)
-			{
-				
-			});
+				// Handle a update match callback.
+			});			
 			
 			/**
 			 *	This is the callback if the user is performing a checkIn.
 			 */
 			socket.on('checkIn', function(payload)
 			{
-
+				// Handle checkIn callback.
 			});
 			
 			/**
@@ -576,8 +568,57 @@
 			 */
 			socket.on('lastMove', function(payload)
 			{
-				
+				if ('' !== validateParameter(payload) &&
+					'' !== validateParameter(payload.result))
+				{
+					if (payload.result)
+					{
+						if ('' !== validateParameter(payload.gameID) &&
+							'' !== validateParameter(payload.matchID))
+						{
+							if ('' !== validateParameter(payload.move))
+							{
+								handleMove(payload.gameID, payload.matchID, payload.move);
+							}
+							else
+							{
+								handleEmptyMove(payload.gameID, payload.matchID);
+							}
+						}
+					}
+					else
+					{
+						if ('' !== validateParameter(payload.description))
+						{
+							alert(payload.description);
+						}
+					}
+				}
 			});
+			
+			/**
+			 *	Handle a move
+			 */
+			var handleMove = function(gameID, matchID, move)
+			{
+				if (!move)
+				{
+					return;
+				}
+				
+				$.each(move, function(key, value) {
+					
+				});
+				
+			}
+			
+			/**
+			 *	Handle an empty move. (Beginning of a game)
+			 */
+			var handleEmptyMove = function(gameID, matchID)
+			{
+				
+			}
 		</script>		
 	</head>
 <body>

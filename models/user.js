@@ -19,9 +19,6 @@ var UserSchema = new Schema
 	// The socket of the user.
 	socketID: 	{ type: String, trim: true, default: "" },
 	
-	// Flag to identify if the user is online
-	isOnline: 	{ type: Boolean, trim: true, default: false},
-	
 	// Current gameID
 	gameID: 	{ type: String, trim: true, default: "" },
 	
@@ -80,7 +77,6 @@ UserSchema.statics.authenticate = function(data, socket, callback)
 			{							
 				// Update the socket of the person.
 				user.socketID = socketID;
-				user.isOnline = true;
 				
 				// Save the changes.
 				user.save(function(err)
@@ -93,7 +89,7 @@ UserSchema.statics.authenticate = function(data, socket, callback)
 		else
 		{
 			// Create a new user.
-			var user = new User({ playerID: playerID, password: password, socketID: socketID, isOnline: true });
+			var user = new User({ playerID: playerID, password: password, socketID: socketID });
 			
 			// Save the changes.
 			user.save(function(err) 
@@ -127,7 +123,6 @@ UserSchema.statics.deauthenticate = function(socket, callback)
 		
 		if (user)
 		{
-			user.isOnline = false;
 			user.socketID = '';
 			user.save(function(err)
 			{
@@ -155,8 +150,8 @@ UserSchema.statics.userForSocket = function(socket, callback)
 	{
 		return callback(null, null);
 	}
-	
-	mongoose.models['User'].findOne({ socketID: socketID, isOnline: true }, function(err, user)
+	// TODO: Check if socket.id length of string is greater than 0
+	mongoose.models['User'].findOne({ socketID: socketID }, function(err, user)
 	{
 		if (err) { return callback(err, null); }
 		
@@ -177,7 +172,7 @@ UserSchema.statics.userForSocket = function(socket, callback)
  */
 UserSchema.statics.onlineUsers = function(callback)
 {
-	mongoose.models['User'].find({ isOnline: true }, 'playerID socketID gameID matchID', function(err, userArray)
+	mongoose.models['User'].find({"socketID":{$ne:''}}, 'playerID socketID gameID matchID', function(err, userArray)
 	{
 		if (err) { return callback(err, null); }
 		
@@ -206,7 +201,8 @@ UserSchema.statics.checkIn = function(data, socket, callback)
 		'' !== validateParameter(socket) &&
 		'' !== validateParameter(socket.id))
 	{
-		mongoose.models['User'].findOne({ socketID: socket.id, isOnline: true }, function(err, user)
+		// TODO: Check if socket.id length of string is greater than 0
+		mongoose.models['User'].findOne({ socketID: socket.id }, function(err, user)
 		{
 			if (err) { return callback(err, null); }
 		
