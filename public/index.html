@@ -34,6 +34,11 @@
 			var socket = io.connect();
 
 			/**
+			 *	Global Variable to store the playerID.
+			 */
+			var globalPlayerID = '';
+
+			/**
 			 *	This method is called after the socket.io connection was successful established.
 			 */
 			socket.on('connect', function()
@@ -57,6 +62,7 @@
 			        click: function() 
 					{
 						var username = $("input#username").val();
+						globalPlayerID = username;
 						socket.emit('login', { playerID: username });
 						return false;												
 					}
@@ -105,6 +111,7 @@
 						        click: function () 
 								{
 									socket.emit('logout');
+									globalPlayerID = '';
 									return false;														
 								}
 						    });
@@ -183,6 +190,7 @@
 					}
 					else
 					{
+						globalPlayerID = '';
 						var description = payload.description;
 						if ('' !== validateParameter(description))
 						{
@@ -302,7 +310,7 @@
 						}
 						else if ('join' == payload.description)
 						{
-							alert("join");
+							
 						}
 						else
 						{
@@ -326,44 +334,82 @@
 			{			
 				if ('' !== validateParameter(payload) &&
 					'' !== validateParameter(payload.gameID) &&
-					'' !== validateParameter(payload.gameName) &&
 					'' !== validateParameter(payload.matchID) &&
-				 	'' !== validateParameter(payload.totalSpots))
-				{
-					// Decide status open/running/				
-					var joinMatchButton = $('<button/>',
-				    {
-				        text: 'Test',
-						gameID: payload.gameID,
-				        click: function () 
-						{ 					
-							socket.emit('join', { gameID: payload.gameID, matchID: payload.matchID });
+					'' !== validateParameter(payload.gameName) &&
+				 	'' !== validateParameter(payload.totalSpots) &&
+				 	'' !== validateParameter(payload.status) &&
+					'' !== validateParameter(payload.playerIDs))
+				{					
+					// Decide which status should be displayed
+					if ('created' === payload.status ||
+						'join' === payload.status)
+					{
+						
+						// Create the match.
+						var joinMatchSubmit = $('<input/>',
+					    {
+							class: 'joinMatchSubmit',
+					        text: 'Join',
+							matchID: payload.matchID,
+							type: 'submit',
+					        click: function () 
+							{ 					
+								socket.emit('join', { gameID: payload.gameID, matchID: payload.matchID });
+							}
+					    });
+
+						var openSpots = payload.totalSpots - payload.playerIDs.length;
+						
+						// Check if the match is alread in the list of open matches.;
+						if ($(".openMatch[matchID = '" + payload.matchID + "']").length > 0)
+						{
+							// Update the open spots. 
+							$(".openMatch[matchID = '" + payload.matchID + "'] .openSpots").text(openSpots);
 						}
-				    });
+						else
+						{
+							// Create the game.
+							$("ul#openMatchesList").append("<li class='openMatch' matchID='" + payload.matchID + "'>" + payload.gameID+ "</b><br>" + payload.gameName + "<br>Match ID:" + payload.matchID + "<br>Open Spots:<div class='openSpots'>" + openSpots + "</div><br></li>");
+						}	
 					
-					$("ul#openMatchesList").append("<li>" + payload.gameID+ "</b><br>" + payload.gameName + "<br>total Spots:" + payload.totalSpots + "<br></li>");	
-					$("ul#openMatchesList").append(joinMatchButton);
+						// Check if user is in the list of playerIDs.
+						var foundPlayer = false;
+						$.each(payload.playerIDs, function(key, value) {
+							if (value.playerID === globalPlayerID)
+							{
+								foundPlayer = true;
+							}
+						});
+
+						// Add or remove the joinMatchSubmit
+						if (!foundPlayer)
+						{
+							$(".openMatch[matchID = '" + payload.matchID + "']").append(joinMatchSubmit);							
+						}
+						else
+						{
+							$(".openMatch[matchID = '" + payload.matchID + "'] .joinMatchSubmit").remove()
+						}					
+					}
+					else if ('running' === payload.status)
+					{
+						// Remove the old state in open games.
+						$("#runningMatchesList").append('<li>GameID: ' + payload.gameID + '<br>MatchID: ' + payload.matchID + '<br>GameName: ' + payload.gameName + '<br> Player: <div class=' + payload.matchID + '></div></li>')
+					
+						$.each(payload.playerIDs, function(key, value) {
+							$('.' + payload.matchID).append(value.playerID + ' ');
+						});
+						
+						// Add the field in running games.
+						
+					}
+					else if ('close' === payload.status)
+					{
+						
+					}					
 				}
 			});
-			
-			/*
-			socket.on('addRunningMatch', function(payload)
-			{
-				if ('' !== validateParameter(payload) &&
-					'' !== validateParameter(payload.gameID) &&
-					'' !== validateParameter(payload.matchID) &&
-					'' !== validateParameter(payload.gameName) &&
-					'' !== validateParameter(payload.playerIDs))
-				{						
-					$("#runningMatchesList").append('<li>GameID: ' + payload.gameID + '<br>MatchID: ' + payload.matchID + '<br>GameName: ' + payload.gameName + '<br> Player: <div class=' + payload.matchID + '></div></li>')
-					
-					$.each(payload.playerIDs, function(key, value) {
-						$('.' + payload.matchID).append(value.playerID + ' ');
-					});
-				}		
-			});
-*/
-			
+		
 			/**
 			 *	This method is the user callback after the attempt of a match move.
 			 */
@@ -430,7 +476,7 @@
 		</div>
 
 
-		<!-- //BOX1 -->
+		<!-- Open Matches -->
 		<div id="box">
 			<div id="box_cont" style="background-color: rgb(144, 71, 44);">
 				<strong>Open Matches.</strong> 
@@ -455,7 +501,7 @@
 			</div>
 		</div>
 		
-		<!-- Chat container -->
+		<!-- Chat -->
 		<div id="box" style="margin-left: 20px;">
 			<div id="box_cont" style="background-color: rgb(21, 68, 82);">
 				<strong>Chat</strong> 
@@ -466,7 +512,7 @@
 			</div>
 		</div>
 
-		<!-- //BOX3 -->
+		<!-- Running Matches  -->
 		<div id="box" style="margin-left: 20px;">
 			<div id="box_cont" style="background-color: rgb(21, 95, 64);">
 				<strong>Running matches.</strong> 
@@ -483,7 +529,7 @@
 			<div id="box_bottom"> Output / Server Log</div>
 		</div>
 		
-		<!-- Login container -->
+		<!-- Online Player -->
 		<div id="box" style="margin-left: 20px;">		
 			<div id="box_cont" style="background-color: rgb(146, 139, 21);">
 				<strong>Players logged in.</strong> 
