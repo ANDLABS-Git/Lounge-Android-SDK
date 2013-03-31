@@ -177,7 +177,7 @@ UserSchema.statics.userForSocket = function(socket, callback)
  */
 UserSchema.statics.onlineUsers = function(callback)
 {
-	mongoose.models['User'].find({ isOnline: true }, 'playerID socketID', function(err, userArray)
+	mongoose.models['User'].find({ isOnline: true }, 'playerID socketID gameID matchID', function(err, userArray)
 	{
 		if (err) { return callback(err, null); }
 		
@@ -212,44 +212,60 @@ UserSchema.statics.checkIn = function(data, socket, callback)
 		
 			if (user)
 			{
-				mongoose.models['Match'].findOne({ gameID: data.gameID, _id: data.matchID }, function(err, match)
+				if ('andlabs.lounge.lobby' === data.gameID &&
+					'andlabs.lounge.lobby' === data.matchID)
 				{
-					if (err) { return callback(err, null); }
-			
-					if (match)
+					// Store the new location.
+					user.gameID = data.gameID;
+					user.matchID = undefined;
+	
+					user.save(function(err)
 					{
-						// Check if the user is part of the game and has the right to checkIn
-						containsUserID = false;
-						match.participants.forEach(function(uID)
+						if (err) { return callback(err, null); }
+						return callback(null, user);
+					});		
+				}
+				else
+				{
+					mongoose.models['Match'].findOne({ gameID: data.gameID, _id: data.matchID }, function(err, match)
+					{
+						if (err) { return callback(err, null); }
+			
+						if (match)
 						{
-							if (String(uID) === String(user._id))
+							// Check if the user is part of the game and has the right to checkIn
+							containsUserID = false;
+							match.participants.forEach(function(uID)
 							{
-								containsUserID = true;
-							}
-						});
+								if (String(uID) === String(user._id))
+								{
+									containsUserID = true;
+								}
+							});
 						
-						if (true === containsUserID)
-						{
-							// Store the new location.
-							user.gameID = data.gameID;
-							user.matchID = data.matchID;
-				
-							user.save(function(err)
+							if (true === containsUserID)
 							{
-								if (err) { return callback(err, null); }
-								return callback(null, user);
-							});			
+								// Store the new location.
+								user.gameID = data.gameID;
+								user.matchID = data.matchID;
+				
+								user.save(function(err)
+								{
+									if (err) { return callback(err, null); }
+									return callback(null, user);
+								});			
+							}
+							else
+							{
+								return callback(null, null);
+							}
 						}
 						else
 						{
 							return callback(null, null);
 						}
-					}
-					else
-					{
-						return callback(null, null);
-					}
-				});			
+					});	
+				}		
 			}
 			else
 			{

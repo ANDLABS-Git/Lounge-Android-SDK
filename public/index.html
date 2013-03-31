@@ -84,19 +84,24 @@
 					{
 						if ('' !== validateParameter(payload.playerList))
 						{
+							// CheckIn the user.
+							socket.emit('checkIn', { gameID: "andlabs.lounge.lobby", matchID: "andlabs.lounge.lobby" });							
+							
 							// Initialize Player List.
 							$.each(payload.playerList, function(key, value) 
 							{
-								$.each(value, function(key, value)
+								if ('' !== validateParameter(value.playerID) &&
+									'' !== validateParameter(value.gameID));
 								{
-									if ('playerID' === key)
+									if ('' !== validateParameter(value.matchID))
 									{
-										if ('' !== validateParameter(value))
-										{
-						  					$('div#connectedPlayer').append('<div class="player" playerID="' + value + '">' + value + '</div>');
-										}
-									}	
-								});
+  										$('div#connectedPlayer').append('<div class="player" playerID="' + value.playerID + '">' + value.playerID + '<div class="location">(' + value.gameID + ' | ' +  value.matchID+ ')</div></div>');
+									}
+									else
+									{
+									 	$('div#connectedPlayer').append('<div class="player" playerID="' + value.playerID + '">' + value.playerID + '<div class="location">(' + value.gameID + ')</div></div>');	
+									}
+								}
 							});						
 
 							// Remove the username and login button.
@@ -229,7 +234,8 @@
 				// Remove the chat functionality.
 				$('div#createChatMessage').empty();
 				
-				// TODO: Close the inspection window of an running match.				
+				// Remove the inspection window of an running match.				
+				$('div.inspectGame').remove();
 			});
 			
 			/**
@@ -240,7 +246,7 @@
 				if ('' !== validateParameter(payload) && 
 					'' !== validateParameter(payload.playerID))
 				{
-  					$('div#connectedPlayer').append('<div class="player" playerID="' + payload.playerID + '">' + payload.playerID + '</div>');
+  					$('div#connectedPlayer').append('<div class="player" playerID="' + payload.playerID + '">' + payload.playerID + '<div class="location"></div></div>');
 				}
 			});
 			
@@ -360,7 +366,7 @@
 
 						var openSpots = payload.totalSpots - payload.playerIDs.length;
 						
-						// Check if the match is alread in the list of open matches.;
+						// Check if the match is alread in the list of open matches.
 						if ($(".openMatch[matchID = '" + payload.matchID + "']").length > 0)
 						{
 							// Update the open spots. 
@@ -393,19 +399,70 @@
 					}
 					else if ('running' === payload.status)
 					{
+						// Remove the entry in the open games box.
+						$(".openMatch[matchID = '" + payload.matchID + "']").remove();
+						
+						// Create the match.
+						var inspectGameSubmit = $('<input/>',
+					    {
+							class: 'inspectGameSubmit',
+					        text: 'inspectGame',
+							matchID: payload.matchID,
+							type: 'submit',
+					        click: function () 
+							{ 				
+								// Remove the old inspectGame div.
+								$('.inspectGame').remove();
+								
+								// Display the new inspectGame div
+								$('#wrapper').append('<div id="box" class="inspectGame" matchID="' + payload.matchID + '" style="margin-left: 20px;"><div id="box_cont" style="background-color: rgb(23, 200, 200);"></div></div>');
+								
+								// Update the user status.
+								socket.emit('checkIn', {gameID: payload.gameID, matchID: payload.matchID});
+								
+								// Receive last move.								
+//								alert("inspect... remove old inspect div, show new inspect div, update user status, receive lastMove, ")
+							}
+					    });						
+						
 						// Remove the old state in open games.
-						$("#runningMatchesList").append('<li>GameID: ' + payload.gameID + '<br>MatchID: ' + payload.matchID + '<br>GameName: ' + payload.gameName + '<br> Player: <div class=' + payload.matchID + '></div></li>')
-					
-						$.each(payload.playerIDs, function(key, value) {
-							$('.' + payload.matchID).append(value.playerID + ' ');
-						});
-						
-						// Add the field in running games.
-						
+						if ($(".runningMatch[matchID = '" + payload.matchID + "']").length === 0)
+						{
+							$("ul#runningMatchesList").append('<li class="runningMatch" matchID="' + payload.matchID + '">GameID: ' + payload.gameID + '<br>MatchID: ' + payload.matchID + '<br>GameName: ' + payload.gameName + '<br> Player: <div class=' + payload.matchID + '></div></li>')					
+							$.each(payload.playerIDs, function(key, value) {
+								$('.' + payload.matchID).append(value.playerID + ' ');
+							});												
+							
+							// Check if user is in the list of playerIDs.
+							var foundPlayer = false;
+							$.each(payload.playerIDs, function(key, value) {
+								if (value.playerID === globalPlayerID)
+								{
+									foundPlayer = true;
+								}
+							});
+
+							// Add or remove the joinMatchSubmit
+							if (foundPlayer)
+							{
+								$(".runningMatch[matchID = '" + payload.matchID + "']").append(inspectGameSubmit);							
+							}
+							else
+							{
+								$(".runningMatch[matchID = '" + payload.matchID + "'] .inspectGameSubmit").remove()
+							}
+						}
 					}
 					else if ('close' === payload.status)
 					{
+						// Remove the entry in the open games box.
+						$(".openMatch[matchID = '" + payload.matchID + "']").remove();
 						
+						// Remove the entry in the running games box.
+						$(".runningMatch[matchID = '" + payload.matchID + "']").remove();
+						
+						// Remove the game div if it is currently visible
+						$(".inspectGame[matchID  = '" + payload.matchID + "']").remove();
 					}					
 				}
 			});
@@ -447,7 +504,7 @@
 			 */
 			socket.on('checkIn', function(payload)
 			{
-				
+
 			});
 			
 			/**
@@ -455,7 +512,21 @@
 			 */
 			socket.on('checkInUser', function(payload)
 			{
-				
+				if ( '' !== validateParameter(payload.gameID) &&
+					 '' !== validateParameter(payload.playerID))
+				{
+					if ('' !== validateParameter(payload.matchID))
+					{
+						$('.player[playerID = "' + payload.playerID + '"] div.location').text('(' + payload.gameID + ' | ' + payload.matchID + ')');
+					}
+					else
+					{
+						if ('andlabs.lounge.lobby' === payload.gameID)
+						{
+							$('.player[playerID = "' + payload.playerID + '"] div.location').text('(' + payload.gameID + ')');
+						}
+					}
+				}
 			});
 			
 			/**
@@ -470,7 +541,7 @@
 <body>
 
 	<div id="wrapper">
-		<div id="header"><h1><strong>Lounge Server</strong> - Android Web Debug Client v0.7</h1>
+		<div id="header"><h1><strong>Lounge Server</strong> - Android Web Debug Client v0.8</h1>
 			<div id="authentification">
 			</div>
 		</div>

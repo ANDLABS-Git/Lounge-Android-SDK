@@ -587,17 +587,29 @@ var LoungeServer = function() {
 											{
 												socket.emit('update', { result: true });
 											
-												// Inform all online player about the new match status.
-												onlineUsers.forEach(function (u)
+												// Iterate all online user and inform about the match creation.
+												User.onlineUsers(function(err, onlineUsers)
 												{
-													// Identify the socket for a specific user.
-													var s = self.io.sockets.sockets[u.socketID];
-						
-													// Validate the socket.
-													if (!('undefined' === typeof s))
+													if (err)
 													{
-														// Send the chat message to the user.
-														s.emit('updateMatch', { gameID: match.gameID, matchID: match._id, status: match.status });
+														socket.emit('update', { result: false, description: err });
+														return;
+													}	
+													else
+													{
+														// Inform all online player about the new match status.
+														onlineUsers.forEach(function (u)
+														{
+															// Identify the socket for a specific user.
+															var s = self.io.sockets.sockets[u.socketID];
+						
+															// Validate the socket.
+															if (!('undefined' === typeof s))
+															{
+																// Send the chat message to the user.
+																s.emit('updateMatch', { gameID: match.gameID, matchID: match._id, status: match.status });
+															}
+														});
 													}
 												});
 											}
@@ -656,17 +668,29 @@ var LoungeServer = function() {
 								{
 									socket.emit('checkIn', { result: true });
 									
-									// Inform all online player about the new match status.
-									onlineUsers.forEach(function (u)
+									// Iterate all online user and inform about the match creation.
+									User.onlineUsers(function(err, onlineUsers)
 									{
-										// Identify the socket for a specific user.
-										var s = self.io.sockets.sockets[u.socketID];
-			
-										// Validate the socket.
-										if (!('undefined' === typeof s))
+										if (err)
 										{
-											// Send the chat message to the user.
-											s.emit('checkInUser', { gameID: user.gameID, matchID: user.matchID, playerID: user.playerID });
+											socket.emit('checkIn', { result: false, description: err });
+											return;
+										}		
+										else
+										{
+											// Inform all online player about the new match status.
+											onlineUsers.forEach(function (u)
+											{
+												// Identify the socket for a specific user.
+												var s = self.io.sockets.sockets[u.socketID];
+			
+												// Validate the socket.
+												if (!('undefined' === typeof s))
+												{
+													// Send the chat message to the user.
+													s.emit('checkInUser', { gameID: user.gameID, matchID: user.matchID, playerID: user.playerID });
+												}
+											});
 										}
 									});
 								}
