@@ -1,4 +1,4 @@
-package andlabs.lounge;
+package andlabs.lounge.lobby;
 
 import org.json.JSONObject;
 

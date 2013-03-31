@@ -1,4 +1,4 @@
-package andlabs.lounge;
+package andlabs.lounge.lobby;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,6 +68,12 @@ public class LoungeServiceController {
 							Log.e("LoungeServiceController", "Handler.handleMessage(): caught exception while parsing JSON", e);
 							mLoungeServiceCallback.onError(e.getMessage());
 						}
+					}
+					break;
+
+				case 7:
+					Log.v("LoungeServiceController", "Handler.handleMessage(): Getting update for games/matches/players: " + message.getData());
+					if (mLoungeServiceCallback != null) {
 					}
 					break;
 

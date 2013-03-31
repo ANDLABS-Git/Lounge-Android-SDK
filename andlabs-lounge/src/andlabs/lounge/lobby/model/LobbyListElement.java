@@ -1,4 +1,4 @@
-package andlabs.lounge.model;
+package andlabs.lounge.lobby.model;
 
 import java.util.ArrayList;
 import java.util.List;

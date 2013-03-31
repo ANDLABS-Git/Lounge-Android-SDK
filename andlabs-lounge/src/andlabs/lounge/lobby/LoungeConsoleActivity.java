@@ -1,5 +1,6 @@
-package andlabs.lounge;
+package andlabs.lounge.lobby;
 
+import andlabs.lounge.lobby.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
