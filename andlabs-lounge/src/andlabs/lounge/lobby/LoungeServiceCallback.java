@@ -1,15 +1,19 @@
 package andlabs.lounge.lobby;
 
-import org.json.JSONObject;
+import java.util.ArrayList;
+
+import andlabs.lounge.model.Game;
 
 
 public interface LoungeServiceCallback {
 
 	public void theAnswerIs42();
 
-	public void onLogin(JSONObject payload);
+	public void onConnect();
 
-	public void onJoinMatch(JSONObject payload);
+	public void onDisconnect();
+
+	public void onStateUpdate(ArrayList<Game> pGames);
 
 	public void onError(String message);
 

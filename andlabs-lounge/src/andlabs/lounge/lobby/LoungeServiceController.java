@@ -1,8 +1,9 @@
 package andlabs.lounge.lobby;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.Serializable;
+import java.util.ArrayList;
 
+import andlabs.lounge.model.Game;
 import andlabs.lounge.service.LoungeService;
 import andlabs.lounge.service.LoungeServiceDef;
 import android.annotation.SuppressLint;
@@ -45,35 +46,11 @@ public class LoungeServiceController {
 					}
 					break;
 
-				case 2:
-					Log.v("LoungeServiceController", "Handler.handleMessage(): Login okay. Getting list of players: " + message.getData());
-					if (mLoungeServiceCallback != null) {
-						try {
-							JSONObject payload = new JSONObject(message.getData().getString("JSON"));
-							mLoungeServiceCallback.onLogin(payload);
-						} catch (JSONException e) {
-							Log.e("LoungeServiceController", "Handler.handleMessage(): caught exception while parsing JSON", e);
-							mLoungeServiceCallback.onError(e.getMessage());
-						}
-					}
-					break;
-
-				case 3:
-					Log.v("LoungeServiceController", "Handler.handleMessage(): Getting list of players for a game: " + message.getData());
-					if (mLoungeServiceCallback != null) {
-						try {
-							JSONObject payload = new JSONObject(message.getData().getString("JSON"));
-							mLoungeServiceCallback.onJoinMatch(payload);
-						} catch (JSONException e) {
-							Log.e("LoungeServiceController", "Handler.handleMessage(): caught exception while parsing JSON", e);
-							mLoungeServiceCallback.onError(e.getMessage());
-						}
-					}
-					break;
-
 				case 7:
 					Log.v("LoungeServiceController", "Handler.handleMessage(): Getting update for games/matches/players: " + message.getData());
 					if (mLoungeServiceCallback != null) {
+						Serializable gameList = message.getData().getSerializable("gameList");
+						mLoungeServiceCallback.onStateUpdate((ArrayList<Game>) gameList);
 					}
 					break;
 

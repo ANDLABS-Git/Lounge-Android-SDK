@@ -6,11 +6,12 @@ import io.socket.SocketIO;
 import io.socket.SocketIOException;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import andlabs.lounge.model.Game;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -70,36 +71,29 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 		@Override
 		public void on(String arg0, IOAcknowledge arg1, Object... arg2) {
 			Log.v("LoungeServiceImpl", String.format("IOCallback.on(): arg0 = %s, arg1 = %s, arg2 = %s", arg0, arg1, Arrays.toString(arg2)));
-			if ("login".equals(arg0)) {
-				Log.v("LoungeServiceImpl", String.format("IOCallback.on(): sending login confirmation"));
-				try {
-					Message message = new Message();
-					message.what = 2;
-					Bundle bundle = new Bundle();
-					bundle.putString("JSON", arg2[0].toString());
-					message.setData(bundle);
-					mMessenger.send(message);
-				} catch (RemoteException e) {
-					Log.e("LoungeServiceImpl", "caught exception while sending login confirmation message", e);
-				}
-			}
-			if ("joinMatch".equals(arg0)) {
-				Log.v("LoungeServiceImpl", String.format("IOCallback.on(): sending login confirmation"));
-				try {
-					Message message = new Message();
-					message.what = 3;
-					Bundle bundle = new Bundle();
-					bundle.putString("JSON", arg2[0].toString());
-					message.setData(bundle);
-					mMessenger.send(message);
-				} catch (RemoteException e) {
-					Log.e("LoungeServiceImpl", "caught exception while sending joinMathch message", e);
-				}
-			}
+			mLoungeMessageProcessor.processMessage(arg0, arg2);
 		}
 
 	};
 
+	private LoungeMessageProcessor mLoungeMessageProcessor = new LoungeMessageProcessor() {
+
+		@Override
+		public void triggerUpdate(ArrayList<Game> pGames) {
+			Log.v("LoungeServiceImpl", String.format("LoungeUtil.triggerUpdate(): pGames = %s", pGames));
+			Message message = new Message();
+			message.what = 7;
+			Bundle bundle = new Bundle();
+			bundle.putSerializable("gameList", pGames);
+			message.setData(bundle);
+			try {
+				mMessenger.send(message);
+			} catch (RemoteException e) {
+				Log.e("LoungeServiceImpl", "LoungeUtil.(): caught exception while sending message", e);
+			}
+		};
+
+	};
 
 	public LoungeServiceImpl(Intent intent) {
 		super();

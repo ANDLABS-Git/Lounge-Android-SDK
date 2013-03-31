@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.lobby.model.LobbyListElement;
+import andlabs.lounge.model.Game;
 import android.content.Context;
 import android.util.Log;
 
@@ -26,39 +27,21 @@ public class LoungeLobbyController {
 		}
 
 		@Override
-		public void onLogin(JSONObject payload) {
-			Log.v("LoungeLobbyController", "LoungeServiceCallback.onLogin(): " + payload);
-			try {
-				JSONArray jsonArray = payload.getJSONArray("playerList");
-				Log.v("LoungeLobbyController", "LoungeServiceCallback.onLogin(): " + jsonArray);
-				for (int index = 0; index < jsonArray.length(); index++) {
-					JSONObject jsonObject = jsonArray.getJSONObject(index);
-					String playerId = jsonObject.getString("playerID");
-					// TODO how to use this data
-				}
-			} catch (JSONException e) {
-				Log.e("LoungeLobbyController", "LoungeServiceCallback.onLogin(): caught exception while processing JSON payload", e);
-			}
+		public void onConnect() {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
-		public void onJoinMatch(JSONObject payload) {
-			Log.v("LoungeLobbyController", "LoungeServiceCallback.onJoinMatch(): " + payload);
-			try {
-				String gameId = payload.getString("gameID");
-				String gameName = payload.getString("gameName");
-				int totalSpots = payload.getInt("totalSpots");
-				String status = payload.getString("status");
-				JSONArray jsonArray = payload.getJSONArray("playerIDs");
-				Log.v("LoungeLobbyController", "LoungeServiceCallback.onJoinMatch(): gameName = " + gameName + " / " + jsonArray);
-				for (int index = 0; index < jsonArray.length(); index++) {
-					JSONObject jsonObject = jsonArray.getJSONObject(index);
-					String playerId = jsonObject.getString("playerID");
-					// TODO how to use this data
-				}
-			} catch (JSONException e) {
-				Log.e("LoungeLobbyController", "LoungeServiceCallback.onJoinMatch(): caught exception while processing JSON payload", e);
-			}
+		public void onDisconnect() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onStateUpdate(ArrayList<Game> pGames) {
+			Log.v("LoungeLobbyController", "LoungeServiceCallback.onStateUpdate(): " + pGames);
+			
 		}
 
 		@Override
