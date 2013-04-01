@@ -79,4 +79,14 @@ public class LoungeLobbyController {
 		mLoungeServiceController.unbindServiceFrom(pContext);
 	}
 
+
+	public void openMatch(String pPackageId, String pDisplayName) {
+		Log.v("LoungeLobbyController", "hostGame()");
+	}
+
+
+	public void joinMatch(String pPackageId, String pMatchId) {
+		Log.v("LoungeLobbyController", "joinGame()");
+	}
+
 }
