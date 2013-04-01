@@ -1,7 +1,9 @@
 package andlabs.lounge.game;
 
-import android.os.Bundle;
+import andlabs.lounge.lobby.ui.LobbyActivity;
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
@@ -9,7 +11,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		startActivity(new Intent(this, LobbyActivity.class));
 	}
 
 

@@ -18,7 +18,10 @@ package andlabs.lounge.lobby.ui;
 
 import java.util.List;
 
+import andlabs.lounge.lobby.LoungeLobbyCallback;
+import andlabs.lounge.lobby.LoungeLobbyController;
 import andlabs.lounge.lobby.R;
+import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.lobby.model.GameMatch;
 import andlabs.lounge.lobby.model.LobbyListElement;
 import andlabs.lounge.lobby.util.Utils;
@@ -39,7 +42,8 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class LobbyFragment extends Fragment implements OnChildClickListener {
+public class LobbyFragment extends Fragment implements OnChildClickListener,
+		LoungeLobbyCallback {
 
 	private SparseIntArray listPositions = new SparseIntArray();
 	private ExpandableListView lobbyList;
@@ -49,6 +53,8 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 	private static final String TAG = "Lounge";
 	private static final int GAMES = 0;
 
+	LoungeLobbyController mLoungeLobbyController = new LoungeLobbyController();
+	
 	@Override
 	public View onCreateView(final LayoutInflater lI, ViewGroup p, Bundle b) {
 		View v = lI.inflate(R.layout.fragment_lobby, p, false);
@@ -66,44 +72,58 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 			}
 		});
 		mAdapter = new LobbyListAdapter(getActivity());
-		
+
 		final List<LobbyListElement> data = TestData.getMockData();
 		final PlayParser parser = PlayParser.getInstance(getActivity());
-		
-		for(LobbyListElement element : data) {
-		    parser.queryPlay(element.getPgkName());
+
+		for (LobbyListElement element : data) {
+			parser.queryPlay(element.getPgkName());
 		}
-		
+
 		parser.addListener(new PlayListener() {
-            
-            @Override
-            public void onPlayResult(PlayResult pResult) {
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-		
+
+			@Override
+			public void onPlayResult(PlayResult pResult) {
+				mAdapter.notifyDataSetChanged();
+			}
+		});
+
 		mAdapter.setContent(data);
 		lobbyList.setAdapter(mAdapter);
 		lobbyList.setOnChildClickListener(this);
-		
-		
-	
-		
-		  this.mHostList = (ListView) v.findViewById(R.id.installed_games);
-	        this.hostAdapter = new HostGameAdapter(getActivity());
-	        this.mHostList.setAdapter(hostAdapter);
-	        this.mHostList.setOnItemClickListener(hostAdapter);
-	        
-	    	v.findViewById(R.id.btn_host).setOnClickListener(new OnClickListener() {
+
+		this.mHostList = (ListView) v.findViewById(R.id.installed_games);
+		this.hostAdapter = new HostGameAdapter(getActivity());
+		this.mHostList.setAdapter(hostAdapter);
+		this.mHostList.setOnItemClickListener(hostAdapter);
+
+		v.findViewById(R.id.btn_host).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
 				
-				@Override
-				public void onClick(View v) {
-//				Lounge.host(hostAdapter.getSelectedItemPackage(),hostAdapter.getSelectedItemName());
-					
-				}
-			});
+				// Lounge.host(hostAdapter.getSelectedItemPackage(),hostAdapter.getSelectedItemName());
+
+			}
+		});
 
 		return v;
+	}
+	
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		mLoungeLobbyController.bindServiceTo(getActivity());
+		mLoungeLobbyController.registerCallback(this);
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		mLoungeLobbyController.unbindServiceFrom(getActivity());
+		mLoungeLobbyController.unregisterCallback(this);
+		super.onPause();
 	}
 
 	@Override
@@ -120,18 +140,43 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 		GameMatch match = (GameMatch) mAdapter.getChild(groupPosition,
 				childPosition);
 
-//		if (game.isInvolved()) { //TODO Adopt here
-////			Lounge.join(match.getMatchId(),game.getPgkName()); // join Game
-//		} else {
-//			// open joined game
-//			if (match.isRunning()) {
-//				Utils.launchGameApp(getActivity(), game.getPgkName(), match);
-//			} else {
-//				Toast.makeText(getActivity(), "Game not started yet",
-//						Toast.LENGTH_LONG).show();
-//			}
-//		}
+		// if (game.isInvolved()) { //TODO Adopt here
+		// // Lounge.join(match.getMatchId(),game.getPgkName()); // join Game
+		// } else {
+		// // open joined game
+		// if (match.isRunning()) {
+		// Utils.launchGameApp(getActivity(), game.getPgkName(), match);
+		// } else {
+		// Toast.makeText(getActivity(), "Game not started yet",
+		// Toast.LENGTH_LONG).show();
+		// }
+		// }
 		return false;
+	}
+
+	@Override
+	public void onLobbyDataUpdated(List<LobbyListElement> data) {
+		mAdapter.setContent(data);
+		mAdapter.notifyDataSetChanged();
+
+	}
+
+	@Override
+	public void onChatDataUpdated(List<ChatMessage> data) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onNewChatLog(List<ChatMessage> chatLog) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onNewChatMessage(ChatMessage chatMsg) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
