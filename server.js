@@ -829,7 +829,7 @@ var LoungeServer = function() {
 										{
 											if (match)
 											{
-												socket.emit('lastMove', { result: true, gameID: match.gameID, matchID: match.matchID, move: match.move });
+												socket.emit('lastMove', { result: true, gameID: match.gameID, matchID: match._id, move: match.move });
 											}
 											else
 											{

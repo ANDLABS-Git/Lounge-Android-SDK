@@ -451,8 +451,7 @@
 								
 								// Add the button to the inspectMatchBox.
 								$('.inspectGame[matchID = "' + payload.matchID + '"] #box_cont').append(closeInspectMatchSubmit);
-								
-								
+															
 								// Update the user status.
 								socket.emit('checkIn', {gameID: payload.gameID, matchID: payload.matchID});
 								
@@ -514,7 +513,7 @@
 			 */
 			socket.on('move', function(payload)
 			{
-				
+				// Handle the move callback after successful match move.
 			});
 			
 			/**
@@ -522,7 +521,13 @@
 			 */
 			socket.on('moveMatch', function(payload)
 			{
-				
+				if ('' !== validateParameter(payload) &&
+					'' !== validateParameter(payload.gameID) &&
+					'' !== validateParameter(payload.matchID) &&
+					'' !== validateParameter(payload.move))
+				{
+					handleMove(payload.gameID, payload.matchID, payload.move);
+				}
 			});
 			
 			/**
@@ -576,6 +581,10 @@
 						if ('' !== validateParameter(payload.gameID) &&
 							'' !== validateParameter(payload.matchID))
 						{
+							createInspectionInputFields(payload.gameID, payload.matchID);
+							createInspectionSubmit(payload.gameID, payload.matchID);
+							createLastMoveArea(payload.gameID, payload.matchID);
+							
 							if ('' !== validateParameter(payload.move))
 							{
 								handleMove(payload.gameID, payload.matchID, payload.move);
@@ -605,19 +614,99 @@
 				{
 					return;
 				}
+
+				// Remove the old move.
+				$('.inspectGame[matchID = "' + matchID + '"] #box_cont .currentMove').empty();
 				
-				$.each(move, function(key, value) {
+				var JSONObj = $.parseJSON(move)
+				$.each(JSONObj, function(key, value)
+				{
+					$('.inspectGame[matchID = "' + matchID + '"] #box_cont .currentMove').append(key + " --> " + value + "<br>")
+				});								
+			}			
+			
+			/**
+			 *	Create empty key/value input fields.
+			 */
+			var createInspectionInputFields = function(gameID, matchID)
+			{
+				for (var i = 0; i < 8; i++)
+				{
+					var div = $('<div/>',
+					{
+						 class:'inspectionInput'
+					});
 					
-				});
-				
+					var key = $('<input/>', 
+					{
+						class: 'inspectionInputKey' + i,
+						value: 'key',
+						type: 'text'
+					});
+					var value = $('<input/>', 
+					{
+						class: 'inspectionInputValue' + i,
+						value: 'value',
+						type: 'text'
+					});	
+					$('.inspectGame[matchID = "' + matchID + '"] #box_cont').append(div)
+					div.append(key);					
+					div.append(value);					
+				}			
 			}
 			
 			/**
-			 *	Handle an empty move. (Beginning of a game)
+			 *	Create the inspection submit field.
 			 */
-			var handleEmptyMove = function(gameID, matchID)
+			var createInspectionSubmit = function(gameID, matchID)
+			{					
+				// Create a button to close the current inspected match.
+				var createInspectionSubmit = $('<input/>', 
+				{
+					class: 'createInspectionSubmit',
+					value: 'Send',
+					type: 'submit',
+					click: function ()
+					{
+						var jsonObj = {};
+						var createPkg = false;
+						
+						// CheckIn the user.
+						$('.inspectGame[matchID = "' + matchID + '"] #box_cont .inspectionInput').each(function(key, val)
+						{
+							var k = $('.inspectGame[matchID = "' + matchID + '"] #box_cont .inspectionInput .inspectionInputKey' + key );
+							var v = $('.inspectGame[matchID = "' + matchID + '"] #box_cont .inspectionInput .inspectionInputValue' + key );
+
+							if ('key' !== k.val() &&
+								'value' !== v.val() &&
+								'' !== k.val())
+							{
+								jsonObj[k.val()] = v.val();
+								createPkg = true;
+							}
+						});
+						var myString = JSON.stringify(jsonObj);
+						
+						if (createPkg)
+						{
+							socket.emit('move', {gameID: gameID, matchID: matchID, move: myString})
+						}
+					}
+				});
+				$('.inspectGame[matchID = "' + matchID + '"] #box_cont').append(createInspectionSubmit);	
+			}
+			
+			/**
+			 *	Create the last move area.
+			 */
+			var createLastMoveArea = function(gameID, matchID)
 			{
-				
+				// Add the new move.
+				var div = $('<div/>',
+				{
+					class: 'currentMove'
+				});
+				$('.inspectGame[matchID = "' + matchID + '"] #box_cont').append(div);
 			}
 		</script>		
 	</head>
