@@ -11,6 +11,7 @@ public class GameMatch {
 	private int maxPlayers;
 	private String playerOnTurn;
 	private boolean running;
+	private boolean isInvolved;
 
 
 	public GameMatch() {
@@ -67,6 +68,16 @@ public class GameMatch {
 
 	public void setRunning(boolean running) {
 		this.running = running;
+	}
+
+
+	public boolean isInvolved() {
+		return isInvolved;
+	}
+
+
+	public void setInvolved(boolean isInvolved) {
+		this.isInvolved = isInvolved;
 	}
 
 }

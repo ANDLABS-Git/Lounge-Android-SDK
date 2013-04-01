@@ -2,8 +2,6 @@
 <resources>
 
     <string name="app_name">ANDLABS Lounge</string>
-    <string name="title_activity_lounge_console">Lounge Console</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_lounge_console">Lounge Lobby</string>
 
 </resources>

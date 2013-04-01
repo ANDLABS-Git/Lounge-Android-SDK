@@ -34,11 +34,16 @@ public class LoungeLobbyController {
 		}
 
 		@Override
-		public void onStateUpdate(ArrayList<Game> pGames) {
-			Log.v("LoungeLobbyController", "LoungeServiceCallback.onStateUpdate(): " + pGames);
+		public void onOpenGamesUpdate(ArrayList<Game> pGames) {
+			Log.v("LoungeLobbyController", "LoungeServiceCallback.onOpenGamesUpdate(): " + pGames);
 			ArrayList<LobbyListElement> data = new ArrayList<LobbyListElement>();
 			// TODO populate data from the pGames object
 			mLoungeLobbyCallback.onLobbyDataUpdated(data);
+		}
+
+		@Override
+		public void onRunningGamesUpdate(ArrayList<Game> pGames) {
+			Log.v("LoungeLobbyController", "LoungeServiceCallback.onRunningGamesUpdate(): " + pGames);
 		}
 
 		@Override
@@ -72,6 +77,16 @@ public class LoungeLobbyController {
 		Log.v("LoungeLobbyController", "unbindServiceFrom()");
 		mLoungeServiceController.unregisterCallback(mLoungeServiceCallback);
 		mLoungeServiceController.unbindServiceFrom(pContext);
+	}
+
+
+	public void openMatch(String pPackageId, String pDisplayName) {
+		Log.v("LoungeLobbyController", "hostGame()");
+	}
+
+
+	public void joinMatch(String pPackageId, String pMatchId) {
+		Log.v("LoungeLobbyController", "joinGame()");
 	}
 
 }

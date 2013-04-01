@@ -102,7 +102,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener,
 			@Override
 			public void onClick(View v) {
 				
-				// Lounge.host(hostAdapter.getSelectedItemPackage(),hostAdapter.getSelectedItemName());
+				 mLoungeLobbyController.openMatch(hostAdapter.getSelectedItemPackage(),hostAdapter.getSelectedItemName());
 
 			}
 		});
@@ -140,17 +140,18 @@ public class LobbyFragment extends Fragment implements OnChildClickListener,
 		GameMatch match = (GameMatch) mAdapter.getChild(groupPosition,
 				childPosition);
 
-		// if (game.isInvolved()) { //TODO Adopt here
-		// // Lounge.join(match.getMatchId(),game.getPgkName()); // join Game
-		// } else {
-		// // open joined game
-		// if (match.isRunning()) {
-		// Utils.launchGameApp(getActivity(), game.getPgkName(), match);
-		// } else {
-		// Toast.makeText(getActivity(), "Game not started yet",
-		// Toast.LENGTH_LONG).show();
-		// }
-		// }
+		 if (match.isInvolved()) { //TODO Adopt here
+			 mLoungeLobbyController.joinMatch(match.getMatchId(),game.getPgkName());
+		 // Lounge.join(match.getMatchId(),game.getPgkName()); // join Game
+		 } else {
+		 // open joined game
+		 if (match.isRunning()) {
+		 Utils.launchGameApp(getActivity(), game.getPgkName(), match);
+		 } else {
+		 Toast.makeText(getActivity(), "Game not started yet",
+		 Toast.LENGTH_LONG).show();
+		 }
+		 }
 		return false;
 	}
 
