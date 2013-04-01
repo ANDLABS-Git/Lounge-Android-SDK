@@ -8,6 +8,7 @@ public class Player {
 	private boolean isOnTurn;
 	private int avatar;
 	
+	
 	public String getGuid() {
 		return guid;
 	}

@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="andlabs.lounge.lobby.LoungeConsoleActivity"
-            android:label="@string/title_activity_lounge_console" >
+            android:label="LOUNGE" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
