@@ -42,8 +42,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class LobbyFragment extends Fragment implements OnChildClickListener,
-		LoungeLobbyCallback {
+public class LobbyFragment extends Fragment implements OnChildClickListener {
 
 	private SparseIntArray listPositions = new SparseIntArray();
 	private ExpandableListView lobbyList;
@@ -54,7 +53,45 @@ public class LobbyFragment extends Fragment implements OnChildClickListener,
 	private static final int GAMES = 0;
 
 	LoungeLobbyController mLoungeLobbyController = new LoungeLobbyController();
-	
+
+	LoungeLobbyCallback mLoungeLobbyCallback = new LoungeLobbyCallback() {
+		
+		@Override
+		public void onNewChatMessage(ChatMessage chatMsg) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		
+		@Override
+		public void onNewChatLog(List<ChatMessage> chatLog) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		
+		@Override
+		public void onChatDataUpdated(List<ChatMessage> data) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+		@Override
+		public void onLobbyDataUpdated(final List<LobbyListElement> data) {
+			getActivity().runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					mAdapter.setContent(data);
+					mAdapter.notifyDataSetChanged();
+				}
+
+			});
+		}
+
+	};
+
 	@Override
 	public View onCreateView(final LayoutInflater lI, ViewGroup p, Bundle b) {
 		View v = lI.inflate(R.layout.fragment_lobby, p, false);
@@ -109,21 +146,29 @@ public class LobbyFragment extends Fragment implements OnChildClickListener,
 
 		return v;
 	}
-	
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		mLoungeLobbyController.bindServiceTo(getActivity());
+	}
+
 	@Override
 	public void onResume() {
-		// TODO Auto-generated method stub
-		mLoungeLobbyController.bindServiceTo(getActivity());
-		mLoungeLobbyController.registerCallback(this);
+		mLoungeLobbyController.registerCallback(mLoungeLobbyCallback);
 		super.onResume();
 	}
 	
 	@Override
 	public void onPause() {
-		// TODO Auto-generated method stub
-		mLoungeLobbyController.unbindServiceFrom(getActivity());
-		mLoungeLobbyController.unregisterCallback(this);
+		mLoungeLobbyController.unregisterCallback(mLoungeLobbyCallback);
 		super.onPause();
+	}
+
+	@Override
+	public void onStop() {
+		mLoungeLobbyController.unbindServiceFrom(getActivity());
+		super.onStop();
 	}
 
 	@Override
@@ -153,38 +198,6 @@ public class LobbyFragment extends Fragment implements OnChildClickListener,
 		 }
 		 }
 		return false;
-	}
-
-	@Override
-	public void onLobbyDataUpdated(final List<LobbyListElement> data) {
-		getActivity().runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				mAdapter.setContent(data);
-				mAdapter.notifyDataSetChanged();
-			}
-		});
-		
-
-	}
-
-	@Override
-	public void onChatDataUpdated(List<ChatMessage> data) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onNewChatLog(List<ChatMessage> chatLog) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onNewChatMessage(ChatMessage chatMsg) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
