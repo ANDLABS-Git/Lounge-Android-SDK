@@ -86,16 +86,15 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 					mAdapter.setContent(data);
 					mAdapter.notifyDataSetChanged();
 				}
-
 			});
 		}
 
 	};
 
 	@Override
-	public View onCreateView(final LayoutInflater lI, ViewGroup p, Bundle b) {
-		View v = lI.inflate(R.layout.fragment_lobby, p, false);
-		lobbyList = (ExpandableListView) v.findViewById(R.id.list);
+	public View onCreateView(final LayoutInflater pLayoutInflater, ViewGroup pViewGroup, Bundle pBundle) {
+		View view = pLayoutInflater.inflate(R.layout.fragment_lobby, pViewGroup, false);
+		lobbyList = (ExpandableListView) view.findViewById(R.id.list);
 		lobbyList.setDividerHeight(0);
 		lobbyList.setDivider(null);
 
@@ -129,12 +128,12 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 		lobbyList.setAdapter(mAdapter);
 		lobbyList.setOnChildClickListener(this);
 
-		this.mHostList = (ListView) v.findViewById(R.id.installed_games);
+		this.mHostList = (ListView) view.findViewById(R.id.installed_games);
 		this.hostAdapter = new HostGameAdapter(getActivity());
 		this.mHostList.setAdapter(hostAdapter);
 		this.mHostList.setOnItemClickListener(hostAdapter);
 
-		v.findViewById(R.id.btn_host).setOnClickListener(new OnClickListener() {
+		view.findViewById(R.id.btn_host).setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -144,7 +143,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 			}
 		});
 
-		return v;
+		return view;
 	}
 
 	@Override
