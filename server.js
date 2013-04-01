@@ -42,8 +42,8 @@ var LoungeServer = function() {
      */
     self.setupVariables = function() {
 		// mongodbAddress for nodejitsu:
-        //self.mongodbAddress = 'mongodb://nodejitsu:4226bafd5bb734c192f0700b7b2e114c@linus.mongohq.com:10092/nodejitsudb7687973685';
-		self.mongodbAddress = 'mongodb://127.0.0.1:27017/lounge'
+        self.mongodbAddress = 'mongodb://nodejitsu:4226bafd5bb734c192f0700b7b2e114c@linus.mongohq.com:10092/nodejitsudb7687973685';
+		//self.mongodbAddress = 'mongodb://127.0.0.1:27017/lounge'
     };
  
  
@@ -1056,8 +1056,8 @@ var LoungeServer = function() {
         // Start the app on the specific interface (and port).
         self.http.listen(8080, "127.0.0.1", function() 
 		{
-            console.log('Node server started on IP 127.0.0.1, Port 8080...');
-            //console.log('%s: Node server started...', Date(Date.now()));
+            //console.log('Node server started on IP 127.0.0.1, Port 8080...');
+            console.log('%s: Node server started...', Date(Date.now()));
         });
     };
 };   /*  LoungeServer */

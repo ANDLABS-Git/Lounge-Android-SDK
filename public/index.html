@@ -482,7 +482,7 @@
 								else if ('stream' === payload.gameType)
 								{
 									// Create the canvas
-									var canvas = $('<div/>',
+									var canvas = $('<canvas/>',
 									{
 										id: 'ballCanvas',
 										'style': 'width: 250px; height: 300px; background-color: white;',
@@ -498,12 +498,6 @@
 										var rect = canvas[0].getBoundingClientRect();
 										var x = event.clientX - rect.left;
 										var y = event.clientY - rect.top;
-/*
-										var context = canvas[0].getContext('2d');
-										context.beginPath();
-										context.arc(x, y, 5, 0, 2 * Math.PI, false);
-										context.fillStyle = 'red';
-										context.fill();*/
 
 										socket.emit('stream', {gameID: payload.gameID, matchID: payload.matchID, move: {x: x, y: y, color: color}});
 										paintBall(payload.gameID, payload.matchID, x, y, color);
@@ -802,11 +796,12 @@
 			 */
 			var paintBall = function(gameID, matchID, x, y, color)
 			{
+				var canvas = $('.inspectGame[matchID = "' + matchID + '"] #box_cont #ballCanvas');
 				var context = canvas[0].getContext('2d');
 				context.beginPath();
 				context.arc(x, y, 5, 0, 2 * Math.PI, false);
-				context.fillStyle = 'red';
-				context.fill();*/
+				context.fillStyle = color;
+				context.fill();
 			}
 		</script>		
 	</head>
