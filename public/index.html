@@ -12,6 +12,7 @@
 		<style type="text/css" media="screen, projection">
 			@import "css/global.css";			
 		</style>
+	    <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.4.0.min.js"></script>
 		
 		<!-- Setup jQuery -->
 		<script src ="./js/jquery-1.9.1.min.js"></script>
@@ -151,6 +152,14 @@
 							
 							$('div#createMatch').append(matchMaximumPlayerInput);		
 							
+							var matchStreamGameCheckbox = $('<input/>',
+							{
+								id: 'matchStreamGame',
+								value: 'Stream Game',
+								type: 'checkbox'
+							});
+							$('div#createMatch').append(matchStreamGameCheckbox);
+							
 							var matchCreateSubmit =  $('<input/>',
 						    {
 								id: 'matchCreateSubmit',
@@ -161,8 +170,16 @@
 									var gameID = $("input#matchGameID").val();
 									var gameName = $("input#matchGameName").val();
 									var maximumPlayers = $("input#matchMaximumPlayer").val();
-					
-									socket.emit('join', { gameID: gameID, gameName: gameName, maximumPlayers: maximumPlayers });
+									var gameType = '';
+									if ($("input#matchStreamGame").is(":checked"))
+									{
+										gameType = 'stream';
+									}
+									else
+									{
+										gameType = 'move';
+									}
+									socket.emit('join', { gameID: gameID, gameName: gameName, maximumPlayers: maximumPlayers, gameType: gameType });
 									return false;														
 								}														
 						    });
@@ -344,6 +361,7 @@
 					'' !== validateParameter(payload.gameName) &&
 				 	'' !== validateParameter(payload.totalSpots) &&
 				 	'' !== validateParameter(payload.status) &&
+					'' !== validateParameter(payload.gameType) &&
 					'' !== validateParameter(payload.playerIDs))
 				{					
 					// Decide which status should be displayed
@@ -366,7 +384,7 @@
 
 						var openSpots = payload.totalSpots - payload.playerIDs.length;
 						
-						// Check if the match is alread in the list of open matches.
+						// Check if the match is already in the list of open matches.
 						if ($(".openMatch[matchID = '" + payload.matchID + "']").length > 0)
 						{
 							// Update the open spots. 
@@ -375,7 +393,7 @@
 						else
 						{
 							// Create the game.
-							$("ul#openMatchesList").append("<li class='openMatch' matchID='" + payload.matchID + "'>" + payload.gameID+ "</b><br>" + payload.gameName + "<br>Match ID:" + payload.matchID + "<br>Open Spots:<div class='openSpots'>" + openSpots + "</div><br></li>");
+							$("ul#openMatchesList").append("<li class='openMatch' matchID='" + payload.matchID + "'>" + payload.gameID+ "</b><br>" + payload.gameName + "<br>Match ID:" + payload.matchID + "<br>Game Type: " + payload.gameType + "<br>Open Spots:<div class='openSpots'>" + openSpots + "</div><br></li>");
 						}	
 					
 						// Check if user is in the list of playerIDs.
@@ -455,8 +473,42 @@
 								// Update the user status.
 								socket.emit('checkIn', {gameID: payload.gameID, matchID: payload.matchID});
 								
-								// Receive last move.
-								socket.emit('lastMove', { gameID: payload.gameID, matchID: payload.matchID });
+								// Decide which game type we are playing.
+								if ('move' === payload.gameType)
+								{
+									// Receive last move.
+									socket.emit('lastMove', { gameID: payload.gameID, matchID: payload.matchID });
+								}
+								else if ('stream' === payload.gameType)
+								{
+									// Create the canvas
+									var canvas = $('<div/>',
+									{
+										id: 'ballCanvas',
+										'style': 'width: 250px; height: 300px; background-color: white;',
+									});
+									
+									// Prepare the ui for the ball game.
+									$('.inspectGame[matchID = "' + payload.matchID + '"] #box_cont').append(canvas);
+							
+									var color = createRandomColor();
+									canvas.mousemove(function(event)
+									{
+										
+										var rect = canvas[0].getBoundingClientRect();
+										var x = event.clientX - rect.left;
+										var y = event.clientY - rect.top;
+/*
+										var context = canvas[0].getContext('2d');
+										context.beginPath();
+										context.arc(x, y, 5, 0, 2 * Math.PI, false);
+										context.fillStyle = 'red';
+										context.fill();*/
+
+										socket.emit('stream', {gameID: payload.gameID, matchID: payload.matchID, move: {x: x, y: y, color: color}});
+										paintBall(payload.gameID, payload.matchID, x, y, color);
+									});	
+								}
 							}
 					    });						
 						
@@ -551,7 +603,8 @@
 			 */
 			socket.on('checkInUser', function(payload)
 			{
-				if ( '' !== validateParameter(payload.gameID) &&
+				if ( '' !== validateParameter(payload) &&
+					 '' !== validateParameter(payload.gameID) &&
 					 '' !== validateParameter(payload.playerID))
 				{
 					if ('' !== validateParameter(payload.matchID))
@@ -601,6 +654,27 @@
 						{
 							alert(payload.description);
 						}
+					}
+				}
+			});
+			
+			/**
+			 *	Receive a stream package.
+			 */
+			socket.on('stream', function(payload)
+			{
+				if ( '' !== validateParameter(payload) &&
+					 '' !== validateParameter(payload.gameID) &&
+					 '' !== validateParameter(payload.matchID) &&
+				 	 '' !== validateParameter(payload.move))
+				{
+					// Ball Game
+					var move = payload.move;
+					if ('' !== move.x &&
+						'' !== move.y &&
+						'' !== move.color)
+					{
+						paintBall(payload.gameID, payload.matchID, move.x, move.y, move.color);
 					}
 				}
 			});
@@ -707,6 +781,32 @@
 					class: 'currentMove'
 				});
 				$('.inspectGame[matchID = "' + matchID + '"] #box_cont').append(div);
+			}
+			
+			/**
+			 * Create a random color.
+			 */
+			var createRandomColor = function () 
+			{
+			    var letters = '0123456789ABCDEF'.split('');
+			    var color = '#';
+			    for (var i = 0; i < 6; i++ ) 
+				{
+			        color += letters[Math.round(Math.random() * 15)];
+			    }
+			    return color;
+			}
+			
+			/**
+			 *	Paint the ball.
+			 */
+			var paintBall = function(gameID, matchID, x, y, color)
+			{
+				var context = canvas[0].getContext('2d');
+				context.beginPath();
+				context.arc(x, y, 5, 0, 2 * Math.PI, false);
+				context.fillStyle = 'red';
+				context.fill();*/
 			}
 		</script>		
 	</head>

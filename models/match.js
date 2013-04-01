@@ -30,6 +30,9 @@ var MatchSchema = new Schema
 	// In this version the server is only interested in the last move.
 	move: { type: String, trim: true, default: "" },
 	
+	// Type of the game.
+	gameType: { type: String, trim: true, default: "" }
+	
 	// Array of all game moves.
 	// moves: [{ type: String, trime: true, default: "" }]
 });
@@ -46,8 +49,16 @@ MatchSchema.statics.create = function(data, userID, callback)
 		'' !== validateParameter(data.gameID) &&
 		'' !== validateParameter(data.gameName) &&
 		'' !== validateParameter(data.maximumPlayers) &&
+		'' !== validateParameter(data.gameType) &&
 		'' !== validateParameter(userID))
 	{
+		
+		if (!('move' === data.gameType ||
+			'stream' === data.gameType))
+		{
+			return callback(null, null);
+		}
+		
 		var status = "";
 		
 		if (data.maximumPlayers > 1)
@@ -64,7 +75,7 @@ MatchSchema.statics.create = function(data, userID, callback)
 		}
 		
 		// Create a new match.
-		var match = new Match({ gameID: data.gameID, gameName: data.gameName, status: status, maximumPlayers: data.maximumPlayers });
+		var match = new Match({ gameID: data.gameID, gameName: data.gameName, status: status, maximumPlayers: data.maximumPlayers, gameType: data.gameType });
 		
 		// Save the new match.
 		match.save(function(err)
@@ -78,7 +89,7 @@ MatchSchema.statics.create = function(data, userID, callback)
 			{
 				if (err) { return callback(err, null); }
 				mongoose.models['Match'].findOne({ _id: match._id})
-				.populate('participants', 'playerID')
+				.populate('participants', 'playerID socketID')
 				.exec(function(err, match)
 				{
 					if (err) { return callback(err, null); }
@@ -162,7 +173,7 @@ MatchSchema.statics.join = function(data, userID, callback)
 					{
 						if (err) { return callback(err, null); }
 						mongoose.models['Match'].findOne({ _id: match._id})
-						.populate('participants', 'playerID')
+						.populate('participants', 'playerID socketID')
 						.exec(function(err, match)
 						{
 							if (err) { return callback(err, null); }
@@ -232,7 +243,7 @@ MatchSchema.statics.update = function(data, userID, callback)
 					{
 						if (err) { return callback(err, null); }
 						mongoose.models['Match'].findOne({ _id: match._id})
-						.populate('participants', 'playerID')
+						.populate('participants', 'playerID socketID')
 						.exec(function(err, match)
 						{
 							if (err) { return callback(err, null); }

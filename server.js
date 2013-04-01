@@ -42,8 +42,8 @@ var LoungeServer = function() {
      */
     self.setupVariables = function() {
 		// mongodbAddress for nodejitsu:
-        self.mongodbAddress = 'mongodb://nodejitsu:4226bafd5bb734c192f0700b7b2e114c@linus.mongohq.com:10092/nodejitsudb7687973685';
-		//self.mongodbAddress = 'mongodb://127.0.0.1:27017/lounge'
+        //self.mongodbAddress = 'mongodb://nodejitsu:4226bafd5bb734c192f0700b7b2e114c@linus.mongohq.com:10092/nodejitsudb7687973685';
+		self.mongodbAddress = 'mongodb://127.0.0.1:27017/lounge'
     };
  
  
@@ -206,6 +206,8 @@ var LoungeServer = function() {
 		// Initialize the socket routes.
 		self.io.sockets.on('connection', function (socket) 
 		{	
+			// TODO: Create all streaming games
+			
 			/**
 			 *	Handle a login.
 			 */		
@@ -279,7 +281,7 @@ var LoungeServer = function() {
 										{										
 											allMatches.forEach(function (match)
 											{
-												socket.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants });
+												socket.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, gameType: match.gameType, playerIDs: match.participants });
 											});
 										}
 									});
@@ -413,8 +415,21 @@ var LoungeServer = function() {
 							{
 								// Find the correct join mechanism.
 								if ('' !== self.validateParameter(payload.gameName) &&
-									'' !== self.validateParameter(payload.maximumPlayers))
+									'' !== self.validateParameter(payload.maximumPlayers) &&
+									'' !== self.validateParameter(payload.gameType))
 								{
+									if (payload.maximumPlayers < 2)
+									{
+										socket.emit('join', { result: false, description: "A game needs more then 1 player!" });
+										return;
+									}
+									
+									if (!('move' === payload.gameType ||
+										'stream' === payload.gameType))
+									{
+										socket.emit('join', { result: false, description: "Specified wrong game type!" });
+										return;
+									}
 									// Create a new match.
 									Match.create(payload, user._id, function(err, match)
 									{
@@ -452,7 +467,7 @@ var LoungeServer = function() {
 														if (!('undefined' === typeof s))
 														{
 															// Send the chat message to the user.
-															s.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: "created", playerIDs: match.participants });
+															s.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: "created", gameType: match.gameType, playerIDs: match.participants });
 														}
 													});
 												}
@@ -502,9 +517,28 @@ var LoungeServer = function() {
 														if (!('undefined' === typeof s))
 														{
 															// Send the chat message to the user.
-															s.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants });
+															s.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, gameType: match.gameType, playerIDs: match.participants });
 														}
 													});
+													
+													// Decide if the game changed to state running. If so create the room if its a stream game and join all sockets to the room.
+													if ('running' === match.status &&
+														'stream' === match.gameType)
+													{
+														// Join all participants to the match
+														match.participants.forEach(function (u)
+														{
+															// Identify the socket for a specific user.
+															var s = self.io.sockets.sockets[u.socketID];
+						
+															// Validate the socket.
+															if (!('undefined' === typeof s))
+															{
+																s.join(match._id);
+															}
+														});
+														console.log(self.io);
+													}
 												}
 											});												
 										}
@@ -607,9 +641,27 @@ var LoungeServer = function() {
 															if (!('undefined' === typeof s))
 															{
 																// Send the chat message to the user.
-																s.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, playerIDs: match.participants });
+																s.emit('joinMatch', { gameID: match.gameID, matchID: match._id, gameName: match.gameName, totalSpots: match.maximumPlayers, status: match.status, gameType: match.gameType, playerIDs: match.participants });
 															}
 														});
+														
+														// Decide if the state is closed. If so check if stream game and remove the channel/room.
+														if ('close' === match.status &&
+															'stream' === match.gameType)
+														{
+															// Join all participants to the match
+															match.participants.forEach(function (u)
+															{
+																// Identify the socket for a specific user.
+																var s = self.io.sockets.sockets[u.socketID];
+						
+																// Validate the socket.
+																if (!('undefined' === typeof s))
+																{
+																	s.leave(match._id);
+																}
+															});
+														}
 													}
 												});
 											}
@@ -861,6 +913,20 @@ var LoungeServer = function() {
 			});
 			
 			/**
+			 *	Stream match.
+			 */
+			socket.on('stream', function(payload)
+			{
+				if ('' !== self.validateParameter(payload) &&
+					'' !== self.validateParameter(payload.gameID) &&
+					'' !== self.validateParameter(payload.matchID) &&
+					'' !== self.validateParameter(payload.move))
+				{
+					socket.broadcast.to(payload.matchID).emit('stream', {gameID: payload.gameID, matchID: payload.matchID, move: payload.move });
+				}
+			});
+			
+			/**
 			 *	Handle a disconnect.
 			 */
 			socket.on('disconnect', function() 
@@ -990,8 +1056,8 @@ var LoungeServer = function() {
         // Start the app on the specific interface (and port).
         self.http.listen(8080, "127.0.0.1", function() 
 		{
-            //console.log('Node server started on IP 127.0.0.1, Port 8080...');
-            console.log('%s: Node server started...', Date(Date.now()));
+            console.log('Node server started on IP 127.0.0.1, Port 8080...');
+            //console.log('%s: Node server started...', Date(Date.now()));
         });
     };
 };   /*  LoungeServer */
