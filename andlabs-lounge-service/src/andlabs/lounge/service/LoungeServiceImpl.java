@@ -149,4 +149,18 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 	}
 
+
+	@Override
+	public void openMatch(String pPackageId, String pDisplayName) throws RemoteException {
+		Log.v("LoungeServiceImpl", String.format("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName));
+		try {
+			// PAYLOAD {gameID: "packageID", gameName: ”AppName”, maximumPlayers: “MaximumAllowedPlayersInGame” , gameType: “move/stream”}
+			JSONObject payload = new JSONObject().put("gameID", pPackageId).put("gameName", pDisplayName);
+			payload.put("MaximumAllowedPlayersInGame", 2).put("gameType", "move");
+			mSocketIO.emit("join", payload);
+		} catch (JSONException e) {
+			Log.e("LoungeService", "caught exception while sending join", e);
+		}
+	}
+
 }

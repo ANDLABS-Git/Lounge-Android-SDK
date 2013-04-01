@@ -10,4 +10,6 @@ interface LoungeServiceDef {
 
 	void chat(in String message);
 
+	void openMatch(in String pPackageId, in String pDisplayName);
+
 }

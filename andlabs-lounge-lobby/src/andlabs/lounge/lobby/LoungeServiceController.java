@@ -118,4 +118,14 @@ public class LoungeServiceController {
 		pContext.unbindService(mServiceConnection);
 	}
 
+
+	public void openMatch(String pPackageId, String pDisplayName) {
+		try {
+			mLoungeService.openMatch(pPackageId, pDisplayName);
+		} catch (RemoteException e) {
+			Log.e("LoungeServiceController", "openMatch(): caught exception while opening a match", e);
+		}
+		
+	}
+
 }

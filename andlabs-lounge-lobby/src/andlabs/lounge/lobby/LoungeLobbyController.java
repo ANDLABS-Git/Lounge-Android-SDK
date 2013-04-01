@@ -82,6 +82,7 @@ public class LoungeLobbyController {
 
 	public void openMatch(String pPackageId, String pDisplayName) {
 		Log.v("LoungeLobbyController", "hostGame()");
+		mLoungeServiceController.openMatch(pPackageId, pDisplayName);
 	}
 
 
