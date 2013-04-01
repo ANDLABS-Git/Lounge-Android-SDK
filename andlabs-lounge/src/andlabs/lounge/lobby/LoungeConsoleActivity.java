@@ -35,6 +35,20 @@ public class LoungeConsoleActivity extends Activity {
 			// TODO Auto-generated method stub
 			
 		}
+
+
+		@Override
+		public void onNewChatLog(List<ChatMessage> chatLog) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+		@Override
+		public void onNewChatMessage(ChatMessage chatMsg) {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 
 	@Override
