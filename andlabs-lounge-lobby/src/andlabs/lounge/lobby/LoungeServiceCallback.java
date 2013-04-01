@@ -13,7 +13,9 @@ public interface LoungeServiceCallback {
 
 	public void onDisconnect();
 
-	public void onStateUpdate(ArrayList<Game> pGames);
+	public void onOpenGamesUpdate(ArrayList<Game> pGames);
+
+	public void onRunningGamesUpdate(ArrayList<Game> pGames);
 
 	public void onError(String message);
 
