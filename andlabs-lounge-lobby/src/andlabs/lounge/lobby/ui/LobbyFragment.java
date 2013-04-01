@@ -156,9 +156,16 @@ public class LobbyFragment extends Fragment implements OnChildClickListener,
 	}
 
 	@Override
-	public void onLobbyDataUpdated(List<LobbyListElement> data) {
-		mAdapter.setContent(data);
-		mAdapter.notifyDataSetChanged();
+	public void onLobbyDataUpdated(final List<LobbyListElement> data) {
+		getActivity().runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				mAdapter.setContent(data);
+				mAdapter.notifyDataSetChanged();
+			}
+		});
+		
 
 	}
 
