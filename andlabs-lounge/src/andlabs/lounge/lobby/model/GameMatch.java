@@ -10,7 +10,7 @@ public class GameMatch {
 	private String matchId;
 	private List<Player> players;
 	private int maxPlayers;
-	private boolean localPlayerOnTurn;
+	private String playerOnTurn;
 	private boolean running;
 
 
@@ -49,14 +49,16 @@ public class GameMatch {
 	}
 
 
-	public boolean isLocalPlayerOnTurn() {
-		return localPlayerOnTurn;
+
+	public String getPlayerOnTurn() {
+		return playerOnTurn;
 	}
 
 
-	public void setLocalPlayerOnTurn(boolean localPlayerOnTurn) {
-		this.localPlayerOnTurn = localPlayerOnTurn;
+	public void setPlayerOnTurn(String playerOnTurn) {
+		this.playerOnTurn = playerOnTurn;
 	}
+
 
 
 	public boolean isRunning() {
