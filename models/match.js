@@ -383,13 +383,34 @@ MatchSchema.statics.lastMove = function(data, userID, callback)
 
 /**
  *	All matches with status join, running or close
- *	@return callback(error, emptyGames)
+ *	@return callback(error, allMatches)
  */
 MatchSchema.statics.allMatches = function(callback)
 {
 	mongoose.models['Match'].find()
 	.where('status').in(['join', 'running'])
 	.populate('participants', 'playerID')
+	.exec(function(err, allMatches)
+	{
+		if (err) { return callback(err, null); }
+		if (allMatches)
+		{
+			return callback(null, allMatches);
+		}	
+		else
+		{
+			return callback(null, null);
+		}
+	});
+};
+
+/**
+ *	All matches with status running, gameType stream and userID in participants.
+ *	@return callback(error, allRunningUserStreamingMatches)
+ */
+MatchSchema.statics.allRunningUserStreamingMatches = function(userID, callback)
+{
+	mongoose.models['Match'].find({ gameType: 'stream', 'participants': userID, status: 'running' })
 	.exec(function(err, allMatches)
 	{
 		if (err) { return callback(err, null); }

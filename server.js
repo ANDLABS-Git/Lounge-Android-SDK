@@ -206,8 +206,6 @@ var LoungeServer = function() {
 		// Initialize the socket routes.
 		self.io.sockets.on('connection', function (socket) 
 		{	
-			// TODO: Create all streaming games
-			
 			/**
 			 *	Handle a login.
 			 */		
@@ -301,6 +299,23 @@ var LoungeServer = function() {
 												// Send the chat message to the user.
 												s.emit('addPlayer', { playerID: user.playerID });
 											}
+										}
+									});
+									
+									// Add user to all open streaming games.
+									Match.allRunningUserStreamingMatches(user._id, function (err, allMatches)
+									{
+										if (err)
+										{
+											// TODO: Handle Error!
+										}
+										if (allMatches)
+										{
+											console.log("ASDFASDF" + allMatches);
+											allMatches.forEach(function (match)
+											{
+												socket.join(match._id);												
+											});
 										}
 									});
 								}
@@ -415,13 +430,17 @@ var LoungeServer = function() {
 							{
 								// Find the correct join mechanism.
 								if ('' !== self.validateParameter(payload.gameName) &&
-									'' !== self.validateParameter(payload.maximumPlayers) &&
-									'' !== self.validateParameter(payload.gameType))
+									'' !== self.validateParameter(payload.maximumPlayers))
 								{
 									if (payload.maximumPlayers < 2)
 									{
 										socket.emit('join', { result: false, description: "A game needs more then 1 player!" });
 										return;
+									}
+									
+									if ('' === self.validateParameter(payload.gameType))
+									{
+										payload.gameType = 'move';
 									}
 									
 									if (!('move' === payload.gameType ||
@@ -537,7 +556,6 @@ var LoungeServer = function() {
 																s.join(match._id);
 															}
 														});
-														console.log(self.io);
 													}
 												}
 											});												
