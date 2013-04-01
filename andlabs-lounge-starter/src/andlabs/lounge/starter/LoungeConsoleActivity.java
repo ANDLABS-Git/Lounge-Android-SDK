@@ -1,8 +1,12 @@
-package andlabs.lounge.lobby;
+package andlabs.lounge.starter;
 
 import java.util.List;
 
+import andlabs.lounge.lobby.LoungeLobbyCallback;
+import andlabs.lounge.lobby.LoungeLobbyController;
 import andlabs.lounge.lobby.R;
+import andlabs.lounge.lobby.R.layout;
+import andlabs.lounge.lobby.R.menu;
 import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.lobby.model.LobbyListElement;
 import android.os.Bundle;
