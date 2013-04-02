@@ -23,15 +23,15 @@ public abstract class LoungeMessageProcessor {
 
 
 	public void processMessage(String arg0, Object[] arg2) {
-		Log.v("LoungeUtil", String.format("processMessage(): processing %s message: %s", arg0, Arrays.toString(arg2)));
+		Log.v("LoungeMessageProcessor", String.format("processMessage(): processing %s message: %s", arg0, Arrays.toString(arg2)));
 		try {
 			JSONObject payload = new JSONObject(arg2[0].toString());
 			if ("login".equals(arg0)) {
 				JSONArray jsonArray = payload.getJSONArray("playerList");
-				Log.v("LoungeUtil", "processMessage(): " + jsonArray);
+				Log.v("LoungeMessageProcessor", "processMessage(): " + jsonArray);
 				for (int index = 0; index < jsonArray.length(); index++) {
 					JSONObject jsonObject = jsonArray.getJSONObject(index);
-					Log.v("LoungeUtil", String.format("processMessage(): processing player %s", jsonObject));
+					Log.v("LoungeMessageProcessor", String.format("processMessage(): processing player %s", jsonObject));
 					Player player = new Player();
 					player._id = jsonObject.getString("_id");
 					player.socketID = jsonObject.getString("socketID");
@@ -50,7 +50,7 @@ public abstract class LoungeMessageProcessor {
 				match.matchID = payload.getString("matchID");
 				game.matches.add(match);
 				JSONArray jsonArray = payload.getJSONArray("playerIDs");
-				Log.v("LoungeLobbyController", "processMessage(): gameName = " + game.gameName + " / " + jsonArray);
+				Log.v("LoungeMessageProcessor", "processMessage(): gameName = " + game.gameName + " / " + jsonArray);
 				for (int index = 0; index < jsonArray.length(); index++) {
 					JSONObject jsonObject = jsonArray.getJSONObject(index);
 					Player player = new Player();
@@ -61,7 +61,7 @@ public abstract class LoungeMessageProcessor {
 				triggerUpdate(mGames);
 			}
 		} catch (JSONException e) {
-			Log.e("LoungeUtil", "caught exception while parsing payload", e);
+			Log.e("LoungeMessageProcessor", "caught exception while parsing payload", e);
 		}
 	}
 

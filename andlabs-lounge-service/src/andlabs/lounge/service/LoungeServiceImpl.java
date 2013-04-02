@@ -80,7 +80,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 		@Override
 		public void triggerUpdate(ArrayList<Game> pGames) {
-			Log.v("LoungeServiceImpl", String.format("LoungeUtil.triggerUpdate(): pGames = %s", pGames));
+			Log.v("LoungeServiceImpl", String.format("LoungeMessageProcessor.triggerUpdate(): pGames = %s", pGames));
 			Message message = new Message();
 			message.what = 7;
 			Bundle bundle = new Bundle();
@@ -89,7 +89,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 			try {
 				mMessenger.send(message);
 			} catch (RemoteException e) {
-				Log.e("LoungeServiceImpl", "LoungeUtil.(): caught exception while sending message", e);
+				Log.e("LoungeServiceImpl", "LoungeMessageProcessor.triggerUpdate(): caught exception while sending message", e);
 			}
 		};
 
@@ -105,7 +105,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 			message.setData(Bundle.EMPTY);
 			mMessenger.send(message);
 		} catch (RemoteException e) {
-			Log.e("LoungeServiceImpl", "caught exception while sending message", e);
+			Log.e("LoungeServiceImpl", "LoungeServiceImpl(): caught exception while sending message", e);
 		}
 
 	}
