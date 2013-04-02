@@ -22,11 +22,11 @@ public abstract class LoungeMessageProcessor {
 	public abstract void triggerUpdate(ArrayList<Game> mGames);
 
 
-	public void processMessage(String arg0, Object[] arg2) {
-		Log.v("LoungeMessageProcessor", String.format("processMessage(): processing %s message: %s", arg0, Arrays.toString(arg2)));
+	public void processMessage(String pVerb, Object[] pPayload) {
+		Log.v("LoungeMessageProcessor", String.format("processMessage(): processing %s message: %s", pVerb, Arrays.toString(pPayload)));
 		try {
-			JSONObject payload = new JSONObject(arg2[0].toString());
-			if ("login".equals(arg0)) {
+			JSONObject payload = new JSONObject(pPayload[0].toString());
+			if ("login".equals(pVerb)) {
 				JSONArray jsonArray = payload.getJSONArray("playerList");
 				Log.v("LoungeMessageProcessor", "processMessage(): " + jsonArray);
 				for (int index = 0; index < jsonArray.length(); index++) {
@@ -39,7 +39,7 @@ public abstract class LoungeMessageProcessor {
 					mPlayers.add(player);
 				}
 			}
-			if ("joinMatch".equals(arg0)) {
+			if ("joinMatch".equals(pVerb)) {
 				Game game = new Game();
 				mGames.add(game);
 				game.gameID = payload.getString("gameID");
