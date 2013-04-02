@@ -3,8 +3,12 @@ package andlabs.lounge.lobby;
 import java.util.ArrayList;
 import java.util.List;
 
+import andlabs.lounge.lobby.model.GameMatch;
 import andlabs.lounge.lobby.model.LobbyListElement;
+import andlabs.lounge.lobby.model.LobbyListElement.ElementType;
 import andlabs.lounge.model.Game;
+import andlabs.lounge.model.Match;
+import andlabs.lounge.model.Player;
 import android.content.Context;
 import android.util.Log;
 
@@ -36,19 +40,76 @@ public class LoungeLobbyController {
 		@Override
 		public void onOpenGamesUpdate(ArrayList<Game> pGames) {
 			Log.v("LoungeLobbyController", "LoungeServiceCallback.onOpenGamesUpdate(): " + pGames);
-			ArrayList<LobbyListElement> data = new ArrayList<LobbyListElement>();
-			// TODO populate data from the pGames object
-			mLoungeLobbyCallback.onLobbyDataUpdated(data);
+			mOpenGames = pGames;
+			createLobbyDataUpdate();
 		}
 
 		@Override
 		public void onRunningGamesUpdate(ArrayList<Game> pGames) {
 			Log.v("LoungeLobbyController", "LoungeServiceCallback.onRunningGamesUpdate(): " + pGames);
+			mRunningGames = pGames;
+			createLobbyDataUpdate();
 		}
 
 		@Override
 		public void onError(String message) {
 			Log.e("LoungeLobbyController", "LoungeServiceCallback.onError(): " + message);
+		}
+
+		private List<Game> mOpenGames, mRunningGames;
+
+		private void createLobbyDataUpdate() {
+			ArrayList<LobbyListElement> lobbyData = new ArrayList<LobbyListElement>();
+			if (mRunningGames != null)
+				for (Game game : mRunningGames) {
+					LobbyListElement dataElement = new LobbyListElement();
+
+					dataElement.setPgkName(game.gameID);
+					dataElement.setTitle(game.gameName);
+					dataElement.setType(ElementType.JOINED_GAME);
+
+					for (Match match : game.matches) {
+						GameMatch gameMatch = new GameMatch();
+				        gameMatch.setMaxPlayers(2);
+
+				        for (Player player : match.players) {
+				        	andlabs.lounge.lobby.model.Player lobbyPlayer = new andlabs.lounge.lobby.model.Player();
+				        	lobbyPlayer.setGuid(player._id);
+				        	lobbyPlayer.setDisplayName(player.playerID);
+							gameMatch.getPlayers().add(lobbyPlayer);
+				        }
+
+				        dataElement.getGameMatches().add(gameMatch);
+					}
+				}
+			if (mRunningGames != null && mOpenGames != null) {
+				LobbyListElement seperator = new LobbyListElement();
+				seperator.setType(ElementType.SEPERATOR);
+				lobbyData.add(seperator);
+			}
+			if (mOpenGames != null)
+				for (Game game : mOpenGames) {
+					LobbyListElement dataElement = new LobbyListElement();
+
+					dataElement.setPgkName(game.gameID);
+					dataElement.setTitle(game.gameName);
+					dataElement.setType(ElementType.OPEN_GAME);
+
+					for (Match match : game.matches) {
+						GameMatch gameMatch = new GameMatch();
+				        gameMatch.setMaxPlayers(2);
+
+				        for (Player player : match.players) {
+				        	andlabs.lounge.lobby.model.Player lobbyPlayer = new andlabs.lounge.lobby.model.Player();
+				        	lobbyPlayer.setGuid(player._id);
+				        	lobbyPlayer.setDisplayName(player.playerID);
+							gameMatch.getPlayers().add(lobbyPlayer);
+				        }
+
+				        dataElement.getGameMatches().add(gameMatch);
+					}
+				}
+			mLoungeLobbyCallback.onLobbyDataUpdated(lobbyData);	
 		}
 
 	};
