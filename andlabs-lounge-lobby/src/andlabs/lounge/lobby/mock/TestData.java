@@ -1,12 +1,13 @@
-package andlabs.lounge.lobby.ui;
+package andlabs.lounge.lobby.mock;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import andlabs.lounge.lobby.model.GameMatch;
 import andlabs.lounge.lobby.model.LobbyListElement;
-import andlabs.lounge.lobby.model.LobbyListElement.ElementType;
 import andlabs.lounge.lobby.model.Player;
+import andlabs.lounge.lobby.model.LobbyListElement.ElementType;
+
 
 public class TestData {
 
