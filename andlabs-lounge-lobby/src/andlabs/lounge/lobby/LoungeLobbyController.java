@@ -81,6 +81,7 @@ public class LoungeLobbyController {
 
 				        dataElement.getGameMatches().add(gameMatch);
 					}
+					lobbyData.add(dataElement);
 				}
 			if (mRunningGames != null && mOpenGames != null) {
 				LobbyListElement seperator = new LobbyListElement();
@@ -108,6 +109,7 @@ public class LoungeLobbyController {
 
 				        dataElement.getGameMatches().add(gameMatch);
 					}
+					lobbyData.add(dataElement);
 				}
 			mLoungeLobbyCallback.onLobbyDataUpdated(lobbyData);	
 		}
