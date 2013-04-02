@@ -23,13 +23,7 @@ a
 
 #wrapper
 {
-	position: absolute;
-	width: 1300px;
-	height: 580px;
-	top: 50%;
-	left: 50%;
-	margin-left: -675px;
-	margin-top: -290px;
+	position: relative;
 }
 
 
