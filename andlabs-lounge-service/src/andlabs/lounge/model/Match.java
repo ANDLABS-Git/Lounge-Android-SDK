@@ -10,7 +10,7 @@ public class Match implements Serializable {
 	public ArrayList<Player> players = new ArrayList<Player>();
 
 	@Override
-	public String toString() {
+	public synchronized String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{matchID: '").append(matchID).append("', players: [");
 		if (players.size() > 0) for (Player player : players) {

@@ -13,7 +13,7 @@ public class Game implements Serializable {
 	public ArrayList<Match> matches = new ArrayList<Match>();
 
 	@Override
-	public String toString() {
+	public synchronized String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{gameName: '").append(gameName).append("', matches: [");
 		if (matches.size() > 0) for (Match match : matches) {

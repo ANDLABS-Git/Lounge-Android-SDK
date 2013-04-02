@@ -10,7 +10,7 @@ public class Player implements Serializable {
 	public String playerID;
 
 	@Override
-	public String toString() {
+	public synchronized String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{playerID: '").append(playerID).append("}");
 		return sb.toString();
