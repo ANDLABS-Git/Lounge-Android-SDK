@@ -40,8 +40,8 @@ import android.widget.TextView;
 public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     private static final int TYPE_JOINEDGAME = 0;
-    private static final int TYPE_OPENGAME = 1;
-    private static final int TYPE_SEPARATOR = 2;
+    private static final int TYPE_SEPARATOR = 1;
+    private static final int TYPE_OPENGAME = 2;
 
     private List<LobbyListElement> content;
     private Context context;
