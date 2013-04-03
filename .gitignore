@@ -12,3 +12,21 @@ logs
 results
 
 npm-debug.log
+andlabs-lounge-lib/.settings
+andlabs-lounge-lib/bin
+andlabs-lounge-lib/gen
+andlabs-lounge/.settings
+andlabs-lounge/bin
+andlabs-lounge/gen
+andlabs-lounge-game/.settings
+andlabs-lounge-game/bin
+andlabs-lounge-game/gen
+andlabs-lounge-service/.settings
+andlabs-lounge-service/bin
+andlabs-lounge-service/gen
+andlabs-lounge-lobby/.settings
+andlabs-lounge-lobby/bin
+andlabs-lounge-lobby/gen
+andlabs-lounge-starter/.settings
+andlabs-lounge-starter/bin
+andlabs-lounge-starter/gen
