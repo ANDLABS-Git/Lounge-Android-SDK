@@ -33,12 +33,13 @@ public class HostGameAdapter extends BaseAdapter implements
         this.mPackageManager = context.getPackageManager();
         final Intent intent = new Intent(Intent.ACTION_MAIN);
 //        intent.addCategory(CATEGORY); // TODO: What was it?
-        this.mContent = this.mPackageManager.queryIntentActivities(intent, 0);
+//        this.mContent = this.mPackageManager.queryIntentActivities(intent, 0);
     }
 
     @Override
     public int getCount() {
-        return this.mContent.size();
+    	
+        return 0;// this.mContent.size();
     }
 
     @Override

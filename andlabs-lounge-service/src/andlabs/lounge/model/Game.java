@@ -10,6 +10,9 @@ public class Game implements Serializable {
 	public String gameName;
 	public int totalSpots;
 	public String status;
+	
+	//public field OPEN/JOINED?
+
 	public ArrayList<Match> matches = new ArrayList<Match>();
 
 	@Override

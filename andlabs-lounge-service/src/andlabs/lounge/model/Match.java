@@ -7,6 +7,10 @@ import java.util.ArrayList;
 public class Match implements Serializable {
 
 	public String matchID;
+	//	   State state;
+	//     int   maxPlayers
+	
+	//     String PlayerOnTurn
 	public ArrayList<Player> players = new ArrayList<Player>();
 
 	@Override

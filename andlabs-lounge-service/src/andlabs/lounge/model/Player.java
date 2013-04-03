@@ -8,6 +8,8 @@ public class Player implements Serializable {
 	public String _id;
 	public String socketID;
 	public String playerID;
+	public String checkInGame;
+	public String checkInMatchID;
 
 	@Override
 	public synchronized String toString() {
