@@ -44,10 +44,10 @@ public abstract class LoungeMessageProcessor {
 				mGames.add(game);
 				game.gameID = payload.getString("gameID");
 				game.gameName = payload.getString("gameName");
-				game.totalSpots = payload.getInt("totalSpots");
-				game.status = payload.getString("status");
 				Match match = new Match();
 				match.matchID = payload.getString("matchID");
+				match.totalSpots =  payload.getInt("totalSpots");
+				match.status =  payload.getString("status");
 				game.matches.add(match);
 				JSONArray jsonArray = payload.getJSONArray("playerIDs");
 				Log.v("LoungeMessageProcessor", "processMessage(): gameName = " + game.gameName + " / " + jsonArray);

@@ -8,10 +8,12 @@ public class Game implements Serializable {
 
 	public String gameID;
 	public String gameName;
-	public int totalSpots;
-	public String status;
+	
+// Not in game but in match	    public int totalSpots;
+// Not in game but in match 	public String status;
 	public ArrayList<Match> matches = new ArrayList<Match>();
 
+	//TODO: Add game name
 	@Override
 	public synchronized String toString() {
 		StringBuilder sb = new StringBuilder();

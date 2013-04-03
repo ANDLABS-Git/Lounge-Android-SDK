@@ -49,7 +49,6 @@ public class GameMatch {
 	}
 
 
-
 	public String getPlayerOnTurn() {
 		return playerOnTurn;
 	}
