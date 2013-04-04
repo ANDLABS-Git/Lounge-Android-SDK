@@ -7,11 +7,13 @@ import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.model.Player;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 
 
 public class LoungeGameController {
 
+	private String mPackageId;
 	private LoungeGameCallback mLoungeGameCallback;
 	private LoungeServiceController mLoungeServiceController = new LoungeServiceController();
 	private LoungeServiceCallback mLoungeServiceCallback = new LoungeServiceCallback() {
@@ -52,6 +54,7 @@ public class LoungeGameController {
 
 
 	public void bindServiceTo(Context pContext) {
+		mPackageId = pContext.getApplicationInfo().packageName;
 		Log.v("LoungeGameController", "bindServiceTo()");
 		mLoungeServiceController.bindServiceTo(pContext);
 		mLoungeServiceController.registerCallback(mLoungeServiceCallback);
@@ -77,15 +80,21 @@ public class LoungeGameController {
 	}
 
 
-	private void checkin(String pMatchId) {
+	public void checkin(String pMatchId) {
 		Log.v("LoungeGameController", "checkin()");
-		// TODO wire it to the corresponding LoungeServiceController method
+		mLoungeServiceController.checkin(mPackageId, pMatchId);
 	}
 
 
 	private void checkout(String pMatchId) {
 		Log.v("LoungeGameController", "checkout()");
 		// TODO wire it to the corresponding LoungeServiceController method
+	}
+
+
+	public void sendGameMove(String pMatchId, Bundle pMoveBundle) {
+		Log.v("LoungeGameController", String.format("sendGameMove(): pMoveBundle = %s", pMoveBundle));
+		mLoungeServiceController.sendGameMove(mPackageId, pMatchId, pMoveBundle);
 	}
 
 }

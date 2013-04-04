@@ -163,4 +163,60 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 		}
 	}
 
+
+	@Override
+	public void joinMatch(String pGameId, String pMatchId) throws RemoteException {
+		Log.v("LoungeServiceImpl", String.format("joinMatch(): pGameId = %s", pGameId));
+		try {
+			// PAYLOAD { gameID: ”packageID”, matchID: “matchID” }
+			mSocketIO.emit("checkin", new JSONObject().put("gameID", pGameId).put("matchID", pMatchId));
+		} catch (JSONException e) {
+			Log.e("LoungeService", "caught exception while sending checkin", e);
+		}
+	}
+
+
+	@Override
+	public void checkin(String pGameId, String pMatchId) throws RemoteException {
+		Log.v("LoungeServiceImpl", String.format("checkin(): pGameId = %s", pGameId));
+		try {
+			// PAYLOAD { gameID: ”packageID”, matchID: “matchID” }
+			mSocketIO.emit("checkin", new JSONObject().put("gameID", pGameId).put("matchID", pMatchId));
+		} catch (JSONException e) {
+			Log.e("LoungeService", "caught exception while sending checkin", e);
+		}
+	}
+
+
+	@Override
+	public void update(String pGameId, String pMatchId, String pStatus) throws RemoteException {
+		Log.v("LoungeServiceImpl", String.format("update(): pGameId = %s", pGameId));
+		try {
+			// PAYLOAD { gameID: “packageID”, matchID: “matchID”, status: “open/running/close” }
+			JSONObject payload = new JSONObject();
+			payload.put("gameID", pGameId).put("matchID", pMatchId).put("status", pStatus);
+			mSocketIO.emit("update", payload);
+		} catch (JSONException e) {
+			Log.e("LoungeService", "caught exception while sending update", e);
+		}
+	}
+
+
+	@Override
+	public void move(String pPackageId, String pMatchId, Bundle pMoveBundle) throws RemoteException {
+		Log.v("LoungeServiceImpl", String.format("move(): pPackageId = %s, pMatchId = %s", pPackageId, pMatchId));
+		try {
+			// PAYLOAD { gameID: “packageID”, matchID: “matchID”, move: {... } }
+			JSONObject payload = new JSONObject().put("gameID", pPackageId).put("matchId", pMatchId);
+			JSONObject bundleJson = new JSONObject();
+			for (String key : pMoveBundle.keySet()) {
+				bundleJson.put(key, pMoveBundle.get(key));
+			}
+			payload.put("move", bundleJson);
+			mSocketIO.emit("move", payload);
+		} catch (JSONException e) {
+			Log.e("LoungeService", "caught exception while sending move", e);
+		}
+	}
+
 }

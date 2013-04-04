@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -124,6 +125,24 @@ public class LoungeServiceController {
 			mLoungeService.openMatch(pPackageId, pDisplayName);
 		} catch (RemoteException e) {
 			Log.e("LoungeServiceController", "openMatch(): caught exception while opening a match", e);
+		}		
+	}
+
+
+	public void checkin(String pPackageId, String pMatchId) {
+		try {
+			mLoungeService.checkin(pPackageId, pMatchId);
+		} catch (RemoteException e) {
+			Log.e("LoungeServiceController", "pMatchId(): caught exception while checkin a match", e);
+		}		
+	}
+
+
+	public void sendGameMove(String pPackageId, String pMatchId, Bundle pMoveBundle) {
+		try {
+			mLoungeService.sendGameMove(pPackageId, pMatchId, pMoveBundle);
+		} catch (RemoteException e) {
+			Log.e("LoungeServiceController", "sendGameMove(): caught exception while opening a game move", e);
 		}
 		
 	}
