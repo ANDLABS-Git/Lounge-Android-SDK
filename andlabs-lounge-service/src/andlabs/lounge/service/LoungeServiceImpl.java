@@ -76,15 +76,16 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 	};
 
-	private LoungeMessageProcessor mLoungeMessageProcessor = new LoungeMessageProcessor() {
+	private LoungeMessageProcessor mLoungeMessageProcessor = new LoungeMessageProcessor(null /*TODO: somehow get the user's id*/) {
 
 		@Override
-		public void triggerUpdate(ArrayList<Game> pGames) {
-			Log.v("LoungeServiceImpl", String.format("LoungeMessageProcessor.triggerUpdate(): pGames = %s", pGames));
+		public void triggerUpdate(ArrayList<Game> pInvolvedGames, ArrayList<Game> pOpenGames) {
+			Log.v("LoungeServiceImpl", String.format("LoungeMessageProcessor.triggerUpdate(): pInvolvedGames = %s, pOpenGames = %s", pInvolvedGames, pOpenGames));
 			Message message = new Message();
 			message.what = 7;
 			Bundle bundle = new Bundle();
-			bundle.putSerializable("gameList", pGames);
+            bundle.putSerializable("involvedGameList", pInvolvedGames);
+            bundle.putSerializable("openGameList", pInvolvedGames);
 			message.setData(bundle);
 			try {
 				mMessenger.send(message);

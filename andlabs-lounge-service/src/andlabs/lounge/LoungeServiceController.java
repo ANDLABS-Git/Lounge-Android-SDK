@@ -50,8 +50,10 @@ public class LoungeServiceController {
 				case 7:
 					Log.v("LoungeServiceController", "Handler.handleMessage(): Getting update for games/matches/players: " + message.getData());
 					if (mLoungeServiceCallback != null) {
-						Serializable gameList = message.getData().getSerializable("gameList");
-						mLoungeServiceCallback.onOpenGamesUpdate((ArrayList<Game>) gameList);
+                        Serializable involvedGames = message.getData().getSerializable("involvedGameList");
+                        Serializable openGames = message.getData().getSerializable("openGameList");
+						mLoungeServiceCallback.onOpenGamesUpdate((ArrayList<Game>) openGames);
+	                    mLoungeServiceCallback.onRunningGamesUpdate((ArrayList<Game>) involvedGames);
 					}
 					break;
 

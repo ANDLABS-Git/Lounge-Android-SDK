@@ -18,100 +18,191 @@ import android.util.Log;
 
 public abstract class LoungeMessageProcessor {
 
-	private HashMap<String, Player> mPlayers = new HashMap<String, Player>();
+    private HashMap<String, Player> mPlayers = new HashMap<String, Player>();
 
-	private Map<String, Bundle> matchMoves;
+    private Map<String, Bundle> mMatchMoves;
 
-	private ArrayList<Game> mGames = new ArrayList<Game>();
+    // All games currently in the lounge in which the user is involved
+    private HashMap<String, Game> mInvolvedGames = new HashMap<String, Game>();
+    // All games currently in the lounge in which the user is not involved
+    private HashMap<String, Game> mOpenGames = new HashMap<String, Game>();
+    // All matches of all games, for easier manipulation
+    private HashMap<String, Match> mMatches = new HashMap<String, Match>();
 
-	public abstract void triggerUpdate(ArrayList<Game> mGames);
+    private String mPlayerID;
 
-	public void processMessage(String pVerb, Object[] pPayload) {
-		Log.v("LoungeMessageProcessor", String.format(
-				"processMessage(): processing %s message: %s", pVerb,
-				Arrays.toString(pPayload)));
-		try {
-			JSONObject payload = new JSONObject(pPayload[0].toString());
+    public abstract void triggerUpdate(ArrayList<Game> pInvolvedGames,
+            ArrayList<Game> pOpenGames);
 
-			if ("login".equals(pVerb)) {
-				JSONArray jsonArray = payload.getJSONArray("playerList");
-				Log.v("LoungeMessageProcessor", "processMessage(): "
-						+ jsonArray);
-				for (int index = 0; index < jsonArray.length(); index++) {
-					JSONObject jsonObject = jsonArray.getJSONObject(index);
-					Log.v("LoungeMessageProcessor", String.format(
-							"processMessage(): processing player %s",
-							jsonObject));
-					Player player = new Player();
-					player._id = jsonObject.getString("_id");
-					player.socketID = jsonObject.getString("socketID");
-					player.playerID = jsonObject.getString("playerID");
-					mPlayers.put(player._id, player);
-				}
-			}
-			if ("joinMatch".equals(pVerb)) {
-				Game game = new Game();
-				mGames.add(game);
-				game.gameID = payload.getString("gameID");
-				game.gameName = payload.getString("gameName");
-				Match match = new Match();
-				match.matchID = payload.getString("matchID");
-				match.totalSpots =  payload.getInt("totalSpots");
-				match.status =  payload.getString("status");
-				game.matches.add(match);
-				JSONArray jsonArray = payload.getJSONArray("playerIDs");
-				Log.v("LoungeMessageProcessor", "processMessage(): gameName = "
-						+ game.gameName + " / " + jsonArray);
-				for (int index = 0; index < jsonArray.length(); index++) {
-					JSONObject jsonObject = jsonArray.getJSONObject(index);
-					match.players.add(mPlayers.get(jsonObject
-							.getString("playerID")));
-				}
-				triggerUpdate(mGames);
-			}
+    public LoungeMessageProcessor(String playerID) {
+        mPlayerID = playerID;
+    }
 
-			if ("update".equals(pVerb)) {
-				String gameID = payload.getString("gameID");
-				String status = payload.getString("status");
-				String matchID = payload.getString("matchID");
-			}
+    public void processMessage(String pVerb, Object[] pPayload) {
+        Log.v("LoungeMessageProcessor", String.format(
+                "processMessage(): processing %s message: %s", pVerb,
+                Arrays.toString(pPayload)));
+        try {
+            JSONObject payload = new JSONObject(pPayload[0].toString());
 
-			if ("checkIn".equals(pVerb)) {
-				// { gameID:” packageID”, matchID: “matchID”, playerID:
-				// ”playerID”}
-				String gameID = payload.getString("gameID");
-				String playerID = payload.getString("playerID");
-				Player p = mPlayers.get(playerID);
+            // Create map with all players
+            if ("login".equals(pVerb)) {
+                JSONArray jsonArray = payload.getJSONArray("playerList");
+                Log.v("LoungeMessageProcessor", "processMessage(): "
+                        + jsonArray);
+                for (int index = 0; index < jsonArray.length(); index++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(index);
+                    Log.v("LoungeMessageProcessor", String.format(
+                            "processMessage(): processing player %s",
+                            jsonObject));
+                    addPlayer(jsonObject);
+                }
+                
+                // TODO: notify lobby on player change
+            }
 
-				if ("andlabs.lounge.lobby".equalsIgnoreCase(gameID)) {
-					String matchID = payload.getString("matchID");
-					p.checkedInMatch = matchID;
-				}
+            // Add new player to the map
+            if ("addPlayer".equals(pVerb)) {
+                addPlayer(payload);
+                // TODO: notify lobby on player change
+            }
 
-				p.checkedInGame = gameID;
-			}
+            // Match was created or joined by someone.
+            // If the status is "created", it is a new match, else a match is
+            // updated.
+            // Needs to split into games / matches in which the user is involved
+            // and others
+            if ("joinMatch".equals(pVerb)) {
 
-			if ("move".equals(pVerb)) {
-				// { gameID: “packageID”, matchID: “matchID”, move: {... } }
-				String matchID = payload.getString("matchID");
+                // When the game is already known, update the known data, else
+                // create a new game object.
+                final String gameID = payload.getString("gameID"); // TODO:
+                                                                   // is it
+                                                                   // called
+                                                                   // gameID or
+                                                                   // packageID?
+                                                                   // spec says
+                                                                   // packageID.
+                Game game = null;
+                if (mInvolvedGames.get(gameID) != null) {
+                    game = mInvolvedGames.get(gameID);
+                } else if (mOpenGames.get(gameID) != null) {
+                    game = mOpenGames.get(gameID);
+                } else {
+                    game = new Game();
+                    game.gameID = gameID;
+                    game.gameName = payload.getString("gameName");
+                }
 
-				JSONObject json = (JSONObject) payload.getJSONObject("move");
-				Bundle b = new Bundle();
-				matchMoves.put(matchID, b);
+                final String matchID = payload.getString("matchID");
+                Match match = mMatches.get(matchID);
+                if (match == null) {
+                    match = new Match();
+                    match.matchID = matchID;
+                    game.matches.add(match);
+                }
 
-				for (Iterator<String> i = json.keys(); i.hasNext();) {
-					String key = i.next();
-					b.putString(key, json.getString(key));
-					Log.i("json", "converting - key:" + key + " / Value: "
-							+ json.getString(key));
-				}
-				matchMoves.put(matchID, b);
+                match.matchID = payload.getString("matchID");
+                match.totalSpots = payload.getInt("totalSpots");
+                match.status = payload.getString("status");
+                JSONArray jsonArray = payload.getJSONArray("playerIDs");
+                Log.v("LoungeMessageProcessor", "processMessage(): gameName = "
+                        + game.gameName + " / " + jsonArray);
 
-			}
-		} catch (JSONException e) {
-			Log.e("LoungeMessageProcessor",
-					"caught exception while parsing payload", e);
-		}
-	}
+                boolean involvedGame = false;
+                for (int index = 0; index < jsonArray.length(); index++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(index);
+                    final String playerID = jsonObject.getString("playerID");
+                    match.players.add(mPlayers.get(playerID));
+
+                    if (mPlayerID.equals(playerID)) {
+                        involvedGame = true;
+                    }
+                }
+
+                final boolean created = "created".equals(match.status);
+                if (created) { // a new game was created
+                    if (involvedGame) { // the user is involved
+                        mInvolvedGames.put(game.gameID, game);
+                    } else {
+                        mOpenGames.put(game.gameID, game);
+                    }
+                } // else, the update happened by reference
+
+                triggerUpdate(new ArrayList<Game>(mInvolvedGames.values()),
+                        new ArrayList<Game>(mOpenGames.values()));
+            }
+
+            // Set checkedInGame and checkedInMatch on the player's object
+            if ("checkIn".equals(pVerb)) {
+                // { gameID:” packageID”, matchID: “matchID”, playerID:
+                // ”playerID”}
+                final String gameID = payload.getString("gameID");
+                final String playerID = payload.getString("playerID");
+                Player player = mPlayers.get(playerID);
+
+                if (!"andlabs.lounge.lobby".equalsIgnoreCase(gameID)) {
+                    String matchID = payload.getString("matchID");
+                    player.matchID = matchID;
+                }
+
+                player.gameID = gameID;
+                
+                triggerUpdate(new ArrayList<Game>(mInvolvedGames.values()),
+                        new ArrayList<Game>(mOpenGames.values()));
+            }
+
+            // Update match and game state to updatesAvailable (or similar)
+            if ("move".equals(pVerb)) {
+                // { gameID: “packageID”, matchID: “matchID”, move: {... } }
+                final String matchID = payload.getString("matchID");
+
+                JSONObject json = (JSONObject) payload.getJSONObject("move");
+                Bundle b = new Bundle();
+
+                for (Iterator<String> i = json.keys(); i.hasNext();) {
+                    String key = i.next();
+                    b.putString(key, json.getString(key));
+                    Log.i("json", "converting - key:" + key + " / Value: "
+                            + json.getString(key));
+                }
+                mMatchMoves.put(matchID, b);
+
+                if(!mPlayerID.equals(payload.getString("playerID"))) {// We react only to moves not send by the user
+                    //TODO: set to false when the move was received by the game
+                    mMatches.get(matchID).playerOnTurn = mPlayerID;
+                    
+                    triggerUpdate(new ArrayList<Game>(mInvolvedGames.values()),
+                            new ArrayList<Game>(mOpenGames.values()));
+                }
+                
+                //TODO: forward moves to app
+            }
+
+            // Process the last move data and update match and game state to
+            // updatesAvailable (or similar)
+            if ("lastMove".equals(pVerb)) {
+                //TODO
+            }
+        } catch (JSONException e) {
+            Log.e("LoungeMessageProcessor",
+                    "caught exception while parsing payload", e);
+        }
+    }
+
+    private Player addPlayer(JSONObject jsonObject) throws JSONException {
+        Player player = new Player();
+        player._id = jsonObject.getString("_id");
+        player.socketID = jsonObject.getString("socketID");
+        player.name = jsonObject.getString("playerID");
+        if (jsonObject.has("gameID")) {
+            player.gameID = jsonObject.getString("gameID");
+        }
+        if (jsonObject.has("matchID")) {
+            player.matchID = jsonObject.getString("matchID");
+        }
+        mPlayers.put(player._id, player);
+        return player;
+    }
 
 }
