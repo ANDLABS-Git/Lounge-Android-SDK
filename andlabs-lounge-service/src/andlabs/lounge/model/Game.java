@@ -1,7 +1,7 @@
 package andlabs.lounge.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Game implements Serializable {
 
@@ -10,7 +10,7 @@ public class Game implements Serializable {
 
     // Not in game but in match public int totalSpots;
     // Not in game but in match public String status;
-    public ArrayList<Match> matches = new ArrayList<Match>();
+    public HashMap<String, Match> matches = new HashMap<String, Match>();
 
     // TODO: Add game name
     @Override
@@ -18,7 +18,7 @@ public class Game implements Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("{gameName: '").append(gameName).append("', matches: [");
         if (matches.size() > 0)
-            for (Match match : matches) {
+            for (Match match : matches.values()) {
                 sb.append(match.toString()).append(", ");
             }
         sb.delete(sb.length() - 2, sb.length());

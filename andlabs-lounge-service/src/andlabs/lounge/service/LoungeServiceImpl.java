@@ -92,8 +92,12 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 			} catch (RemoteException e) {
 				Log.e("LoungeServiceImpl", "LoungeMessageProcessor.triggerUpdate(): caught exception while sending message", e);
 			}
-		};
+		}
 
+        @Override
+        public void onGameMove(String pMatchID, Bundle pParams) {
+            
+        };
 	};
 
 	public LoungeServiceImpl(Intent intent) {

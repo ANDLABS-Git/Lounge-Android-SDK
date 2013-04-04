@@ -50,6 +50,12 @@ public class LoungeGameController {
 			Log.e("LoungeGameController", "LoungeServiceCallback.onError(): " + message);
 		}
 
+        @Override
+        public void onStart() {
+            // TODO Auto-generated method stub
+            
+        }
+
 	};
 
 

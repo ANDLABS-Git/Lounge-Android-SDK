@@ -16,6 +16,7 @@
  */
 package andlabs.lounge.lobby.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import andlabs.lounge.lobby.LoungeLobbyCallback;
@@ -29,6 +30,7 @@ import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;
 import andlabs.lounge.lobby.util.parser.PlayResult;
+import andlabs.lounge.model.Game;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.SparseIntArray;
@@ -78,17 +80,32 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 		}
 
 
-		@Override
-		public void onLobbyDataUpdated(final List<LobbyListElement> data) {
-			getActivity().runOnUiThread(new Runnable() {
-				
-				@Override
-				public void run() {
-					mAdapter.setContent(data);
-					mAdapter.notifyDataSetChanged();
-				}
-			});
-		}
+		// TODO LJA: use below methods instead of this one
+//		@Override
+//		public void onLobbyDataUpdated(final List<LobbyListElement> data) {
+//			getActivity().runOnUiThread(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					mAdapter.setContent(data);
+//					mAdapter.notifyDataSetChanged();
+//				}
+//			});
+//		}
+
+
+        @Override
+        public void onRunningGamesUpdate(ArrayList<Game> pGames) {
+            // TODO Auto-generated method stub
+            
+        }
+
+
+        @Override
+        public void onOpenGamesUpdate(ArrayList<Game> pGames) {
+            // TODO Auto-generated method stub
+            
+        }
 
 	};
 

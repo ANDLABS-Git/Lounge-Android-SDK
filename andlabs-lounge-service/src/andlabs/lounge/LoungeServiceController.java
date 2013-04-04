@@ -40,11 +40,7 @@ public class LoungeServiceController {
 
 				case 1:
 					Log.v("LoungeServiceController", "Handler.handleMessage(): Server connected ... process login");
-					try {
-						mLoungeService.login("John Doe");
-					} catch (RemoteException e) {
-						Log.e("LoungeServiceController", "Handler.handleMessage(): caught exception while processing login", e);
-					}
+					mLoungeServiceCallback.onStart();
 					break;
 
 				case 7:
@@ -121,7 +117,14 @@ public class LoungeServiceController {
 		pContext.unbindService(mServiceConnection);
 	}
 
-
+	public void login(String pPlayerName) {
+	    try {
+            mLoungeService.login("John Doe");
+        } catch (RemoteException e) {
+            Log.e("LoungeServiceController", "Handler.handleMessage(): caught exception while processing login", e);
+        }
+	}
+	
 	public void openMatch(String pPackageId, String pDisplayName) {
 		try {
 			mLoungeService.openMatch(pPackageId, pDisplayName);

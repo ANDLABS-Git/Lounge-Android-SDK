@@ -8,6 +8,8 @@ import andlabs.lounge.model.Game;
 public interface LoungeServiceCallback {
 
 	public void theAnswerIs42();
+	
+	public void onStart();
 
 	public void onConnect();
 

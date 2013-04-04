@@ -1,21 +1,15 @@
 package andlabs.lounge.lobby;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.lobby.model.LobbyListElement;
+import andlabs.lounge.model.Game;
 
 public interface LoungeLobbyCallback {
 
 	
-	/**
-	 * This is the dataset that the LobbyList creates its represantation from.
-	 * For further Details look into {@link LobbyListElement}
-	 * @param data
-	 */
-	public void onLobbyDataUpdated(List<LobbyListElement> data);
-
-
 	public void onChatDataUpdated(List<ChatMessage> data);
 	/**
 	 * Sends all cached Chatmessages to the Listner. 
@@ -33,5 +27,20 @@ public interface LoungeLobbyCallback {
 	 * @param chatMsg
 	 */
 	public void onNewChatMessage(ChatMessage chatMsg);
+
+
+	/**
+     * This is the dataset that the LobbyList creates its running games representation from.
+     * For further Details look into {@link Game}
+     * @param pGames
+     */
+    public void onRunningGamesUpdate(ArrayList<Game> pGames);
+
+    /**
+     * This is the dataset that the LobbyList creates its open games representation from.
+     * For further Details look into {@link Game}
+     * @param pGames
+     */
+    public void onOpenGamesUpdate(ArrayList<Game> pGames);
 
 }
