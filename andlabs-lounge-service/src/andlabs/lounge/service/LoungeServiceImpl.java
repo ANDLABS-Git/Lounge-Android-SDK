@@ -8,6 +8,9 @@ import io.socket.SocketIOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -76,10 +79,10 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 	};
 
-	private LoungeMessageProcessor mLoungeMessageProcessor = new LoungeMessageProcessor(null /*TODO: somehow get the user's id*/) {
+	private LoungeMessageProcessor mLoungeMessageProcessor = new LoungeMessageProcessor() {
 
 		@Override
-		public void triggerUpdate(ArrayList<Game> pInvolvedGames, ArrayList<Game> pOpenGames) {
+		public void triggerUpdate(HashMap<String, Game> pInvolvedGames, HashMap<String, Game> pOpenGames) {
 			Log.v("LoungeServiceImpl", String.format("LoungeMessageProcessor.triggerUpdate(): pInvolvedGames = %s, pOpenGames = %s", pInvolvedGames, pOpenGames));
 			Message message = new Message();
 			message.what = 7;
@@ -97,7 +100,8 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         @Override
         public void onGameMove(String pMatchID, Bundle pParams) {
             
-        };
+        }
+
 	};
 
 	public LoungeServiceImpl(Intent intent) {
@@ -141,6 +145,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 	public void login(String playerId) throws RemoteException {
 		Log.v("LoungeServiceImpl", "login(): playerId = " + playerId);
 		try {
+			mLoungeMessageProcessor.setMyPlayerId(playerId);
 			mSocketIO.emit("login", new JSONObject().put("playerID", playerId));
 		} catch (JSONException e) {
 			Log.e("LoungeService", "caught exception while sending login", e);

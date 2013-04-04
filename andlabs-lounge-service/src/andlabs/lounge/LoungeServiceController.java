@@ -1,7 +1,7 @@
 package andlabs.lounge;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Map;
 
 import andlabs.lounge.model.Game;
 import andlabs.lounge.service.LoungeService;
@@ -48,8 +48,8 @@ public class LoungeServiceController {
 					if (mLoungeServiceCallback != null) {
                         Serializable involvedGames = message.getData().getSerializable("involvedGameList");
                         Serializable openGames = message.getData().getSerializable("openGameList");
-						mLoungeServiceCallback.onOpenGamesUpdate((ArrayList<Game>) openGames);
-	                    mLoungeServiceCallback.onRunningGamesUpdate((ArrayList<Game>) involvedGames);
+						mLoungeServiceCallback.onOpenGamesUpdate((Map<String, Game>) openGames);
+	                    mLoungeServiceCallback.onRunningGamesUpdate((Map<String, Game>) involvedGames);
 					}
 					break;
 
@@ -119,7 +119,7 @@ public class LoungeServiceController {
 
 	public void login(String pPlayerName) {
 	    try {
-            mLoungeService.login("John Doe");
+            mLoungeService.login(pPlayerName);
         } catch (RemoteException e) {
             Log.e("LoungeServiceController", "Handler.handleMessage(): caught exception while processing login", e);
         }

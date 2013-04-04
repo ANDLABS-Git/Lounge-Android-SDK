@@ -18,7 +18,7 @@ package andlabs.lounge.lobby.util;
 
 import java.util.List;
 
-import andlabs.lounge.lobby.model.GameMatch;
+import andlabs.lounge.model.Match;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -37,7 +37,7 @@ public class Utils {
         return ctx.getPackageManager().queryIntentActivities(intent, 0);
     }
 
-   public static void launchGameApp(Context context, String packageName, GameMatch match) {
+   public static void launchGameApp(Context context, String packageName, Match match) {
 //        final ResolveInfo info = null;//getInstalledGameInfo(context, packageName);
 //        if (info != null) {
 //            final Intent intent = new Intent();

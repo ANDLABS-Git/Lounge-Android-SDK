@@ -1,11 +1,8 @@
 package andlabs.lounge;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import andlabs.lounge.model.Game;
-import andlabs.lounge.model.Match;
-import andlabs.lounge.model.Player;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,13 +32,19 @@ public class LoungeGameController {
 			
 		}
 
+        @Override
+        public void onStart() {
+            // TODO Auto-generated method stub
+            
+        }
+
 		@Override
-		public void onOpenGamesUpdate(ArrayList<Game> pGames) {
+		public void onOpenGamesUpdate(Map<String, Game> pGames) {
 			Log.v("LoungeGameController", "LoungeServiceCallback.onOpenGamesUpdate(): " + pGames);
 		}
 
 		@Override
-		public void onRunningGamesUpdate(ArrayList<Game> pGames) {
+		public void onRunningGamesUpdate(Map<String, Game> pGames) {
 			Log.v("LoungeGameController", "LoungeServiceCallback.onRunningGamesUpdate(): " + pGames);
 		}
 
@@ -49,12 +52,6 @@ public class LoungeGameController {
 		public void onError(String message) {
 			Log.e("LoungeGameController", "LoungeServiceCallback.onError(): " + message);
 		}
-
-        @Override
-        public void onStart() {
-            // TODO Auto-generated method stub
-            
-        }
 
 	};
 

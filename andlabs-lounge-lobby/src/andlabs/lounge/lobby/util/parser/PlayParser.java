@@ -117,17 +117,14 @@ public class PlayParser {
             final int imageWidth = data.getWidth();
             final int imageHeight = data.getHeight();
 
-
-            Drawable cached = readFileFromInternalStorage(packageName,
-                    imageHeight);
+			Drawable cached = readFileFromInternalStorage(packageName, imageHeight);
 
             if (cached != null) {
                 mResults.put(packageName, cached);
                 notifyListener(new PlayResult(cached, packageName));
             } else {
-//                UrlDownloadTask urlTask = new UrlDownloadTask(packageName,
-//                        imageWidth, imageHeight);
-//                urlTask.execute(PLAY_BASE_URL + packageName);
+				UrlDownloadTask urlTask = new UrlDownloadTask(packageName, imageWidth, imageHeight);
+				urlTask.execute(PLAY_BASE_URL + packageName);
             }
         } else {
             mIsQuerying = false;

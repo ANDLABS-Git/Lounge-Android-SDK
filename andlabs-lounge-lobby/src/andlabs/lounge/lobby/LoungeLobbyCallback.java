@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import andlabs.lounge.lobby.model.ChatMessage;
-import andlabs.lounge.lobby.model.LobbyListElement;
 import andlabs.lounge.model.Game;
 
 public interface LoungeLobbyCallback {

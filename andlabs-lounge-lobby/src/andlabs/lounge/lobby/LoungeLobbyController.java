@@ -1,17 +1,12 @@
 package andlabs.lounge.lobby;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import andlabs.lounge.LoungeServiceCallback;
 import andlabs.lounge.LoungeServiceController;
-import andlabs.lounge.lobby.model.GameMatch;
-import andlabs.lounge.lobby.model.LobbyListElement;
-import andlabs.lounge.lobby.model.LobbyListElement.ElementType;
 import andlabs.lounge.lobby.util.Id;
 import andlabs.lounge.model.Game;
-import andlabs.lounge.model.Match;
-import andlabs.lounge.model.Player;
 import android.content.Context;
 import android.util.Log;
 
@@ -19,7 +14,6 @@ public class LoungeLobbyController {
 
     private String mUserName;
     private LoungeLobbyCallback mLoungeLobbyCallback;
-    private List<LobbyListElement> mLoungeLobbyList = new ArrayList<LobbyListElement>();
     private LoungeServiceController mLoungeServiceController = new LoungeServiceController();
     private LoungeServiceCallback mLoungeServiceCallback = new LoungeServiceCallback() {
 
@@ -46,15 +40,15 @@ public class LoungeLobbyController {
         }
 
         @Override
-        public void onOpenGamesUpdate(ArrayList<Game> pGames) {
+        public void onOpenGamesUpdate(Map<String, Game> pGames) {
             Log.v("LoungeLobbyController", "LoungeServiceCallback.onOpenGamesUpdate(): " + pGames);
-            mLoungeLobbyCallback.onOpenGamesUpdate(pGames);
+            mLoungeLobbyCallback.onOpenGamesUpdate(new ArrayList<Game>(pGames.values()));
         }
 
         @Override
-        public void onRunningGamesUpdate(ArrayList<Game> pGames) {
+        public void onRunningGamesUpdate(Map<String, Game> pGames) {
             Log.v("LoungeLobbyController", "LoungeServiceCallback.onRunningGamesUpdate(): " + pGames);
-            mLoungeLobbyCallback.onRunningGamesUpdate(pGames);
+            mLoungeLobbyCallback.onRunningGamesUpdate(new ArrayList<Game>(pGames.values()));
         }
 
         @Override
