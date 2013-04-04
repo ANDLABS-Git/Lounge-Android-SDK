@@ -65,7 +65,6 @@ public class LoungeLobbyController {
 			if (mRunningGames != null)
 				for (Game game : mRunningGames) {
 					LobbyListElement dataElement = new LobbyListElement();
-
 					dataElement.setPgkName(game.gameID);
 					dataElement.setTitle(game.gameName);
 					dataElement.setType(ElementType.JOINED_GAME);

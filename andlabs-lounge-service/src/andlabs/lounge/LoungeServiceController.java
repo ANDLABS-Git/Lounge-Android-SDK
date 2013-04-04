@@ -140,7 +140,7 @@ public class LoungeServiceController {
 
 	public void sendGameMove(String pPackageId, String pMatchId, Bundle pMoveBundle) {
 		try {
-			mLoungeService.sendGameMove(pPackageId, pMatchId, pMoveBundle);
+			mLoungeService.move(pPackageId, pMatchId, pMoveBundle);
 		} catch (RemoteException e) {
 			Log.e("LoungeServiceController", "sendGameMove(): caught exception while opening a game move", e);
 		}
