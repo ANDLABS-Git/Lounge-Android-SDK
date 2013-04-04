@@ -1,7 +1,6 @@
 html 
 { 
 	height:100%; 
-	font-family: vegur;
 } 
 
 
@@ -15,56 +14,62 @@ body
 	background-color: #000;
 }
 
-a 
-{
-	text-decoration: none;
-	color: inherit;
-}
-
 #wrapper
 {
 	position: relative;
+	margin: left;
 }
 
 
 #header
 {
-height: 40px;
-border-bottom: 3px solid #fff;
-position: relative;
-margin-bottom: 10px;
+	height: 40px;
+	position: relative;
+	margin-bottom: 40px;
 }
 
 #header h1
 {
-	font-size: 30px;
-	font-weight: normal;
-	color: #fff;
-	margin: 0;
-	padding: 0;
+	margin: 20px 20px;
+	color: white;
 }
 
-#login button
+#authentification
 {
-	border: 0px;
-	padding: 5px;
-	margin: 5px;
-	width: 100px;
-	top: -40px;
 	position: relative;
 	float: right;
+	margin: 0px 20px;
 }
 
-#login input
+#authentification #login
 {
 	border: 0px;
-	background-color: #fff;
-	padding: 5px;
-	margin: 5px;
 	width: 100px;
-	top: -40px;
+	height: 18px;
 	position: relative;
-	float: right;
+}
+
+#authentification #login :hover
+{
+	border: 0px;
+	background: blue;
+	width: 100px;
+	height: 18px;
+	position: relative;
+}
+
+#authentification #logout
+{
+	border: 0px;
+	width: 100px;
+	height: 18px;
+	position: relative;
+}
+
+#authentification #username
+{
+	height: 12px;
+	margin: 0px 10px;
 }
 
 #box
@@ -73,69 +78,138 @@ margin-bottom: 10px;
 	height: 500px;
 	float: left;
 	position: relative;
+	margin: 0px 8px 10px 8px;
 
 }
 #box_cont
 {
+
 	height: 400px;
-	width: 280px;
-	padding: 10px;
 	overflow-y: auto;
 	overflow-x: hidden;
 
 }
 
-#box_bottom
+#box_title
 {
-	position: absolute;
-	bottom: 10px;
+	padding: 10px 10px;
+	font-weight: bold;
+	font-size: 16px;
+	height: 16px;
+	background-color: white;
+	opacity: 0.5;
+}
+
+#box_bottom, #createChatMessage, #createMatch, #status_bottom
+{
+	position: relative;
 	width: 300px;
-	height: 38px;
-	background-color: #fff;
+	min-height: 100px;
 	text-align: center; 
 	font-size: 20px; 
-	padding-top: 12px;
-	opacity: 0.5; 
+	background-color: rgb(21, 95, 64);
+	opacity: 0.8;	
 }
 
-#box_bottom:HOVER
+#createChatMessage
 {
-	opacity: 1;
-	}
+	background-color: rgb(21, 68, 82);
+}
 
-#box_bottom textarea
+#createMatch
 {
-	margin-top: -12px;
-	padding: 5px;
-	height: 40px;
-	border: 0;
+	background-color: rgb(144, 71, 44);
+}
+
+#matchGameID, #matchGameName, #matchCreateSubmit
+{
+	position: relative;
+	float: left;
+	margin: 10px 0px 0px 20px;
+}
+
+#matchMaximumPlayer, #matchStreamGame
+{
+	position: relative;
+	float: left;
+	margin: 10px 0px 0px 10px;
+}
+
+#matchMaximumPlayer
+{
+	width: 16px;
+}
+
+label
+{
+	font-size: 12px;
+	float: left;
+	position: relative;
+	margin: 10px 0px 0px 20px;
+}
+
+#matchCreateSubmit, #chatMessageSubmit
+{
 	position: absolute;
-	left: 0px;
-	width: 290px;
-	font-family: inherit;
+	right: 10px;
+	bottom: 10px;
 }
 
-#box_bottom input
+#status_bottom
 {
-	background-color: #000;
-	border: 0px;
-	position: absolute;
-	right: 0px;
-	bottom: 0px;
-	padding: 3px;
-	color: #fff;
-}
-#box_bottom input:HOVER
-{
-background-color: rgb(21, 68, 82);
+	background-color: rgb(146, 139, 21);
 }
 
+#chatMessageInput
+{
+	height: 70px; 
+	width: 220px; 
+	float: left;
+	position: relative;
+	margin: 10px 10px 10px 10px;
+	resize: none;
+}
+
+.openMatch, .runningMatch, .chatMessage
+{
+	margin: 10px 10px 0px 10px;
+	position: relative;
+}
+
+.player
+{
+	margin: 10px 10px 1px 10px;
+	position: relative;
+	border-bottom: 2px dashed #fff;
+	padding-bottom: 10px;
+	font-weight: bold;
+}
+
+.location
+{
+	font-weight: normal;
+}
+
+.chatMessageUser
+{
+	font-weight: bold;
+	position: relative;
+	float: left;
+}
+
+.chatMessageValue
+{
+	position: relative;
+	float: left;
+	margin: 0px 10px;
+}
 
 #box ul
 {
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	overflow-y: auto;
 }
 
 
@@ -147,15 +221,76 @@ background-color: rgb(21, 68, 82);
 }
 
 
-#joinbutton
+#box ul li #chatMessage
+{
+	border-bottom: none;
+}
+.joinMatchSubmit, .inspectGameSubmit
 {
 	background-color: #fff;
-	width: 50px;
-	height: 22px;
+	width: 60px;
+	height: 34px;
+	margin: -40px 10px;
 	float: right;
 	text-align: center;
-	padding-top: 8px;
 	opacity: 0.5;
 }
 
-#joinbutton:HOVER{opacity: 1;}
+.joinMatchSubmit:ACTIVE, .inspectGameSubmit:ACTIVE
+{
+	background-color: #aaa;
+	opacity: 0.5;
+}
+
+#login, #logout
+{
+	background-color: #ccc;
+}
+
+#login:ACTIVE, #logout:ACTIVE
+{
+	background-color: #aaa;
+}
+
+.closeInspectMatchSubmit
+{
+	position: relative;
+	float: left;
+	margin: 10px 10px;
+}
+
+.closeInspectMatchWindowSubmit
+{
+	position: relative;
+	float: right;
+	margin: 10px 10px;
+}
+
+.inspectionInput
+{
+	position: relative;
+	float: left;
+	margin: 0px 10px;
+	padding: 0px 10px 0px 10px;
+	opacity: 0.8;
+}
+
+.createInspectionSubmit
+{
+	float: left;
+	position: relative;
+}
+
+.currentMove
+{
+	float: left;
+	position: relative;
+	margin: 20px 40px;
+}
+
+#ballCanvas
+{
+	position: relative;
+	float: left;
+	margin: 20px 24px;
+}

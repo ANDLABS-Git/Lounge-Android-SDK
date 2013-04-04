@@ -30,6 +30,9 @@ var MatchSchema = new Schema
 	// In this version the server is only interested in the last move.
 	move: { type: String, trim: true, default: "" },
 	
+	// Player of last move
+	lastMovingPlayer: { type: Schema.Types.ObjectId, ref: 'User' },
+	
 	// Type of the game.
 	gameType: { type: String, trim: true, default: "" }
 	
@@ -301,17 +304,18 @@ MatchSchema.statics.move = function(data, userID, callback)
 				if (true === containsUserID)
 				{
 					match.move = data.move;
+					match.lastMovingPlayer = userID
 					match.save(function(err)
 					{
 						if (err) { return callback(err, null); }
 						mongoose.models['Match'].findOne({ _id: match._id})
 						.populate('participants', 'socketID')
+						.populate('lastMovingPlayer', 'playerID')
 						.exec(function(err, match)
 						{
 							if (err) { return callback(err, null); }
 							return callback(null, match);
 						});
-
 					});
 				}
 				else
@@ -362,7 +366,13 @@ MatchSchema.statics.lastMove = function(data, userID, callback)
 		
 				if (true === containsUserID)
 				{
-					return callback(null, match);
+					mongoose.models['Match'].findOne({ _id: match._id})
+					.populate('lastMovingPlayer', 'playerID')
+					.exec(function(err, match)
+					{
+						if (err) { return callback(err, null); }
+						return callback(null, match);
+					});					
 				}
 				else
 				{

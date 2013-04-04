@@ -43,13 +43,40 @@
 			 */
 			socket.on('connect', function()
 			{
-				// Display the login user interface.
 				// Add the username input.
 				var usernameInput = $('<input/>',
 				{
 					id: 'username',
-					value: 'username',
+					value: 'Your username',
 					type: 'text',
+					click: function()
+					{
+						if ($(this).val() === 'Your username')
+						{
+							$(this).val('');	
+						}
+					},
+					focusout: function()
+					{
+						if ($(this).val() === '')
+						{
+							$(this).val('Your username');
+						}			
+					},
+					keyup: function(e)	
+					{
+						if (e.keyCode === 13)
+						{
+							var username = $("input#username").val();
+							if ('' !== username &&
+								'Your username' !== username)
+							{
+								socket.emit('login', { playerID: username });
+							}
+						}
+						return false;	
+
+					}
 				});
 				$("div#authentification").append(usernameInput);
 				
@@ -62,8 +89,16 @@
 			        click: function() 
 					{
 						var username = $("input#username").val();
-						globalPlayerID = username;
-						socket.emit('login', { playerID: username });
+						if (username !== 'Your username' &&
+							username !== '')
+						{
+							globalPlayerID = username;
+							socket.emit('login', { playerID: username });
+						}	
+						else
+						{
+							alert('Please enter an username!')
+						}
 						return false;												
 					}
 			    });
@@ -123,75 +158,35 @@
 					
 							$("div#authentification").append(logoutButton);
 							
-							// Add the create match functionality.
-							var matchGameInput =  $('<input/>',
-						    {
-								id: 'matchGameID',
-						        value: 'gameID',
-								type: 'text'								
-						    });
-							
-							$('div#createMatch').append(matchGameInput);
-							
-							var matchGameNameInput =  $('<input/>',
-						    {
-								id: 'matchGameName',
-						        value: 'gameName',
-								type: 'text'								
-						    });
-							
-							$('div#createMatch').append(matchGameNameInput);
-							
-							var matchMaximumPlayerInput =  $('<input/>',
-						    {
-								id: 'matchMaximumPlayer',
-						        value: 2,
-								type: 'text'								
-						    });
-							
-							$('div#createMatch').append(matchMaximumPlayerInput);		
-							
-							var matchStreamGameCheckbox = $('<input/>',
-							{
-								id: 'matchStreamGame',
-								value: 'Stream Game',
-								type: 'checkbox'
-							});
-							$('div#createMatch').append(matchStreamGameCheckbox);
-							
-							var matchCreateSubmit =  $('<input/>',
-						    {
-								id: 'matchCreateSubmit',
-						        value: 'Create Match',
-								type: 'submit',
-						        click: function () 
-								{
-									var gameID = $("input#matchGameID").val();
-									var gameName = $("input#matchGameName").val();
-									var maximumPlayers = $("input#matchMaximumPlayer").val();
-									var gameType = '';
-									if ($("input#matchStreamGame").is(":checked"))
-									{
-										gameType = 'stream';
-									}
-									else
-									{
-										gameType = 'move';
-									}
-									socket.emit('join', { gameID: gameID, gameName: gameName, maximumPlayers: maximumPlayers, gameType: gameType });
-									return false;														
-								}														
-						    });
-							
-							$('div#createMatch').append(matchCreateSubmit);	
+							createMatchFunctionality();
 											
 							// Add the chat functionality.							
-							var chatMessageInput =  $('<input/>',
+							var chatMessageInput =  $('<textarea/>',
 						    {
 								id: 'chatMessageInput',
 						        value: 'chattext here',
-								type: 'text'								
-						    });							
+								click: function()
+								{
+									if ($(this).val() === 'Type your chat message here.')
+									{
+										$(this).val('');	
+									}
+									return false;
+								},	
+								keyup: function(e)	
+								{
+									if (e.keyCode === 13)
+									{
+										var message = $(this).val();
+										if ('' !== message)
+										{
+											socket.emit('chat', { message: message });
+										}
+									}
+									return false;	
+								}
+						    });	
+							chatMessageInput.append("Type your chat message here.")						
 							$('div#createChatMessage').append(chatMessageInput);		
 							
 							var chatMessageSubmit =  $('<input/>',
@@ -201,7 +196,7 @@
 								type: 'submit',
 						        click: function () 
 								{
-									var message = $("input#chatMessageInput").val();
+									var message = $("textarea#chatMessageInput").val();
 									socket.emit('chat', { message: message });
 									return false;													
 								}														
@@ -309,7 +304,7 @@
 					'' !== validateParameter(payload.playerID) &&
 					'' !== validateParameter(payload.message))
 				{
-					$('#chatMessages').append('<div class="chatMessage">' + payload.playerID + ": " + payload.message + '</div>');
+					$('#chatMessages').append('<li class="chatMessage" style="border-bottom:none;"><div class="chatMessageUser">' + payload.playerID + ":</div><div class='chatMessageValue'>" + payload.message + '<br/></div></li>');
 				}				
 			});
 						
@@ -326,9 +321,7 @@
 					{
 						if ('create' === payload.description)
 						{
-							$("input#matchGameID").val('');
-							$("input#matchGameName").val('');
-							$("input#matchMaximumPlayer").val('');
+							createMatchFunctionality();
 						}
 						else if ('join' == payload.description)
 						{
@@ -392,7 +385,7 @@
 						else
 						{
 							// Create the game.
-							$("ul#openMatchesList").append("<li class='openMatch' matchID='" + payload.matchID + "'>" + payload.gameID+ "</b><br>" + payload.gameName + "<br>Match ID:" + payload.matchID + "<br>Game Type: " + payload.gameType + "<br>Open Spots:<div class='openSpots'>" + openSpots + "</div><br></li>");
+							$("ul#openMatchesList").append("<li class='openMatch' matchID='" + payload.matchID + "'><span style='font-weight:bold'>Game ID:</span><br><span style='margin: 0px 14px;'>" + payload.gameID+ "</span><br><span style='font-weight:bold'>Game Name:</span><br><span style='margin: 0px 14px;'>" + payload.gameName + "</span><br><span style='font-weight:bold'>Match ID:</span><br><span style='margin: 0px 14px;'>" + payload.matchID + "</span><br><span style='font-weight:bold'>Game Type:</span><br><span style='margin: 0px 14px;'>" + payload.gameType + "</span><br><span style='font-weight:bold'>Open Spots:</span><div class='openSpots'><span style='margin: 0px 14px;'>" + openSpots + "</span></div><br></li>");
 						}	
 					
 						// Check if user is in the list of playerIDs.
@@ -423,7 +416,7 @@
 						var inspectGameSubmit = $('<input/>',
 					    {
 							class: 'inspectGameSubmit',
-					        value: 'inspectMatch',
+					        value: 'Play',
 							matchID: payload.matchID,
 							type: 'submit',
 					        click: function () 
@@ -432,13 +425,13 @@
 								$('.inspectGame').remove();
 								
 								// Display the new inspectGame div
-								$('#wrapper').append('<div id="box" class="inspectGame" matchID="' + payload.matchID + '" style="margin-left: 20px;"><div id="box_cont" style="background-color: rgb(23, 200, 200);"></div></div>');
+								$('#wrapper').append('<div id="box" class="inspectGame" matchID="' + payload.matchID + '"><div id="box_cont" style="background-color: rgb(23, 200, 200);"></div></div>');
 								
 								// Create a button to close the current inspected match window.
 								var closeInspectMatchWindowSubmit = $('<input/>', 
 								{
 									class: 'closeInspectMatchWindowSubmit',
-									value: 'closeMatchWindow',
+									value: 'x',
 									type: 'submit',
 									click: function ()
 									{
@@ -457,7 +450,7 @@
 								var closeInspectMatchSubmit = $('<input/>', 
 								{
 									class: 'closeInspectMatchSubmit',
-									value: 'closeMatch/Finish',
+									value: 'Close the Match',
 									type: 'submit',
 									click: function ()
 									{
@@ -508,29 +501,20 @@
 						// Remove the old state in open games.
 						if ($(".runningMatch[matchID = '" + payload.matchID + "']").length === 0)
 						{
-							$("ul#runningMatchesList").append('<li class="runningMatch" matchID="' + payload.matchID + '">GameID: ' + payload.gameID + '<br>MatchID: ' + payload.matchID + '<br>GameName: ' + payload.gameName + '<br> Player: <div class=' + payload.matchID + '></div></li>')					
+							$("ul#runningMatchesList").append("<li class='runningMatch' matchID='" + payload.matchID+ "'><span style='font-weight:bold'>Game ID:</span><br><span style='margin: 0px 14px;'>" + payload.gameID+ "</span><br><span style='font-weight:bold'>Game Name:</span><br><span style='margin: 0px 14px;'>" + payload.gameName + "</span><br><span style='font-weight:bold'>Match ID:</span><br><span style='margin: 0px 14px;'>" + payload.matchID + "</span><br><span style='font-weight:bold'>Game Type:</span><br><span style='margin: 0px 14px;'>" + payload.gameType + "</span><br><span style='font-weight:bold'>Participants:</span><br><div class='" + payload.matchID+"' style='margin: 0px 14px;'></div></li>");
 							$.each(payload.playerIDs, function(key, value) {
-								$('.' + payload.matchID).append(value.playerID + ' ');
+								if (0 === key)
+								{
+									$('.' + payload.matchID).append(value.playerID);
+								}
+								else
+								{
+									$('.' + payload.matchID).append(" | " + value.playerID);									
+								}
 							});												
 							
-							// Check if user is in the list of playerIDs.
-							var foundPlayer = false;
-							$.each(payload.playerIDs, function(key, value) {
-								if (value.playerID === globalPlayerID)
-								{
-									foundPlayer = true;
-								}
-							});
+							$(".runningMatch[matchID = '" + payload.matchID + "']").append(inspectGameSubmit);							
 
-							// Add or remove the joinMatchSubmit
-							if (foundPlayer)
-							{
-								$(".runningMatch[matchID = '" + payload.matchID + "']").append(inspectGameSubmit);							
-							}
-							else
-							{
-								$(".runningMatch[matchID = '" + payload.matchID + "'] .inspectGameSubmit").remove()
-							}
 						}
 					}
 					else if ('close' === payload.status)
@@ -635,10 +619,6 @@
 							{
 								handleMove(payload.gameID, payload.matchID, payload.move);
 							}
-							else
-							{
-								handleEmptyMove(payload.gameID, payload.matchID);
-							}
 						}
 					}
 					else
@@ -688,7 +668,7 @@
 				var JSONObj = $.parseJSON(move)
 				$.each(JSONObj, function(key, value)
 				{
-					$('.inspectGame[matchID = "' + matchID + '"] #box_cont .currentMove').append(key + " --> " + value + "<br>")
+					$('.inspectGame[matchID = "' + matchID + '"] #box_cont .currentMove').append("" + key + " &rarr; " + value + "<br>")
 				});								
 			}			
 			
@@ -708,13 +688,15 @@
 					{
 						class: 'inspectionInputKey' + i,
 						value: 'key',
-						type: 'text'
+						type: 'text',
+						style: 'width: 80px; margin-right: 10px;'
 					});
 					var value = $('<input/>', 
 					{
 						class: 'inspectionInputValue' + i,
 						value: 'value',
-						type: 'text'
+						type: 'text',
+						style: 'width: 80px'
 					});	
 					$('.inspectGame[matchID = "' + matchID + '"] #box_cont').append(div)
 					div.append(key);					
@@ -802,12 +784,136 @@
 				context.fillStyle = color;
 				context.fill();
 			}
+			
+			var createMatchFunctionality = function()
+			{
+				$('div#createMatch').empty();
+				
+				// Add the create match functionality.
+				var matchGameInput =  $('<input/>',
+			    {
+					id: 'matchGameID',
+			        value: 'The game id',
+					type: 'text',
+					click: function()
+					{
+						if ($(this).val() === 'The game id')
+						{
+							$(this).val('');	
+						}
+					},
+					focusout: function()
+					{
+						if ($(this).val() === '')
+						{
+							$(this).val('The game id');
+						}			
+					}							
+			    });
+				
+				$('div#createMatch').append(matchGameInput);
+				
+				var matchGameNameInput =  $('<input/>',
+			    {
+					id: 'matchGameName',
+			        value: 'The game name',
+					type: 'text',
+					click: function()
+					{
+						if ($(this).val() === 'The game name')
+						{
+							$(this).val('');	
+						}
+					},
+					focusout: function()
+					{
+						if ($(this).val() === '')
+						{
+							$(this).val('The game name');
+						}			
+					}																
+			    });
+				
+				$('div#createMatch').append(matchGameNameInput);
+				
+				var maximumPlayerLabel = $('<label for="matchMaximumPlayer">Maximum Player:</label>');							
+				var matchMaximumPlayerInput =  $('<input/>',
+			    {
+					id: 'matchMaximumPlayer',
+			        value: 2,
+					type: 'text',
+					click: function()
+					{
+						if ($(this).val() === '2')
+						{
+							$(this).val('');	
+						}
+					},
+					focusout: function()
+					{
+						if ($(this).val() === '')
+						{
+							$(this).val(2);
+						}			
+					}									
+			    });
+				$('div#createMatch').append(maximumPlayerLabel);
+				$('div#createMatch').append(matchMaximumPlayerInput);		
+
+				var streamLabel = $('<label for="matchStreamGame">Stream Match:</label>');
+				var matchStreamGameCheckbox = $('<input/>',
+				{
+					id: 'matchStreamGame',
+					value: 'Stream Game',
+					name: 'Stream Game',
+					type: 'checkbox'
+				});
+				$('div#createMatch').append(streamLabel);
+				$('div#createMatch').append(matchStreamGameCheckbox);
+				
+				var matchCreateSubmit =  $('<input/>',
+			    {
+					id: 'matchCreateSubmit',
+			        value: 'Create Match',
+					type: 'submit',
+			        click: function () 
+					{
+						var gameID = $("input#matchGameID").val();
+						var gameName = $("input#matchGameName").val();
+						var maximumPlayers = $("input#matchMaximumPlayer").val();
+						var gameType = '';
+						
+						if (!('' !== gameID &&
+							'The game id' !== gameID &&
+							'' !== gameName &&
+							'The game name' !== gameName &&
+							'' !== maximumPlayers))
+						{
+							alert("Please fill out all required fields!");
+							return false;
+						}
+						
+						if ($("input#matchStreamGame").is(":checked"))
+						{
+							gameType = 'stream';
+						}
+						else
+						{
+							gameType = 'move';
+						}
+						socket.emit('join', { gameID: gameID, gameName: gameName, maximumPlayers: maximumPlayers, gameType: gameType });
+						return false;														
+					}														
+			    });
+				
+				$('div#createMatch').append(matchCreateSubmit);	
+			}
 		</script>		
 	</head>
 <body>
 
 	<div id="wrapper">
-		<div id="header"><h1><strong>Lounge Server</strong> - Android Web Debug Client v0.8</h1>
+		<div id="header"><h1><strong>Lounge Server</strong></h1>
 			<div id="authentification">
 			</div>
 		</div>
@@ -816,22 +922,8 @@
 		<!-- Open Matches -->
 		<div id="box">
 			<div id="box_cont" style="background-color: rgb(144, 71, 44);">
-				<strong>Open Matches.</strong> 
+				<div id="box_title">Open Matches</div> 
 				<ul id="openMatchesList">
-					<!-- Listelement --> 
-					<li>
-						<div id="joinbutton">Join</div>
-						<b>Player Name A</b><br>
-						Gamename
-					</li>
-					<!-- Listelement end--> 
-					<!-- Listelement --> 
-					<li>
-						<div id="joinbutton">Join</div>
-						<b>Player Name A</b><br>
-						Gamename
-					</li>
-					<!-- Listelement end--> 
 				</ul>
 			</div>
 			<div id="createMatch">
@@ -839,40 +931,34 @@
 		</div>
 		
 		<!-- Chat -->
-		<div id="box" style="margin-left: 20px;">
+		<div id="box">
 			<div id="box_cont" style="background-color: rgb(21, 68, 82);">
-				<strong>Chat</strong> 
-				<div id="chatMessages">
-				</div>
+				<div id="box_title">Chat</div>				
+				<ul id="chatMessages">
+				</ul>
 			</div>
 			<div id="createChatMessage">
 			</div>
 		</div>
 
 		<!-- Running Matches  -->
-		<div id="box" style="margin-left: 20px;">
+		<div id="box">
 			<div id="box_cont" style="background-color: rgb(21, 95, 64);">
-				<strong>Running matches.</strong> 
+				<div id="box_title">Running Matches</div>
 				<ul id="runningMatchesList">
-					<!-- Listelement --> 
-					<li>
-						GameID: <strong>12345678</strong><br>
-						Game: <strong>thatgamemon!</strong><br>
-						Players: <strong>yo, gangsta, pibbedipit</strong><br>
-					</li>
-					<!-- Listelement end--> 
 				</ul>	
 			</div>
-			<div id="box_bottom"> Output / Server Log</div>
+			<div id="box_bottom"></div>
 		</div>
 		
 		<!-- Online Player -->
-		<div id="box" style="margin-left: 20px;">		
+		<div id="box">		
 			<div id="box_cont" style="background-color: rgb(146, 139, 21);">
-				<strong>Players logged in.</strong> 
+				<div id="box_title">Online Players</div>
 				<div id="connectedPlayer">
 				</div>
-			</div>		
+			</div>	
+			<div id="status_bottom"></div>			
 		</div>		
 	</div>	
 </body>

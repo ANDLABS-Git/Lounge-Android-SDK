@@ -311,7 +311,6 @@ var LoungeServer = function() {
 										}
 										if (allMatches)
 										{
-											console.log("ASDFASDF" + allMatches);
 											allMatches.forEach(function (match)
 											{
 												socket.join(match._id);												
@@ -473,9 +472,7 @@ var LoungeServer = function() {
 												{
 													// Give the socket a valid callback.
 													socket.emit('join', { result: true, description: "create" });									
-					
-													console.log(match);				
-					
+										
 													// Inform all online player about the match creation.
 													onlineUsers.forEach(function (u)
 													{
@@ -832,7 +829,15 @@ var LoungeServer = function() {
 													if (!('undefined' === typeof s))
 													{
 														// Send the chat message to the user.
-														s.emit('moveMatch', { gameID: match.gameID, matchID: match._id, move: match.move });
+														if ('' !== self.validateParameter(match.lastMovingPlayer) &&
+															'' !== self.validateParameter(match.lastMovingPlayer.playerID))
+														{
+															socket.emit('moveMatch', { result: true, gameID: match.gameID, matchID: match._id, move: match.move, playerID: match.lastMovingPlayer.playerID });
+														}
+														else
+														{
+															socket.emit('moveMatch', { result: true, gameID: match.gameID, matchID: match._id, move: match.move, playerID: '' });													
+														}														
 													}
 												});
 											}
@@ -899,7 +904,15 @@ var LoungeServer = function() {
 										{
 											if (match)
 											{
-												socket.emit('lastMove', { result: true, gameID: match.gameID, matchID: match._id, move: match.move });
+												if ('' !== self.validateParameter(match.lastMovingPlayer) &&
+													'' !== self.validateParameter(match.lastMovingPlayer.playerID))
+												{
+													socket.emit('lastMove', { result: true, gameID: match.gameID, matchID: match._id, move: match.move, playerID: match.lastMovingPlayer.playerID });
+												}
+												else
+												{
+													socket.emit('lastMove', { result: true, gameID: match.gameID, matchID: match._id, move: match.move, playerID: '' });													
+												}
 											}
 											else
 											{
