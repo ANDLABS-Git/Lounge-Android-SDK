@@ -13,6 +13,7 @@ import android.util.Log;
 
 public class LoungeGameController {
 
+	private String mPackageId;
 	private LoungeGameCallback mLoungeGameCallback;
 	private LoungeServiceController mLoungeServiceController = new LoungeServiceController();
 	private LoungeServiceCallback mLoungeServiceCallback = new LoungeServiceCallback() {
@@ -53,6 +54,7 @@ public class LoungeGameController {
 
 
 	public void bindServiceTo(Context pContext) {
+		mPackageId = pContext.getApplicationInfo().packageName;
 		Log.v("LoungeGameController", "bindServiceTo()");
 		mLoungeServiceController.bindServiceTo(pContext);
 		mLoungeServiceController.registerCallback(mLoungeServiceCallback);
@@ -77,25 +79,22 @@ public class LoungeGameController {
 		mLoungeServiceController.unbindServiceFrom(pContext);
 	}
 
-	
-	
-	private void sendGameMessage(String matchID, Bundle gameMessage) {
+
+	public void checkin(String pMatchId) {
 		Log.v("LoungeGameController", "checkin()");
-
-	}
-
-
-	private void checkin(String pMatchId) {
-		Log.v("LoungeGameController", "checkin()");
-		// TODO wire it to the corresponding LoungeServiceController method
-		// When a player checks into a game that already was running the last 
-		//GameMessage is send to the LoungeGameCallback.
+		mLoungeServiceController.checkin(mPackageId, pMatchId);
 	}
 
 
 	private void checkout(String pMatchId) {
 		Log.v("LoungeGameController", "checkout()");
 		// TODO wire it to the corresponding LoungeServiceController method
+	}
+
+
+	public void sendGameMove(String pMatchId, Bundle pMoveBundle) {
+		Log.v("LoungeGameController", String.format("sendGameMove(): pMoveBundle = %s", pMoveBundle));
+		mLoungeServiceController.sendGameMove(mPackageId, pMatchId, pMoveBundle);
 	}
 
 }
