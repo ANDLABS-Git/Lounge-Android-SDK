@@ -3,6 +3,8 @@ package andlabs.lounge.lobby;
 import java.util.ArrayList;
 import java.util.List;
 
+import andlabs.lounge.LoungeServiceCallback;
+import andlabs.lounge.LoungeServiceController;
 import andlabs.lounge.lobby.model.GameMatch;
 import andlabs.lounge.lobby.model.LobbyListElement;
 import andlabs.lounge.lobby.model.LobbyListElement.ElementType;

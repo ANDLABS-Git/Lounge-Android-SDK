@@ -1,4 +1,4 @@
-package andlabs.lounge.lobby;
+package andlabs.lounge;
 
 import java.io.Serializable;
 import java.util.ArrayList;
