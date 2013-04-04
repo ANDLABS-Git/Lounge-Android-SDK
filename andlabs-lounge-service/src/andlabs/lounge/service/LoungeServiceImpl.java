@@ -88,7 +88,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 			message.what = 7;
 			Bundle bundle = new Bundle();
             bundle.putSerializable("involvedGameList", pInvolvedGames);
-            bundle.putSerializable("openGameList", pInvolvedGames);
+            bundle.putSerializable("openGameList", pOpenGames);
 			message.setData(bundle);
 			try {
 				mMessenger.send(message);
