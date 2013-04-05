@@ -165,7 +165,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 		try {
 			// PAYLOAD {gameID: "packageID", gameName: ”AppName”, maximumPlayers: “MaximumAllowedPlayersInGame” , gameType: “move/stream”}
 			JSONObject payload = new JSONObject().put("gameID", pPackageId).put("gameName", pDisplayName);
-			payload.put("MaximumAllowedPlayersInGame", 2).put("gameType", "move");
+			payload.put("maximumPlayers", 2).put("gameType", "move");
 			mSocketIO.emit("join", payload);
 		} catch (JSONException e) {
 			Ln.e(e, "openMatch(): caught exception while sending join");
