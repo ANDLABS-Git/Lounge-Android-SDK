@@ -66,17 +66,13 @@ public abstract class LoungeMessageProcessor {
 			}
 
 			// Match was created or joined by someone.
-			// If the status is "created", it is a new match, else a match is
-			// updated.
-			// Needs to split into games / matches in which the user is involved
-			// and others
+			// If the status is "created", it is a new match, else a match is updated.
+			// Needs to split into games / matches in which the user is involved and others
 			if ("joinMatch".equals(pVerb)) {
 
-				/*
-				 * { gameID: "packageID", matchID: â€œmatchIDâ€�, gameName:â€�AppNameâ€�, totalSpots: â€�totalSpotsâ€�,
-				 * status:â€�join/runningâ€�, gameType: â€œmove/streamâ€�, playerIDs: [player] } where each player is of type {_id:
-				 * â€œuuidâ€�, playerID: â€œplayerIDâ€�}
-				 */
+				// PAYLOAD { gameID: "packageID", matchID: “matchID”, gameName:”AppName”, totalSpots: ”totalSpots”,
+				//           status:”join/running”, gameType: “move/stream”, playerIDs: [player] }
+				// where each player is of type {_id: “uuid”, playerID: “playerID”}
 
 				JSONArray jsonArray = payload.getJSONArray("playerIDs");
 				Log.v("LoungeMessageProcessor", "processMessage(): payload = " + jsonArray);
@@ -149,8 +145,7 @@ public abstract class LoungeMessageProcessor {
 
 			// Set checkedInGame and checkedInMatch on the player's object
 			if ("checkIn".equals(pVerb)) {
-				// { gameID:ï¿½ packageIDï¿½, matchID: ï¿½matchIDï¿½, playerID:
-				// ï¿½playerIDï¿½}
+				// PAYLOAD { gameID:"packageID", matchID: "matchID", playerID: "playerID"}
 				final String gameID = payload.getString("gameID");
 				final String playerID = payload.getString("playerID");
 				Player player = mPlayers.get(playerID);
