@@ -20,26 +20,24 @@ import android.widget.TextView;
 public class HostGameAdapter extends BaseAdapter implements
         OnItemClickListener {
 
-    private Context mContext;
     private List<ResolveInfo> mContent;
     private PackageManager mPackageManager;
 
     private View mLastMarkedView;
     private int mSelectedItem = -1;
+	private Context mContext;
 
-    public HostGameAdapter(Context context) {
-        this.mContext = context;
 
-        this.mPackageManager = context.getPackageManager();
-        final Intent intent = new Intent(Intent.ACTION_MAIN);
-//        intent.addCategory(CATEGORY); // TODO: What was it?
-//        this.mContent = this.mPackageManager.queryIntentActivities(intent, 0);
-    }
+    public HostGameAdapter(List<ResolveInfo> installedGames, Context context, PackageManager packageManager) {
+    	this.mContext=context;
+    	mContent=installedGames;
+    	this.mPackageManager=packageManager;
+	}
 
-    @Override
+	@Override
     public int getCount() {
     	
-        return 0;// this.mContent.size();
+        return  this.mContent.size();
     }
 
     @Override

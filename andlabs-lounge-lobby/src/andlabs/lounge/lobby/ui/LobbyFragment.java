@@ -30,6 +30,9 @@ import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;
 import andlabs.lounge.lobby.util.parser.PlayResult;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.SparseIntArray;
@@ -46,6 +49,7 @@ import android.widget.Toast;
 
 public class LobbyFragment extends Fragment implements OnChildClickListener {
 
+	public static final String CATEGORY = "eu.andlabs.lounge";
 	private SparseIntArray listPositions = new SparseIntArray();
 	private ExpandableListView lobbyList;
 	private LobbyListAdapter mAdapter;
@@ -85,8 +89,10 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
 				@Override
 				public void run() {
+					if(pGames!=null){
 					mAdapter.setJoinedGames(pGames);
 					mAdapter.notifyDataSetChanged();
+					}
 				}
 
 			});
@@ -99,14 +105,18 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
 				@Override
 				public void run() {
+					if(pGames!=null){
 					mAdapter.setOpenGames(pGames);
 					mAdapter.notifyDataSetChanged();
+					}
 				}
 
 			});
 		}
 
 	};
+	private PackageManager mPackageManager;
+	private List<ResolveInfo> installedGames;
 
 
 	@Override
@@ -144,13 +154,22 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 			}
 		});
 
-		mAdapter.setJoinedGames(joinedGames);
-		mAdapter.setOpenGames(openGames);
+//		mAdapter.setJoinedGames(joinedGames);
+//		mAdapter.setOpenGames(openGames);
 		lobbyList.setAdapter(mAdapter);
 		lobbyList.setOnChildClickListener(this);
 
 		this.mHostList = (ListView) view.findViewById(R.id.installed_games);
-		this.hostAdapter = new HostGameAdapter(getActivity());
+
+		this.mPackageManager = getActivity().getPackageManager();
+		final Intent intent = new Intent(Intent.ACTION_MAIN);
+		intent.addCategory(CATEGORY); // TODO: What was it?
+		this.installedGames = this.mPackageManager.queryIntentActivities(
+				intent, 0);
+		mAdapter.setInstalledGames(installedGames, mPackageManager);
+
+		this.mHostList = (ListView) view.findViewById(R.id.installed_games);
+		this.hostAdapter = new HostGameAdapter(installedGames, getActivity(),mPackageManager);
 		this.mHostList.setAdapter(hostAdapter);
 		this.mHostList.setOnItemClickListener(hostAdapter);
 

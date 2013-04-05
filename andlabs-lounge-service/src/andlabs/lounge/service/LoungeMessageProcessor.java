@@ -73,9 +73,9 @@ public abstract class LoungeMessageProcessor {
 			if ("joinMatch".equals(pVerb)) {
 
 				/*
-				 * { gameID: "packageID", matchID: “matchID”, gameName:”AppName”, totalSpots: ”totalSpots”,
-				 * status:”join/running”, gameType: “move/stream”, playerIDs: [player] } where each player is of type {_id:
-				 * “uuid”, playerID: “playerID”}
+				 * { gameID: "packageID", matchID: â€œmatchIDâ€�, gameName:â€�AppNameâ€�, totalSpots: â€�totalSpotsâ€�,
+				 * status:â€�join/runningâ€�, gameType: â€œmove/streamâ€�, playerIDs: [player] } where each player is of type {_id:
+				 * â€œuuidâ€�, playerID: â€œplayerIDâ€�}
 				 */
 
 				JSONArray jsonArray = payload.getJSONArray("playerIDs");
@@ -122,7 +122,15 @@ public abstract class LoungeMessageProcessor {
 					match.matchID = matchID;
 					game.matches.put(matchID, match);
 				}
-
+				match.players=new ArrayList<Player>();
+				JSONArray playerArray = payload.getJSONArray("playerIDs");
+				for (int index = 0; index < jsonArray.length(); index++) {
+					JSONObject jsonObject = jsonArray.getJSONObject(index);
+					
+					String player = jsonObject.getString("_id");
+					match.players.add(mPlayers.get(player));
+				}
+				
 				match.totalSpots = payload.getInt("totalSpots");
 				match.status = payload.getString("status");
 
@@ -140,8 +148,8 @@ public abstract class LoungeMessageProcessor {
 
 			// Set checkedInGame and checkedInMatch on the player's object
 			if ("checkIn".equals(pVerb)) {
-				// { gameID:� packageID�, matchID: �matchID�, playerID:
-				// �playerID�}
+				// { gameID:ï¿½ packageIDï¿½, matchID: ï¿½matchIDï¿½, playerID:
+				// ï¿½playerIDï¿½}
 				final String gameID = payload.getString("gameID");
 				final String playerID = payload.getString("playerID");
 				Player player = mPlayers.get(playerID);

@@ -40,7 +40,9 @@ public class LoungeServiceController {
 
 				case 1:
 					Log.v("LoungeServiceController", "Handler.handleMessage(): Server connected ... process login");
-					mLoungeServiceCallback.onStart();
+					if(mLoungeServiceCallback != null) {
+						mLoungeServiceCallback.onStart();
+					}
 					break;
 
 				case 7:

@@ -3,15 +3,29 @@
     android:id="@+id/match"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    >
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="70dp"
+        android:background="@color/whiteAlpha" />
+
+    <LinearLayout
+        android:layout_width="10dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:background="@color/orange"
+        android:orientation="vertical" >
+
+    </LinearLayout>
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_marginBottom="5dp"
-        android:paddingLeft="70dp"
-        android:layout_marginTop="5dp" >
+        android:layout_marginTop="5dp"
+        android:paddingLeft="70dp" >
 
         <TableRow
             android:id="@+id/tableRow1"
@@ -44,9 +58,7 @@
                     android:layout_width="20dp"
                     android:layout_height="40dp"
                     android:layout_gravity="right"
-                    android:background="@color/blue" >
-
-                </View>
+                    android:background="@color/blue" />
             </TableRow>
 
             <TableRow
@@ -62,9 +74,7 @@
                     android:layout_width="20dp"
                     android:layout_height="40dp"
                     android:layout_gravity="right"
-                    android:background="@color/blue" >
-
-                </View>
+                    android:background="@color/blue" />
 
                 <TextView
                     android:id="@+id/playerLbl2"
@@ -75,18 +85,8 @@
                     android:text="TextView"
                     android:textColor="@android:color/white"
                     android:textSize="16dp" />
-
             </TableRow>
         </TableRow>
     </TableLayout>
-
-    <LinearLayout
-        android:layout_width="10dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="right"
-        android:background="@color/orange"
-        android:orientation="vertical" >
-
-    </LinearLayout>
 
 </FrameLayout>

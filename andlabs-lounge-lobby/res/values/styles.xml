@@ -14,6 +14,8 @@
 
     <style name="AppTheme" parent="android:Theme.Light" />
     <color name="whiteAlpha">#25ffffff</color>
+      <color name="blackHighAlpha">#80000000</color>
+        <color name="blacLowAlpha">#50000000</color>
     <color name="btnBackground">#10ffffff</color>
     
     

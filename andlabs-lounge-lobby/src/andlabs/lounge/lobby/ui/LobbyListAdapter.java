@@ -17,16 +17,18 @@
 
 package andlabs.lounge.lobby.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import andlabs.lounge.lobby.R;
 import andlabs.lounge.lobby.util.ColorAnimatorTask;
-import andlabs.lounge.lobby.util.ColorAnimatorTask.ViewColorAnimationHolder;
 import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.model.Player;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -36,6 +38,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
+import android.widget.TableRow;
+import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 
 public class LobbyListAdapter extends BaseExpandableListAdapter {
@@ -49,14 +54,18 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 	public static final int TYPE_OPENGAME = 2;
 
 	//private List<LobbyListElement> content;
-	private List<Game> mJoinedGames;
-	private List<Game> mOpenGames;
+	private List<Game> mJoinedGames = new ArrayList<Game>();
+	private List<Game> mOpenGames= new ArrayList<Game>();
 	private LayoutInflater mInflater;
 	private Handler handler = new Handler();
 
 	private PlayParser parser;
 
 	private ColorAnimatorTask anmimatorTask;
+
+	private List<ResolveInfo> installedGames;
+
+	private PackageManager mPackageManager;
 
 
 	public LobbyListAdapter(Context pContext) {
@@ -187,6 +196,28 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 			player2Beacon.setBackgroundColor(Color.WHITE);
 			player2Label.setText("Open");
 		}
+		
+		  if("running".equalsIgnoreCase(match.status)){
+	        	TableRow.LayoutParams params2 = (LayoutParams) player2Beacon.getLayoutParams();
+	        	TableRow.LayoutParams params1 = (LayoutParams) player1Beacon.getLayoutParams();
+	        	params2.leftMargin=0;
+//	        	params2.rightMargin=20;
+	        	player2Beacon.setLayoutParams(params2);
+	        	
+//	        	params1.leftMargin=20;
+	        	params1.rightMargin=0;
+	        	player1Beacon.setLayoutParams(params1);
+	        }else{
+	        	TableRow.LayoutParams params2 = (LayoutParams) player2Beacon.getLayoutParams();
+	        	TableRow.LayoutParams params1 = (LayoutParams) player1Beacon.getLayoutParams();
+	        	params2.leftMargin=15;
+//	        	params2.rightMargin=20;
+	        	player2Beacon.setLayoutParams(params2);
+	        	
+//	        	params1.leftMargin=20;
+	        	params1.rightMargin=15;
+	        	player1Beacon.setLayoutParams(params1);
+	        }
 
 		// if (match.isLocalPlayerOnTurn()) { // TODO: Adopt
 		//
@@ -292,6 +323,15 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 		if (promo != null) {
 			convertView.findViewById(R.id.promo).setBackgroundDrawable(promo);
 		}
+		
+		  for(ResolveInfo info:installedGames){
+	        	if(game.gameID.equalsIgnoreCase(info.activityInfo.packageName)){
+	        		 final ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
+	        	        icon.setImageDrawable(info.loadIcon(this.mPackageManager));
+	        	}
+	        	
+	        }
+	        
 	}
 
 
@@ -334,9 +374,17 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 	}
 
 
+	public void setInstalledGames(List<ResolveInfo> installedGames, PackageManager packageManager) {
+		this.installedGames=installedGames;
+		this.mPackageManager=packageManager;
+		
+	}
+	
 	@Override
 	public int getGroupTypeCount() {
 		// TODO Auto-generated method stub
 		return 3;
 	}
+
+
 }
