@@ -1,36 +1,36 @@
 package andlabs.lounge.service;
 
+import roboguice.util.Ln;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 public class LoungeService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		Log.v("LoungeService", "onBind(): arg0 = " + intent);
+		Ln.v("onBind(): arg0 = %s", intent);
 		return new LoungeServiceImpl(intent);
 	}
 
 
 	@Override
 	public void onCreate() {
-		Log.v("LoungeService", "onCreate():");
+		Ln.v("onCreate():");
 		super.onCreate();
 	}
 
 
 	@Override
 	public void onStart(Intent intent, int startId) {
-		Log.v("LoungeService", "onStart():");
+		Ln.v("onStart():");
 		super.onStart(intent, startId);
 	}
 
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.v("LoungeService", "onStartCommand():");
+		Ln.v("onStartCommand():");
 		return super.onStartCommand(intent, flags, startId);
 	}
 
