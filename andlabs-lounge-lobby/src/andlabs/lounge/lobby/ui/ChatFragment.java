@@ -32,15 +32,17 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ChatFragment extends Fragment implements ChatListener,
-        OnClickListener {
+public class ChatFragment extends Fragment implements ChatListener, OnClickListener {
+
     private ArrayList<ChatMessage> mConversation = new ArrayList<ChatMessage>();
     private EditText mChatEditText;
+
 
     static ChatFragment newInstance(int num) {
         ChatFragment f = new ChatFragment();
         return f;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,23 +50,26 @@ public class ChatFragment extends Fragment implements ChatListener,
         setRetainInstance(true);
     }
 
+
     @Override
     public void onStart() {
-//        ((LoungeActivity) getActivity()).getLounge().register(this);
+        // ((LoungeActivity) getActivity()).getLounge().register(this);
         super.onStart();
     }
+
 
     @Override
     public View onCreateView(final LayoutInflater infl, ViewGroup p, Bundle b) {
         final View chat = infl.inflate(R.layout.chat, p, false);
         mChatEditText = ((EditText) chat.findViewById(R.id.msg_field));
-        ((ImageButton) chat.findViewById(R.id.btn_msgSend))
-                .setOnClickListener(this);
+        ((ImageButton) chat.findViewById(R.id.btn_msgSend)).setOnClickListener(this);
         ((ListView) chat.findViewById(R.id.list)).setAdapter(new BaseAdapter() {
+
             @Override
             public int getCount() {
                 return mConversation.size();
             }
+
 
             @Override
             public View getView(int position, View view, ViewGroup parent) {
@@ -76,10 +81,12 @@ public class ChatFragment extends Fragment implements ChatListener,
                 return view;
             }
 
+
             @Override
             public long getItemId(int position) {
                 return 0;
             }
+
 
             @Override
             public Object getItem(int position) {
@@ -88,10 +95,10 @@ public class ChatFragment extends Fragment implements ChatListener,
         });
         // http://code.google.com/p/android/issues/detail?id=2516
         mChatEditText.setOnKeyListener(new OnKeyListener() {
+
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER
-                        && event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
                     onClick(null);
                     return true;
                 }
@@ -101,12 +108,13 @@ public class ChatFragment extends Fragment implements ChatListener,
         return chat;
     }
 
+
     @Override
     public void onChatMessageRecieved(ChatMessage msg) {
         mConversation.add(msg);
-        ((BaseAdapter) ((ListView) getView().findViewById(R.id.list))
-                .getAdapter()).notifyDataSetChanged();
+        ((BaseAdapter) ((ListView) getView().findViewById(R.id.list)).getAdapter()).notifyDataSetChanged();
     }
+
 
     @Override
     public void onClick(View v) {
@@ -117,10 +125,12 @@ public class ChatFragment extends Fragment implements ChatListener,
         onChatMessageRecieved(msg);
     }
 
+
     @Override
     public void onStop() {
         super.onStop();
     }
+
 
     @Override
     public void onDestroyView() {

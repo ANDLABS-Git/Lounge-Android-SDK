@@ -2,6 +2,6 @@ package andlabs.lounge.lobby.ui;
 
 public interface ChatListener {
 
-	void onChatMessageRecieved(ChatMessage msg);
+    void onChatMessageRecieved(ChatMessage msg);
 
 }

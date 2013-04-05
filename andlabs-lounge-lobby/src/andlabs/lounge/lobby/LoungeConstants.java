@@ -9,4 +9,5 @@ public interface LoungeConstants {
     public static final String PLAY_BASE_URL = "http://play.google.com/store/apps/details?id=";
     public static final int HOST_FLAG = 100;
     public static final int GUEST_FLAG = 200;
+
 }

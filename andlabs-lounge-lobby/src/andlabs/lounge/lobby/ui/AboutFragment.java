@@ -1,5 +1,5 @@
 /*
-  * Copyright (C) 2012, 2013 by it's authors. Some rights reserved.
+ * Copyright (C) 2012, 2013 by it's authors. Some rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class AboutFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater lI, ViewGroup p, Bundle b) {
         return lI.inflate(R.layout.fragment_about, p, false);
-        
+
     }
 
 }

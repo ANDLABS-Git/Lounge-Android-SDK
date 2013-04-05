@@ -17,38 +17,41 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class HostGameAdapter extends BaseAdapter implements
-        OnItemClickListener {
+public class HostGameAdapter extends BaseAdapter implements OnItemClickListener {
 
     private List<ResolveInfo> mContent;
     private PackageManager mPackageManager;
 
     private View mLastMarkedView;
     private int mSelectedItem = -1;
-	private Context mContext;
+    private Context mContext;
 
 
     public HostGameAdapter(List<ResolveInfo> installedGames, Context context, PackageManager packageManager) {
-    	this.mContext=context;
-    	mContent=installedGames;
-    	this.mPackageManager=packageManager;
-	}
-
-	@Override
-    public int getCount() {
-    	
-        return  this.mContent.size();
+        this.mContext = context;
+        mContent = installedGames;
+        this.mPackageManager = packageManager;
     }
+
+
+    @Override
+    public int getCount() {
+
+        return this.mContent.size();
+    }
+
 
     @Override
     public Object getItem(int position) {
         return this.mContent.get(position);
     }
 
+
     @Override
     public long getItemId(int position) {
         return position;
     }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -70,9 +73,9 @@ public class HostGameAdapter extends BaseAdapter implements
         return view;
     }
 
+
     @Override
-    public void onItemClick(AdapterView<?> adapter, View view, int position,
-            long smthn) {
+    public void onItemClick(AdapterView<?> adapter, View view, int position, long smthn) {
         if (this.mLastMarkedView != null) {
             this.mLastMarkedView.setBackgroundColor(Color.TRANSPARENT);
         }
@@ -80,7 +83,8 @@ public class HostGameAdapter extends BaseAdapter implements
         this.mLastMarkedView = view;
         this.mSelectedItem = position;
     }
-    
+
+
     public String getSelectedItemName() {
         if (this.mSelectedItem == -1) {
             return null;
@@ -90,13 +94,13 @@ public class HostGameAdapter extends BaseAdapter implements
         return info.loadLabel(this.mPackageManager).toString();
     }
 
+
     public String getSelectedItemPackage() {
         if (this.mSelectedItem == -1) {
             return null;
         }
 
         final ResolveInfo info = this.mContent.get(this.mSelectedItem);
-        return info.activityInfo.packageName + "/"
-                + info.loadLabel(this.mPackageManager);
+        return info.activityInfo.packageName + "/" + info.loadLabel(this.mPackageManager);
     }
 }

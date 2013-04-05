@@ -49,196 +49,195 @@ import android.widget.Toast;
 
 public class LobbyFragment extends Fragment implements OnChildClickListener {
 
-	public static final String CATEGORY = "eu.andlabs.lounge";
-	private SparseIntArray listPositions = new SparseIntArray();
-	private ExpandableListView lobbyList;
-	private LobbyListAdapter mAdapter;
-	private ListView mHostList;
-	private HostGameAdapter hostAdapter;
-	private static final String TAG = "Lounge";
-	private static final int GAMES = 0;
+    public static final String CATEGORY = "eu.andlabs.lounge";
+    private SparseIntArray listPositions = new SparseIntArray();
+    private ExpandableListView lobbyList;
+    private LobbyListAdapter mAdapter;
+    private ListView mHostList;
+    private HostGameAdapter hostAdapter;
+    private static final String TAG = "Lounge";
+    private static final int GAMES = 0;
 
-	LoungeLobbyController mLoungeLobbyController = new LoungeLobbyController();
+    LoungeLobbyController mLoungeLobbyController = new LoungeLobbyController();
 
-	LoungeLobbyCallback mLoungeLobbyCallback = new LoungeLobbyCallback() {
+    LoungeLobbyCallback mLoungeLobbyCallback = new LoungeLobbyCallback() {
 
-		@Override
-		public void onNewChatMessage(ChatMessage chatMsg) {
-			// TODO Auto-generated method stub
+        @Override
+        public void onNewChatMessage(ChatMessage chatMsg) {
+            // TODO Auto-generated method stub
 
-		}
-
-
-		@Override
-		public void onNewChatLog(List<ChatMessage> chatLog) {
-			// TODO Auto-generated method stub
-
-		}
+        }
 
 
-		@Override
-		public void onChatDataUpdated(List<ChatMessage> data) {
-			// TODO Auto-generated method stub
+        @Override
+        public void onNewChatLog(List<ChatMessage> chatLog) {
+            // TODO Auto-generated method stub
 
-		}
-
-
-		@Override
-		public void onRunningGamesUpdate(final ArrayList<Game> pGames) {
-			getActivity().runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					if(pGames!=null){
-					mAdapter.setJoinedGames(pGames);
-					mAdapter.notifyDataSetChanged();
-					}
-				}
-
-			});
-		}
+        }
 
 
-		@Override
-		public void onOpenGamesUpdate(final ArrayList<Game> pGames) {
-			getActivity().runOnUiThread(new Runnable() {
+        @Override
+        public void onChatDataUpdated(List<ChatMessage> data) {
+            // TODO Auto-generated method stub
 
-				@Override
-				public void run() {
-					if(pGames!=null){
-					mAdapter.setOpenGames(pGames);
-					mAdapter.notifyDataSetChanged();
-					}
-				}
-
-			});
-		}
-
-	};
-	private PackageManager mPackageManager;
-	private List<ResolveInfo> installedGames;
+        }
 
 
-	@Override
-	public View onCreateView(final LayoutInflater pLayoutInflater, ViewGroup pViewGroup, Bundle pBundle) {
-		View view = pLayoutInflater.inflate(R.layout.fragment_lobby, pViewGroup, false);
-		lobbyList = (ExpandableListView) view.findViewById(R.id.list);
-		lobbyList.setDividerHeight(0);
-		lobbyList.setDivider(null);
+        @Override
+        public void onRunningGamesUpdate(final ArrayList<Game> pGames) {
+            getActivity().runOnUiThread(new Runnable() {
 
-		ViewTreeObserver vto = lobbyList.getViewTreeObserver();
+                @Override
+                public void run() {
+                    if (pGames != null) {
+                        mAdapter.setJoinedGames(pGames);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
 
-		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-
-			@Override
-			public void onGlobalLayout() {
-				lobbyList.setIndicatorBounds(lobbyList.getRight() - 40, lobbyList.getWidth());
-			}
-		});
-		mAdapter = new LobbyListAdapter(getActivity());
-
-		List<Game> joinedGames = TestData.getJoinedGames();
-		List<Game> openGames = TestData.getOpenGames();
-
-		final PlayParser parser = PlayParser.getInstance(getActivity());
-
-		for (Game element : joinedGames) {
-			parser.queryPlay(element.gameID);
-		}
-
-		parser.addListener(new PlayListener() {
-
-			@Override
-			public void onPlayResult(PlayResult pResult) {
-				mAdapter.notifyDataSetChanged();
-			}
-		});
-
-//		mAdapter.setJoinedGames(joinedGames);
-//		mAdapter.setOpenGames(openGames);
-		lobbyList.setAdapter(mAdapter);
-		lobbyList.setOnChildClickListener(this);
-
-		this.mHostList = (ListView) view.findViewById(R.id.installed_games);
-
-		this.mPackageManager = getActivity().getPackageManager();
-		final Intent intent = new Intent(Intent.ACTION_MAIN);
-		intent.addCategory(CATEGORY); // TODO: What was it?
-		this.installedGames = this.mPackageManager.queryIntentActivities(
-				intent, 0);
-		mAdapter.setInstalledGames(installedGames, mPackageManager);
-
-		this.mHostList = (ListView) view.findViewById(R.id.installed_games);
-		this.hostAdapter = new HostGameAdapter(installedGames, getActivity(),mPackageManager);
-		this.mHostList.setAdapter(hostAdapter);
-		this.mHostList.setOnItemClickListener(hostAdapter);
-
-		view.findViewById(R.id.btn_host).setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				mLoungeLobbyController.openMatch(hostAdapter.getSelectedItemPackage(), hostAdapter.getSelectedItemName());
-
-			}
-		});
-
-		return view;
-	}
+            });
+        }
 
 
-	@Override
-	public void onStart() {
-		super.onStart();
-		mLoungeLobbyController.bindServiceTo(getActivity());
-	}
+        @Override
+        public void onOpenGamesUpdate(final ArrayList<Game> pGames) {
+            getActivity().runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (pGames != null) {
+                        mAdapter.setOpenGames(pGames);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+
+            });
+        }
+
+    };
+    private PackageManager mPackageManager;
+    private List<ResolveInfo> installedGames;
 
 
-	@Override
-	public void onResume() {
-		mLoungeLobbyController.registerCallback(mLoungeLobbyCallback);
-		super.onResume();
-	}
+    @Override
+    public View onCreateView(final LayoutInflater pLayoutInflater, ViewGroup pViewGroup, Bundle pBundle) {
+        View view = pLayoutInflater.inflate(R.layout.fragment_lobby, pViewGroup, false);
+        lobbyList = (ExpandableListView) view.findViewById(R.id.list);
+        lobbyList.setDividerHeight(0);
+        lobbyList.setDivider(null);
+
+        ViewTreeObserver vto = lobbyList.getViewTreeObserver();
+
+        vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                lobbyList.setIndicatorBounds(lobbyList.getRight() - 40, lobbyList.getWidth());
+            }
+        });
+        mAdapter = new LobbyListAdapter(getActivity());
+
+        List<Game> joinedGames = TestData.getJoinedGames();
+        List<Game> openGames = TestData.getOpenGames();
+
+        final PlayParser parser = PlayParser.getInstance(getActivity());
+
+        for (Game element : joinedGames) {
+            parser.queryPlay(element.gameID);
+        }
+
+        parser.addListener(new PlayListener() {
+
+            @Override
+            public void onPlayResult(PlayResult pResult) {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+        // mAdapter.setJoinedGames(joinedGames);
+        // mAdapter.setOpenGames(openGames);
+        lobbyList.setAdapter(mAdapter);
+        lobbyList.setOnChildClickListener(this);
+
+        this.mHostList = (ListView) view.findViewById(R.id.installed_games);
+
+        this.mPackageManager = getActivity().getPackageManager();
+        final Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(CATEGORY); // TODO: What was it?
+        this.installedGames = this.mPackageManager.queryIntentActivities(intent, 0);
+        mAdapter.setInstalledGames(installedGames, mPackageManager);
+
+        this.mHostList = (ListView) view.findViewById(R.id.installed_games);
+        this.hostAdapter = new HostGameAdapter(installedGames, getActivity(), mPackageManager);
+        this.mHostList.setAdapter(hostAdapter);
+        this.mHostList.setOnItemClickListener(hostAdapter);
+
+        view.findViewById(R.id.btn_host).setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                mLoungeLobbyController.openMatch(hostAdapter.getSelectedItemPackage(), hostAdapter.getSelectedItemName());
+
+            }
+        });
+
+        return view;
+    }
 
 
-	@Override
-	public void onPause() {
-		mLoungeLobbyController.unregisterCallback(mLoungeLobbyCallback);
-		super.onPause();
-	}
+    @Override
+    public void onStart() {
+        super.onStart();
+        mLoungeLobbyController.bindServiceTo(getActivity());
+    }
 
 
-	@Override
-	public void onStop() {
-		mLoungeLobbyController.unbindServiceFrom(getActivity());
-		super.onStop();
-	}
+    @Override
+    public void onResume() {
+        mLoungeLobbyController.registerCallback(mLoungeLobbyCallback);
+        super.onResume();
+    }
 
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
+    @Override
+    public void onPause() {
+        mLoungeLobbyController.unregisterCallback(mLoungeLobbyCallback);
+        super.onPause();
+    }
 
-	}
+
+    @Override
+    public void onStop() {
+        mLoungeLobbyController.unbindServiceFrom(getActivity());
+        super.onStop();
+    }
 
 
-	@Override
-	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-		Game game = (Game) mAdapter.getGroup(groupPosition);
-		Match match = (Match) mAdapter.getChild(groupPosition, childPosition);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-		if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) { // TODO Adopt here
-			mLoungeLobbyController.joinMatch(match.matchID, game.gameID);
-			// Lounge.join(match.getMatchId(),game.getPgkName()); // join Game
-		} else {
-			// open joined game
-			if (match.status.equalsIgnoreCase("running")) {
-				Utils.launchGameApp(getActivity(), game.gameID, match);
-			} else {
-				Toast.makeText(getActivity(), "Game not started yet", Toast.LENGTH_LONG).show();
-			}
-		}
-		return false;
-	}
+    }
+
+
+    @Override
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+        Game game = (Game) mAdapter.getGroup(groupPosition);
+        Match match = (Match) mAdapter.getChild(groupPosition, childPosition);
+
+        if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) { // TODO Adopt here
+            mLoungeLobbyController.joinMatch(match.matchID, game.gameID);
+            // Lounge.join(match.getMatchId(),game.getPgkName()); // join Game
+        } else {
+            // open joined game
+            if (match.status.equalsIgnoreCase("running")) {
+                Utils.launchGameApp(getActivity(), game.gameID, match);
+            } else {
+                Toast.makeText(getActivity(), "Game not started yet", Toast.LENGTH_LONG).show();
+            }
+        }
+        return false;
+    }
 
 }

@@ -29,8 +29,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class LobbyActivity extends FragmentActivity 
-                            implements OnPageChangeListener {
+public class LobbyActivity extends FragmentActivity implements OnPageChangeListener {
 
     private TextView mSectionLabel;
     private ViewPager mViewPager;
@@ -39,51 +38,55 @@ public class LobbyActivity extends FragmentActivity
     private ImageView mAboutIcon;
     private ImageView mChatIcon;
     private View mHeader;
-    
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_lobby);
-        
+
         mSectionLabel = (TextView) findViewById(R.id.lobbySection);
         mAboutIcon = (ImageView) findViewById(R.id.ic_tab_about);
         mLobbyIcon = (ImageView) findViewById(R.id.ic_tab_lobby);
         mStatsIcon = (ImageView) findViewById(R.id.ic_tab_stat);
         mChatIcon = (ImageView) findViewById(R.id.ic_tab_chat);
         mHeader = findViewById(R.id.header);
-        
+
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setOnPageChangeListener(this);
         mViewPager.setOffscreenPageLimit(3);
-        mViewPager.setAdapter(
-                new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+        mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 
             @Override
-            public int getCount() { return 4; }
+            public int getCount() {
+                return 4;
+            }
+
 
             @Override
             public Fragment getItem(int position) {
                 Log.d(TAG, "ITEM " + position);
                 switch (position) {
-                case LOBBY:
-                    return new LobbyFragment();
-                case CHAT:
-                    return new ChatFragment();
-                case STATS:
-                    return new StatsFragment();
-                case ABOUT:
-                    return new AboutFragment();
+                    case LOBBY:
+                        return new LobbyFragment();
+                    case CHAT:
+                        return new ChatFragment();
+                    case STATS:
+                        return new StatsFragment();
+                    case ABOUT:
+                        return new AboutFragment();
                 }
                 return null;
             }
         });
-        onPageSelected(LOBBY); 
+        onPageSelected(LOBBY);
     }
-    
+
+
     public void onNavigationClicked(View v) {
         if (v.getId() == R.id.ic_tab_lobby) {
             mViewPager.setCurrentItem(LOBBY, true);
@@ -99,65 +102,69 @@ public class LobbyActivity extends FragmentActivity
         }
     }
 
+
     @Override
     public void onPageSelected(int position) {
         Log.d(TAG, "page selected");
         switch (position) {
-        case LOBBY:
-            mSectionLabel.setText("Lobby");
-            mLobbyIcon.setAlpha(255);
-            mChatIcon.setAlpha(ALPHA_OFF);
-            mStatsIcon.setAlpha(ALPHA_OFF);
-            mAboutIcon.setAlpha(ALPHA_OFF);
-            break;
+            case LOBBY:
+                mSectionLabel.setText("Lobby");
+                mLobbyIcon.setAlpha(255);
+                mChatIcon.setAlpha(ALPHA_OFF);
+                mStatsIcon.setAlpha(ALPHA_OFF);
+                mAboutIcon.setAlpha(ALPHA_OFF);
+                break;
 
-        case CHAT:
-            mSectionLabel.setText("Chat");
-            mLobbyIcon.setAlpha(ALPHA_OFF);
-            mChatIcon.setAlpha(255);
-            mStatsIcon.setAlpha(ALPHA_OFF);
-            mAboutIcon.setAlpha(ALPHA_OFF);
-            break;
+            case CHAT:
+                mSectionLabel.setText("Chat");
+                mLobbyIcon.setAlpha(ALPHA_OFF);
+                mChatIcon.setAlpha(255);
+                mStatsIcon.setAlpha(ALPHA_OFF);
+                mAboutIcon.setAlpha(ALPHA_OFF);
+                break;
 
-        case STATS:
-            mSectionLabel.setText("Statistics");
-            mLobbyIcon.setAlpha(ALPHA_OFF);
-            mChatIcon.setAlpha(ALPHA_OFF);
-            mStatsIcon.setAlpha(255);
-            mAboutIcon.setAlpha(ALPHA_OFF);
-            break;
-            
+            case STATS:
+                mSectionLabel.setText("Statistics");
+                mLobbyIcon.setAlpha(ALPHA_OFF);
+                mChatIcon.setAlpha(ALPHA_OFF);
+                mStatsIcon.setAlpha(255);
+                mAboutIcon.setAlpha(ALPHA_OFF);
+                break;
 
-        case ABOUT:
-            mSectionLabel.setText("About");
-            mLobbyIcon.setAlpha(ALPHA_OFF);
-            mChatIcon.setAlpha(ALPHA_OFF);
-            mStatsIcon.setAlpha(ALPHA_OFF);
-            mAboutIcon.setAlpha(255);
-            break;
-        default:
-            break;
+
+            case ABOUT:
+                mSectionLabel.setText("About");
+                mLobbyIcon.setAlpha(ALPHA_OFF);
+                mChatIcon.setAlpha(ALPHA_OFF);
+                mStatsIcon.setAlpha(ALPHA_OFF);
+                mAboutIcon.setAlpha(255);
+                break;
+            default:
+                break;
         }
     }
 
+
     @Override
-    public void onPageScrollStateChanged(int state) {}
+    public void onPageScrollStateChanged(int state) {
+    }
+
 
     @Override
     public void onPageScrolled(int position, float foo, int arg2) {
-//        switch (position) {
-//        case LOBBY:
-//            mHeader.setBackgroundColor(Utils.ipc(this, R.color.orange, R.color.green, foo));
-//            break;
-//        case CHAT:
-//            mHeader.setBackgroundColor(Utils.ipc(this, R.color.green, R.color.blue, foo));
-//            break;
-//        case STATS:
-//            mHeader.setBackgroundColor(Utils.ipc(this, R.color.blue, R.color.yellow, foo));
-//            break;
-//        }
+        // switch (position) {
+        // case LOBBY:
+        // mHeader.setBackgroundColor(Utils.ipc(this, R.color.orange, R.color.green, foo));
+        // break;
+        // case CHAT:
+        // mHeader.setBackgroundColor(Utils.ipc(this, R.color.green, R.color.blue, foo));
+        // break;
+        // case STATS:
+        // mHeader.setBackgroundColor(Utils.ipc(this, R.color.blue, R.color.yellow, foo));
+        // break;
+        // }
     }
-    
+
     private static final int ALPHA_OFF = (int) (255 * 0.3f);
     private static final String TAG = "Lounge";
     private static final int LOBBY = 0;
@@ -166,19 +173,18 @@ public class LobbyActivity extends FragmentActivity
     private static final int ABOUT = 3;
 
 
-
     @Override
     protected void onStart() {
-//        Lounge.checkIn(this, "Lobby");
+        // Lounge.checkIn(this, "Lobby");
         super.onStart();
     }
-    
+
+
     @Override
     protected void onStop() {
-//        Lounge.checkOut(this);
+        // Lounge.checkOut(this);
         super.onStop();
     }
-
 
 
 }

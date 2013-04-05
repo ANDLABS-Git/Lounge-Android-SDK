@@ -34,25 +34,29 @@ public class StatsFragment extends Fragment implements LoaderCallbacks<Cursor> {
     private TextView mOpenGames;
     private TextView mMsgesSend;
 
+
     @Override
     public View onCreateView(final LayoutInflater lI, ViewGroup p, Bundle b) {
         return lI.inflate(R.layout.fragment_stats, p, false);
     }
-    
+
+
     @Override
     public void onViewCreated(View layout, Bundle savedInstanceState) {
         super.onViewCreated(layout, savedInstanceState);
-        
+
         mPlayerOnl = (TextView) layout.findViewById(R.id.player);
-        
-//        getLoaderManager().initLoader(0, null, this);
+
+        // getLoaderManager().initLoader(0, null, this);
     }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
         Uri uri = Uri.parse("content://foo.lounge/stats");
         return new CursorLoader(getActivity(), uri, null, null, null, null);
     }
+
 
     @Override
     public void onLoadFinished(Loader<Cursor> l, Cursor stats) {
@@ -62,10 +66,11 @@ public class StatsFragment extends Fragment implements LoaderCallbacks<Cursor> {
         mMsgesSend.setText(stats.getString(1));
     }
 
+
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
         // TODO Auto-generated method stub
-        
+
     }
 
 
