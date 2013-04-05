@@ -241,9 +241,14 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         if (groupPosition < mJoinedGames.size()) {
             game = mJoinedGames.get(groupPosition);
         } else if (groupPosition == mJoinedGames.size() && mJoinedGames.size() > 0) {
-            
+
         } else {
-            game = mOpenGames.get(groupPosition - mJoinedGames.size() > 0 ? 1:0 - mJoinedGames.size());
+            int sep = mJoinedGames.size() > 0 ? 1 : 0;
+            int joined = mJoinedGames.size();
+            int position = groupPosition - sep - joined;
+            game = mOpenGames.get(position);
+            Log.d("group", "position = " + position + ", groupPosition = " + groupPosition);
+            Log.d("group", "item = " + game);
         }
         return (game != null) ? game : mSeparator;
     }
@@ -287,18 +292,18 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
                 break;
             }
 
-            switch (type) {
-            case TYPE_JOINEDGAME:
-                createGameView((Game) group, convertView);
-                break;
+        }
+        switch (type) {
+        case TYPE_JOINEDGAME:
+            createGameView((Game) group, convertView);
+            break;
 
-            case TYPE_SEPARATOR:
-                break;
+        case TYPE_SEPARATOR:
+            break;
 
-            case TYPE_OPENGAME:
-                createGameView((Game) group, convertView);
-                break;
-            }
+        case TYPE_OPENGAME:
+            createGameView((Game) group, convertView);
+            break;
         }
         convertView.setTag(type);
         return convertView;
