@@ -121,6 +121,7 @@ public abstract class LoungeMessageProcessor {
 					match = new Match();
 					match.matchID = matchID;
 					game.matches.put(matchID, match);
+					mMatches.put(matchID, match);
 				}
 				match.players=new ArrayList<Player>();
 				JSONArray playerArray = payload.getJSONArray("playerIDs");
