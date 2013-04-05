@@ -297,7 +297,7 @@ var LoungeServer = function() {
 											if (!('undefined' === typeof s))
 											{
 												// Send the chat message to the user.
-												s.emit('addPlayer', { playerID: user.playerID });
+												s.emit('addPlayer', { _id: user._id, playerID: user.playerID });
 											}
 										}
 									});
