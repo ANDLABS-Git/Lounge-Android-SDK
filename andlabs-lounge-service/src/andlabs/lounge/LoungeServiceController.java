@@ -3,6 +3,8 @@ package andlabs.lounge;
 import java.io.Serializable;
 import java.util.Map;
 
+import roboguice.util.Ln;
+
 import andlabs.lounge.model.Game;
 import andlabs.lounge.service.LoungeService;
 import andlabs.lounge.service.LoungeServiceDef;
@@ -17,7 +19,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 
 
 public class LoungeServiceController {
@@ -29,34 +30,28 @@ public class LoungeServiceController {
 
 		@Override
 		public void handleMessage(Message message) {
-			Log.v("LoungeServiceController", "Handler.handleMessage(): message = " + message);
+			Ln.v("Handler.handleMessage(): message = %s", message);
 			switch (message.what) {
 
 				case 42:
-					if (mLoungeServiceCallback != null) {
-						mLoungeServiceCallback.theAnswerIs42();
-					}
+					mLoungeServiceCallback.theAnswerIs42();
 					break;
 
 				case 1:
-					Log.v("LoungeServiceController", "Handler.handleMessage(): Server connected ... process login");
-					if(mLoungeServiceCallback != null) {
-						mLoungeServiceCallback.onStart();
-					}
+					Ln.v("Handler.handleMessage(): Server connected ... process login");
+					mLoungeServiceCallback.onStart();
 					break;
 
 				case 7:
-					Log.v("LoungeServiceController", "Handler.handleMessage(): Getting update for games/matches/players: " + message.getData());
-					if (mLoungeServiceCallback != null) {
-                        Serializable involvedGames = message.getData().getSerializable("involvedGameList");
-                        Serializable openGames = message.getData().getSerializable("openGameList");
-						mLoungeServiceCallback.onOpenGamesUpdate((Map<String, Game>) openGames);
-	                    mLoungeServiceCallback.onRunningGamesUpdate((Map<String, Game>) involvedGames);
-					}
+					Ln.v("Handler.handleMessage(): Getting update for games/matches/players: %s", message.getData());
+					Serializable involvedGames = message.getData().getSerializable("involvedGameList");
+					Serializable openGames = message.getData().getSerializable("openGameList");
+					mLoungeServiceCallback.onOpenGamesUpdate((Map<String, Game>) openGames);
+					mLoungeServiceCallback.onRunningGamesUpdate((Map<String, Game>) involvedGames);
 					break;
 
 				default:
-					Log.v("LoungeServiceController", "Handler.handleMessage(): message = " + message);
+					Ln.v("Handler.handleMessage(): message = %s", message);
 
 			}
 		}
@@ -68,19 +63,19 @@ public class LoungeServiceController {
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			Log.v("LoungeServiceController", "ServiceConnection.onServiceDisconnected():");
+			Ln.v("ServiceConnection.onServiceDisconnected():");
 			mLoungeService = null;
 		}
 
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.v("LoungeServiceController", "ServiceConnection.onServiceConnected():");
+			Ln.v("ServiceConnection.onServiceConnected():");
 			mLoungeService = LoungeServiceDef.Stub.asInterface(service);
 			try {
 				mLoungeService.connect();
 			} catch (RemoteException e) {
-				Log.e("LoungeServiceController", "ServiceConnection.onServiceConnected(): caught exception while connecting", e);
+				Ln.e(e, "ServiceConnection.onServiceConnected(): caught exception while connecting");
 			}
 		}
 
@@ -88,7 +83,7 @@ public class LoungeServiceController {
 
 
 	public void bindServiceTo(Context pContext) {
-		Log.v("LoungeServiceController", "bindServiceTo()");
+		Ln.v("bindServiceTo()");
 		Intent serviceIntent = new Intent(pContext, LoungeService.class);
 		serviceIntent.putExtra("client-messenger", mMessenger);
 		pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
@@ -96,60 +91,64 @@ public class LoungeServiceController {
 
 
 	public void registerCallback(LoungeServiceCallback pLoungeServiceCallback) {
-		Log.v("LoungeServiceController", "registerCallback()");
+		Ln.v("registerCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
 		mLoungeServiceCallback = pLoungeServiceCallback;
 	}
 
 
 	public void unregisterCallback(LoungeServiceCallback pLoungeServiceCallback) {
-		Log.v("LoungeServiceController", "unregisterCallback()");
+		Ln.v("unregisterCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
 		mLoungeServiceCallback = null;
 	}
 
 
 	public void unbindServiceFrom(Context pContext) {
-		Log.v("LoungeServiceController", "unbindServiceFrom()");
+		Ln.v("unbindServiceFrom()");
 		try {
 			if (mLoungeService != null) {
 				mLoungeService.disconnect();
 			}
 		} catch (RemoteException e) {
-			Log.e("LoungeServiceController", "unbindServiceFrom(): caught exception while disconnecting", e);
+			Ln.e(e, "unbindServiceFrom(): caught exception while disconnecting");
 		}
 		pContext.unbindService(mServiceConnection);
 	}
 
 	public void login(String pPlayerName) {
+		Ln.v("login(): pPlayerName = %s", pPlayerName);
 	    try {
             mLoungeService.login(pPlayerName);
         } catch (RemoteException e) {
-            Log.e("LoungeServiceController", "Handler.handleMessage(): caught exception while processing login", e);
+            Ln.e(e, "login(): caught exception while processing login");
         }
 	}
 	
 	public void openMatch(String pPackageId, String pDisplayName) {
+		Ln.v("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName);
 		try {
 			mLoungeService.openMatch(pPackageId, pDisplayName);
 		} catch (RemoteException e) {
-			Log.e("LoungeServiceController", "openMatch(): caught exception while opening a match", e);
+			Ln.e(e, "openMatch(): caught exception while opening a match");
 		}		
 	}
 
 
 	public void checkin(String pPackageId, String pMatchId) {
+		Ln.v("checkin(): pPackageId = %s, pMatchId = %s", pPackageId, pMatchId);
 		try {
 			mLoungeService.checkin(pPackageId, pMatchId);
 		} catch (RemoteException e) {
-			Log.e("LoungeServiceController", "pMatchId(): caught exception while checkin a match", e);
+			Ln.e(e, "checkin(): caught exception while checkin a match");
 		}		
 	}
 
 
 	public void sendGameMove(String pPackageId, String pMatchId, Bundle pMoveBundle) {
+		Ln.v("sendGameMove(): pPackageId = %s, pMatchId = %s, pMoveBundle = %s", pPackageId, pMatchId, pMoveBundle);
 		try {
 			mLoungeService.move(pPackageId, pMatchId, pMoveBundle);
 		} catch (RemoteException e) {
-			Log.e("LoungeServiceController", "sendGameMove(): caught exception while opening a game move", e);
+			Ln.e(e, "sendGameMove(): caught exception while opening a game move");
 		}
 		
 	}
