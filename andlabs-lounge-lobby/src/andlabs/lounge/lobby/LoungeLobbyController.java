@@ -61,7 +61,7 @@ public class LoungeLobbyController {
     public void bindServiceTo(Context pContext) {
         Log.v("LoungeLobbyController", "bindServiceTo()");
         mUserName = Id.getName(pContext);
-        mLoungeServiceController.registerCallback(mLoungeServiceCallback);
+        mLoungeServiceController.registerCallback(mLoungeServiceCallback);          
         mLoungeServiceController.bindServiceTo(pContext);
     }
 

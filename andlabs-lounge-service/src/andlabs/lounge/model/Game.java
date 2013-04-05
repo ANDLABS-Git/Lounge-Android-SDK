@@ -13,19 +13,9 @@ public class Game implements Serializable {
 	public HashMap<String, Match> matches = new HashMap<String, Match>();
 
 
-	// TODO: Add game name
-	@Override
-	public synchronized String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("{gameName: '").append(gameName).append("', matches: [");
-		if (matches.size() > 0) {
-			for (Match match : matches.values()) {
-				sb.append(match.toString()).append(", ");
-			}
-			sb.delete(sb.length() - 2, sb.length());
-		}
-		sb.append("]}");
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        return "Game [gameID=" + gameID + ", gameName=" + gameName + ", matches=" + matches + "]";
+    }
 
 }

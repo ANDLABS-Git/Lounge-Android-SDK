@@ -16,10 +16,9 @@ public class Player implements Serializable {
     public String matchID;
 
     @Override
-    public synchronized String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{playerID: '").append(playerID).append("}");
-        return sb.toString();
+    public String toString() {
+        return "Player [_id=" + _id + ", socketID=" + socketID + ", playerID=" + playerID + ", gameID=" + gameID + ", matchID="
+                + matchID + "]";
     }
 
 }

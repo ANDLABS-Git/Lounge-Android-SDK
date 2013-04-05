@@ -85,10 +85,10 @@ public abstract class LoungeMessageProcessor {
 				boolean involvedGame = false;
 				for (int index = 0; index < jsonArray.length(); index++) {
 					JSONObject jsonObject = jsonArray.getJSONObject(index);
-					final String playerID = jsonObject.getString("playerID");
-					players.add(mPlayers.get(playerID));
+					final String _id = jsonObject.getString("_id");
+					players.add(mPlayers.get(_id));
 
-					if (mPlayerID.equals(playerID)) {
+					if (mPlayerID.equals(_id)) {
 						involvedGame = true;
 					}
 				}
