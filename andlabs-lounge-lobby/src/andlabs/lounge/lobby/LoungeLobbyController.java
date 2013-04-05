@@ -61,8 +61,8 @@ public class LoungeLobbyController {
     public void bindServiceTo(Context pContext) {
         Log.v("LoungeLobbyController", "bindServiceTo()");
         mUserName = Id.getName(pContext);
-        mLoungeServiceController.bindServiceTo(pContext);
         mLoungeServiceController.registerCallback(mLoungeServiceCallback);
+        mLoungeServiceController.bindServiceTo(pContext);
     }
 
     public void registerCallback(LoungeLobbyCallback pLoungeLobbyCallback) {
@@ -77,8 +77,8 @@ public class LoungeLobbyController {
 
     public void unbindServiceFrom(Context pContext) {
         Log.v("LoungeLobbyController", "unbindServiceFrom()");
-        mLoungeServiceController.unregisterCallback(mLoungeServiceCallback);
         mLoungeServiceController.unbindServiceFrom(pContext);
+        mLoungeServiceController.unregisterCallback(mLoungeServiceCallback);
     }
 
     public void openMatch(String pPackageId, String pDisplayName) {
