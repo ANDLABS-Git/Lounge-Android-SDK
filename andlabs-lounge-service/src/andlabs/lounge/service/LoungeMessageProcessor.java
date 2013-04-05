@@ -10,11 +10,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import roboguice.util.Ln;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.model.Player;
 import android.os.Bundle;
-import android.util.Log;
 
 public abstract class LoungeMessageProcessor {
 
@@ -44,18 +44,17 @@ public abstract class LoungeMessageProcessor {
 
 
 	public void processMessage(String pVerb, Object[] pPayload) {
-		Log.v("LoungeMessageProcessor",
-				String.format("processMessage(): processing %s message: %s", pVerb, Arrays.toString(pPayload)));
+		Ln.v("processMessage(): processing %s message: %s", pVerb, Arrays.toString(pPayload));
 		try {
 			JSONObject payload = new JSONObject(pPayload[0].toString());
 
 			// Create map with all players
 			if ("login".equals(pVerb)) {
 				JSONArray jsonArray = payload.getJSONArray("playerList");
-				Log.v("LoungeMessageProcessor", "processMessage(): " + jsonArray);
+				Ln.v("processMessage(): %s", jsonArray);
 				for (int index = 0; index < jsonArray.length(); index++) {
 					JSONObject jsonObject = jsonArray.getJSONObject(index);
-					Log.v("LoungeMessageProcessor", String.format("processMessage(): processing player %s", jsonObject));
+					Ln.v("processMessage(): processing player %s", jsonObject);
 					addPlayer(jsonObject);
 				}
 			}
@@ -75,7 +74,7 @@ public abstract class LoungeMessageProcessor {
 				// where each player is of type {_id: “uuid”, playerID: “playerID”}
 
 				JSONArray jsonArray = payload.getJSONArray("playerIDs");
-				Log.v("LoungeMessageProcessor", "processMessage(): payload = " + jsonArray);
+				Ln.v("processMessage(): payload = %s", jsonArray);
 
 				ArrayList<Player> players = new ArrayList<Player>();
 				boolean involvedGame = false;
@@ -171,7 +170,7 @@ public abstract class LoungeMessageProcessor {
 				// TODO
 			}
 		} catch (JSONException e) {
-			Log.e("LoungeMessageProcessor", "caught exception while parsing payload", e);
+			Ln.e(e, "caught exception while parsing payload");
 		}
 	}
 
@@ -185,7 +184,7 @@ public abstract class LoungeMessageProcessor {
 		for (Iterator<String> i = json.keys(); i.hasNext();) {
 			String key = i.next();
 			b.putString(key, json.getString(key));
-			Log.i("json", "converting - key:" + key + " / Value: " + json.getString(key));
+			Ln.i("processGameMessage(): converting - key: %s / Value: %s", key, json.getString(key));
 		}
 		if (!pStream) {
 			mMatchMoves.put(matchID, b);
