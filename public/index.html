@@ -43,6 +43,8 @@
 			 */
 			socket.on('connect', function()
 			{
+				globalPlayerID = '';
+				
 				// Add the username input.
 				var usernameInput = $('<input/>',
 				{
@@ -97,6 +99,7 @@
 						}	
 						else
 						{
+							globalPlayerID = '';
 							alert('Please enter an username!')
 						}
 						return false;												
@@ -150,8 +153,8 @@
 								type: 'submit',
 						        click: function () 
 								{
-									socket.emit('logout');
 									globalPlayerID = '';
+									socket.emit('logout');
 									return false;														
 								}
 						    });
@@ -221,6 +224,8 @@
 			 */
 			socket.on('disconnect', function () 
 			{	
+				globalPlayerID = '';
+				
 				// Reconnect to the server.
 				socket.socket.connect();
 				
@@ -511,9 +516,25 @@
 								{
 									$('.' + payload.matchID).append(" | " + value.playerID);									
 								}
-							});												
+							});	
 							
-							$(".runningMatch[matchID = '" + payload.matchID + "']").append(inspectGameSubmit);							
+							// Check if user is in the list of playerIDs.
+							var foundPlayer = false;
+							$.each(payload.playerIDs, function(key, value) {
+								if (value.playerID === globalPlayerID)
+								{
+									foundPlayer = true;
+								}
+							});
+																		
+							if (foundPlayer)
+							{
+								$(".runningMatch[matchID = '" + payload.matchID + "']").append(inspectGameSubmit);			
+							}
+							else
+							{
+								$(".runningMatch[matchID = '" + payload.matchID + "'] .inspectGameSubmit").remove();
+							}				
 
 						}
 					}
