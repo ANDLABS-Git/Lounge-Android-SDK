@@ -120,8 +120,8 @@ public abstract class LoungeMessageProcessor {
 				}
 				match.players=new ArrayList<Player>();
 				JSONArray playerArray = payload.getJSONArray("playerIDs");
-				for (int index = 0; index < jsonArray.length(); index++) {
-					JSONObject jsonObject = jsonArray.getJSONObject(index);
+				for (int index = 0; index < playerArray.length(); index++) {
+					JSONObject jsonObject = playerArray.getJSONObject(index);
 					
 					String player = jsonObject.getString("_id");
 					match.players.add(mPlayers.get(player));
