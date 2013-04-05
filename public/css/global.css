@@ -294,3 +294,10 @@ label
 	float: left;
 	margin: 20px 24px;
 }
+
+#resetArea
+{
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+}

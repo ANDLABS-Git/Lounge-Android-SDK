@@ -987,6 +987,35 @@ var LoungeServer = function() {
 					}
 				});				
 			});
+			
+			// DEBUG ROUTES
+			socket.on('debugDropCollections', function(payload)
+			{
+				if ('' !== self.validateParameter(payload) &&
+					'' !== self.validateParameter(payload.password))
+				{		
+					if ('q1w2e3r4' === payload.password)
+					{
+						User.collection.drop(function(err) 
+						{
+							console.log('Collection "matches" dropped.');
+						});	
+						Match.collection.drop(function(err)
+						{
+							console.log('Collection "users" dropped.');
+						});
+						socket.emit('debugDropCollections', { result: true });		
+					}
+					else
+					{
+						socket.emit('debugDropCollections', { result: false });
+					}
+				}
+				else
+				{
+					socket.emit('debugDropCollections', { result: false });
+				}
+			});
 		});
 	}
 	

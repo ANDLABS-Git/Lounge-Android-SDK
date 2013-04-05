@@ -92,7 +92,7 @@ MatchSchema.statics.create = function(data, userID, callback)
 			{
 				if (err) { return callback(err, null); }
 				mongoose.models['Match'].findOne({ _id: match._id})
-				.populate('participants', 'playerID socketID')
+				.populate('participants', '_id playerID socketID')
 				.exec(function(err, match)
 				{
 					if (err) { return callback(err, null); }
@@ -176,7 +176,7 @@ MatchSchema.statics.join = function(data, userID, callback)
 					{
 						if (err) { return callback(err, null); }
 						mongoose.models['Match'].findOne({ _id: match._id})
-						.populate('participants', 'playerID socketID')
+						.populate('participants', '_id playerID socketID')
 						.exec(function(err, match)
 						{
 							if (err) { return callback(err, null); }
@@ -246,7 +246,7 @@ MatchSchema.statics.update = function(data, userID, callback)
 					{
 						if (err) { return callback(err, null); }
 						mongoose.models['Match'].findOne({ _id: match._id})
-						.populate('participants', 'playerID socketID')
+						.populate('participants', '_id playerID socketID')
 						.exec(function(err, match)
 						{
 							if (err) { return callback(err, null); }
@@ -309,7 +309,7 @@ MatchSchema.statics.move = function(data, userID, callback)
 					{
 						if (err) { return callback(err, null); }
 						mongoose.models['Match'].findOne({ _id: match._id})
-						.populate('participants', 'socketID')
+						.populate('participants', '_id playerID socketID')
 						.populate('lastMovingPlayer', 'playerID')
 						.exec(function(err, match)
 						{
@@ -367,7 +367,7 @@ MatchSchema.statics.lastMove = function(data, userID, callback)
 				if (true === containsUserID)
 				{
 					mongoose.models['Match'].findOne({ _id: match._id})
-					.populate('lastMovingPlayer', 'playerID')
+					.populate('lastMovingPlayer', '_id playerID')
 					.exec(function(err, match)
 					{
 						if (err) { return callback(err, null); }
@@ -399,7 +399,7 @@ MatchSchema.statics.allMatches = function(callback)
 {
 	mongoose.models['Match'].find()
 	.where('status').in(['join', 'running'])
-	.populate('participants', 'playerID')
+	.populate('participants', '_id playerID socketID')
 	.exec(function(err, allMatches)
 	{
 		if (err) { return callback(err, null); }

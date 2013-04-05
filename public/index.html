@@ -206,6 +206,34 @@
 						    });						
 							$('div#createChatMessage').append(chatMessageSubmit);														
 						}
+						
+						var resetInput = $('<input/>',
+						{
+							id: 'resetPasswordInput',
+							type: 'password',
+							value: 'Password',
+							click: function()
+							{
+								if ($(this).val() === 'Password')
+								{
+									$(this).val('');
+								}
+							}
+						})
+						$('#resetArea').append(resetInput);
+						
+						var inputButton = $('<input/>',
+						{
+							id: 'resetDatabase',
+							type: 'submit',
+							value: 'Reset',
+							click: function() 
+							{
+								var password = $('#resetPasswordInput').val();
+								socket.emit('debugDropCollections', { password: password });
+							}
+						});
+						$('#resetArea').append(inputButton);
 					}
 					else
 					{
@@ -218,6 +246,22 @@
 					}
 				}
 			});		
+			
+			socket.on('debugDropCollections', function(payload)
+			{
+				if ('' !== validateParameter(payload) &&
+					'' !== validateParameter(payload.result))
+				{
+					if (payload.result)
+					{
+						window.location.reload();
+					}
+					else
+					{
+						alert("Cannot drop the database!");
+					}
+				}
+			});
 			
 			/**
    			 *	This method is called after the user was disconnected.
@@ -252,6 +296,9 @@
 				
 				// Remove the inspection window of an running match.				
 				$('div.inspectGame').remove();
+				
+				// Remove the reset button.
+				$('#resetArea').empty();
 			});
 			
 			/**
@@ -516,26 +563,8 @@
 								{
 									$('.' + payload.matchID).append(" | " + value.playerID);									
 								}
-							});	
-							
-							// Check if user is in the list of playerIDs.
-							var foundPlayer = false;
-							$.each(payload.playerIDs, function(key, value) {
-								if (value.playerID === globalPlayerID)
-								{
-									foundPlayer = true;
-								}
-							});
-																		
-							if (foundPlayer)
-							{
-								$(".runningMatch[matchID = '" + payload.matchID + "']").append(inspectGameSubmit);			
-							}
-							else
-							{
-								$(".runningMatch[matchID = '" + payload.matchID + "'] .inspectGameSubmit").remove();
-							}				
-
+							});						
+							$(".runningMatch[matchID = '" + payload.matchID + "']").append(inspectGameSubmit);			
 						}
 					}
 					else if ('close' === payload.status)
@@ -979,7 +1008,10 @@
 				<div id="connectedPlayer">
 				</div>
 			</div>	
-			<div id="status_bottom"></div>			
+			<div id="status_bottom">
+				<div id="resetArea">
+				</div>
+			</div>			
 		</div>		
 	</div>	
 </body>
