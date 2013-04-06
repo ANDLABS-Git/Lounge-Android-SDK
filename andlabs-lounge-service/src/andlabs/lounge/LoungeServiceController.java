@@ -1,6 +1,7 @@
 package andlabs.lounge;
 
 import java.io.Serializable;
+import java.util.ConcurrentModificationException;
 import java.util.Map;
 
 import roboguice.util.Ln;
@@ -20,7 +21,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
-
 public class LoungeServiceController {
 
     private LoungeServiceCallback mLoungeServiceCallback;
@@ -33,25 +33,29 @@ public class LoungeServiceController {
             Ln.v("Handler.handleMessage(): message = %s", message);
             switch (message.what) {
 
-                case 42:
-                    mLoungeServiceCallback.theAnswerIs42();
-                    break;
+            case 42:
+                mLoungeServiceCallback.theAnswerIs42();
+                break;
 
-                case 1:
-                    Ln.v("Handler.handleMessage(): Server connected ... process login");
-                    mLoungeServiceCallback.onStart();
-                    break;
+            case 1:
+                Ln.v("Handler.handleMessage(): Server connected ... process login");
+                mLoungeServiceCallback.onStart();
+                break;
 
-                case 7:
+            case 7:
+                try {
                     Ln.v("Handler.handleMessage(): Getting update for games/matches/players: %s", message.getData());
-                    Serializable involvedGames = message.getData().getSerializable("involvedGameList");
-                    Serializable openGames = message.getData().getSerializable("openGameList");
-                    mLoungeServiceCallback.onOpenGamesUpdate((Map<String, Game>) openGames);
-                    mLoungeServiceCallback.onRunningGamesUpdate((Map<String, Game>) involvedGames);
-                    break;
+                } catch (ConcurrentModificationException e) {
+                    Ln.w("LoungeServiceController", e.getMessage());
+                }
+                Serializable involvedGames = message.getData().getSerializable("involvedGameList");
+                Serializable openGames = message.getData().getSerializable("openGameList");
+                mLoungeServiceCallback.onOpenGamesUpdate((Map<String, Game>) openGames);
+                mLoungeServiceCallback.onRunningGamesUpdate((Map<String, Game>) involvedGames);
+                break;
 
-                default:
-                    Ln.v("Handler.handleMessage(): message = %s", message);
+            default:
+                Ln.v("Handler.handleMessage(): message = %s", message);
 
             }
         }
@@ -67,7 +71,6 @@ public class LoungeServiceController {
             mLoungeService = null;
         }
 
-
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Ln.v("ServiceConnection.onServiceConnected():");
@@ -81,7 +84,6 @@ public class LoungeServiceController {
 
     };
 
-
     public void bindServiceTo(Context pContext) {
         Ln.v("bindServiceTo()");
         Intent serviceIntent = new Intent(pContext, LoungeService.class);
@@ -89,18 +91,15 @@ public class LoungeServiceController {
         pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
-
     public void registerCallback(LoungeServiceCallback pLoungeServiceCallback) {
         Ln.v("registerCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
         mLoungeServiceCallback = pLoungeServiceCallback;
     }
 
-
     public void unregisterCallback(LoungeServiceCallback pLoungeServiceCallback) {
         Ln.v("unregisterCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
         mLoungeServiceCallback = null;
     }
-
 
     public void unbindServiceFrom(Context pContext) {
         Ln.v("unbindServiceFrom()");
@@ -114,7 +113,6 @@ public class LoungeServiceController {
         pContext.unbindService(mServiceConnection);
     }
 
-
     public void login(String pPlayerName) {
         Ln.v("login(): pPlayerName = %s", pPlayerName);
         try {
@@ -123,7 +121,6 @@ public class LoungeServiceController {
             Ln.e(e, "login(): caught exception while processing login");
         }
     }
-
 
     public void openMatch(String pPackageId, String pDisplayName) {
         Ln.v("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName);
@@ -134,7 +131,6 @@ public class LoungeServiceController {
         }
     }
 
-
     public void joinMatch(String pGameId, String pMatchId) {
         Ln.v("joinMatch(): pGameId = %s, pMatchId = %s", pGameId, pMatchId);
         try {
@@ -144,7 +140,6 @@ public class LoungeServiceController {
         }
     }
 
-
     public void checkin(String pPackageId, String pMatchId) {
         Ln.v("checkin(): pPackageId = %s, pMatchId = %s", pPackageId, pMatchId);
         try {
@@ -153,7 +148,6 @@ public class LoungeServiceController {
             Ln.e(e, "checkin(): caught exception while checkin a match");
         }
     }
-
 
     public void sendGameMove(String pPackageId, String pMatchId, Bundle pMoveBundle) {
         Ln.v("sendGameMove(): pPackageId = %s, pMatchId = %s, pMoveBundle = %s", pPackageId, pMatchId, pMoveBundle);

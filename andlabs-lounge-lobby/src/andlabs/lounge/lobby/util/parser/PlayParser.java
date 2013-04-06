@@ -107,6 +107,7 @@ public class PlayParser {
             Drawable cached = readFileFromInternalStorage(packageName, imageHeight);
 
             if (cached != null) {
+                Log.d(TAG, "Added cached result for " + packageName);
                 mResults.put(packageName, cached);
                 notifyListener(new PlayResult(cached, packageName));
             } else {
