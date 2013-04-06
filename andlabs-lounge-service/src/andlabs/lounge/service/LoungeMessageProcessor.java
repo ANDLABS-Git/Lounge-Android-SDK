@@ -212,16 +212,20 @@ public abstract class LoungeMessageProcessor {
 
 
 	private Player addPlayer(JSONObject jsonObject) throws JSONException {
-		Player player = new Player();
-		player._id = jsonObject.getString("_id");
+	    String _id = jsonObject.getString("_id");
+	    Player player = mPlayers.get(_id);
+	    if (player == null) {
+	        player = new Player();
+	        player._id = _id;
 		player.playerID = jsonObject.getString("playerID");
+	        mPlayers.put(player._id, player);
+	    }
 		if (jsonObject.has("gameID")) {
 			player.gameID = jsonObject.getString("gameID");
 		}
 		if (jsonObject.has("matchID")) {
 			player.matchID = jsonObject.getString("matchID");
 		}
-		mPlayers.put(player._id, player);
 		return player;
 	}
 
