@@ -3,7 +3,9 @@ package andlabs.lounge;
 import android.os.Bundle;
 
 
-public interface LoungeGameCallback {
+public interface LoungeGameCallback  {
+    
+
 
     /**
      * is called every time one of the other players is ready to play

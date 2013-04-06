@@ -18,7 +18,9 @@ package andlabs.lounge.lobby.util;
 
 import java.util.List;
 
+import andlabs.lounge.lobby.LoungeConstants;
 import andlabs.lounge.model.Match;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -26,7 +28,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
-public class Utils {
+public class Utils implements LoungeConstants{
 
     private static final String TAG = "Lounge";
 
@@ -38,16 +40,18 @@ public class Utils {
     }
 
    public static void launchGameApp(Context context, String packageName, Match match) {
-//        final ResolveInfo info = null;//getInstalledGameInfo(context, packageName);
-//        if (info != null) {
-//            final Intent intent = new Intent();
-//            intent.setComponent(new ComponentName(info.activityInfo.packageName,
-//                    info.activityInfo.name));
-//            intent.putExtra("HOST", isHost);
+        final ResolveInfo info = null;//getInstalledGameInfo(context, packageName);
+        if (info != null) {
+            final Intent intent = new Intent();
+            intent.setComponent(new ComponentName(info.activityInfo.packageName,
+                    info.activityInfo.name));
+            String isHost;
+//            intent.putExtra(EXTRA_IS_HOST, isHost);
 //            intent.putExtra("HOSTNAME",hostName);
-//            intent.putExtra("GUESTNAME", guestName);
-//            context.startActivity(intent);
-//        }
+//            intent.putExtra(EXTRA_HOST_NAME, guestName);
+//            intent.putExtra(EXTRA_MATCH_ID, value)
+            context.startActivity(intent);
+        }
     }
 
     static Drawable getGameIcon(Context context, String packageName) {

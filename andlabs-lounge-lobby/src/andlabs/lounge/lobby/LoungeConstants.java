@@ -2,12 +2,10 @@ package andlabs.lounge.lobby;
 
 public interface LoungeConstants {
 
-    public static final String CATEGORY = "eu.andlabs.lounge";
-    public static final String ACCOUNT_TYPE_GOOGLE = "com.google";
-    public static final String LOGIN = "login";
-    public static final String PACKAGE_APPNAME_SEPERATOR = "/";
-    public static final String PLAY_BASE_URL = "http://play.google.com/store/apps/details?id=";
-    public static final int HOST_FLAG = 100;
-    public static final int GUEST_FLAG = 200;
+    public static final String EXTRA_IS_HOST = "ishost";
+    public static final String EXTRA_GUEST_NAME = "guestname";
+    public static final String EXTRA_HOST_NAME = "hostname";
+    public static final String EXTRA_MATCH_ID = "matchid";
+    
 
 }

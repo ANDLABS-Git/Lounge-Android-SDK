@@ -45,6 +45,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ListView;
+import android.widget.SlidingDrawer;
 import android.widget.Toast;
 
 public class LobbyFragment extends Fragment implements OnChildClickListener {
