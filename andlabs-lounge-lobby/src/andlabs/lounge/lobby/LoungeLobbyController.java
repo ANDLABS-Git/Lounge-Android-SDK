@@ -104,7 +104,7 @@ public class LoungeLobbyController {
 
     public void joinMatch(String pPackageId, String pMatchId) {
         Ln.v("joinGame(): pPackageId = %s, pMatchId = %s", pPackageId, pMatchId);
-        // TODO
+        mLoungeServiceController.joinMatch(pPackageId, pMatchId);
     }
 
 }

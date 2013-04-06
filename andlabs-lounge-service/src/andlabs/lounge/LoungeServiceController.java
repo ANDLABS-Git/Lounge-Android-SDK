@@ -122,15 +122,26 @@ public class LoungeServiceController {
             Ln.e(e, "login(): caught exception while processing login");
         }
 	}
-	
-	public void openMatch(String pPackageId, String pDisplayName) {
-		Ln.v("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName);
-		try {
-			mLoungeService.openMatch(pPackageId, pDisplayName);
-		} catch (RemoteException e) {
-			Ln.e(e, "openMatch(): caught exception while opening a match");
-		}		
-	}
+
+
+    public void openMatch(String pPackageId, String pDisplayName) {
+        Ln.v("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName);
+        try {
+            mLoungeService.openMatch(pPackageId, pDisplayName);
+        } catch (RemoteException e) {
+            Ln.e(e, "openMatch(): caught exception while opening a match");
+        }
+    }
+
+
+    public void joinMatch(String pGameId, String pMatchId) {
+        Ln.v("joinMatch(): pGameId = %s, pMatchId = %s", pGameId, pMatchId);
+        try {
+            mLoungeService.joinMatch(pGameId, pMatchId);
+        } catch (RemoteException e) {
+            Ln.e(e, "joinMatch(): caught exception while joining a match");
+        }
+    }
 
 
 	public void checkin(String pPackageId, String pMatchId) {
