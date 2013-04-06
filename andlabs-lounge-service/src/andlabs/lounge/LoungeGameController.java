@@ -69,8 +69,8 @@ public class LoungeGameController {
     public void bindServiceTo(Context pContext) {
         mPackageId = pContext.getApplicationInfo().packageName;
         Ln.v("bindServiceTo()");
-        mLoungeServiceController.bindServiceTo(pContext);
         mLoungeServiceController.registerCallback(mLoungeServiceCallback);
+        mLoungeServiceController.bindServiceTo(pContext);
     }
 
 
@@ -88,8 +88,8 @@ public class LoungeGameController {
 
     public void unbindServiceFrom(Context pContext) {
         Ln.v("unbindServiceFrom()");
-        mLoungeServiceController.unregisterCallback(mLoungeServiceCallback);
         mLoungeServiceController.unbindServiceFrom(pContext);
+        mLoungeServiceController.unregisterCallback(mLoungeServiceCallback);
     }
 
 
