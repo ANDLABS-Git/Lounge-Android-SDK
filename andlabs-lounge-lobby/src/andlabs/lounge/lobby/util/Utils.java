@@ -27,6 +27,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.util.Log;
 
 public class Utils implements LoungeConstants{
 
@@ -40,19 +41,31 @@ public class Utils implements LoungeConstants{
     }
 
    public static void launchGameApp(Context context, String packageName, Match match) {
-        final ResolveInfo info = null;//getInstalledGameInfo(context, packageName);
+        final ResolveInfo info = getInstalledGameInfo(context, packageName);
         if (info != null) {
             final Intent intent = new Intent();
             intent.setComponent(new ComponentName(info.activityInfo.packageName,
                     info.activityInfo.name));
-            String isHost;
-//            intent.putExtra(EXTRA_IS_HOST, isHost);
-//            intent.putExtra("HOSTNAME",hostName);
-//            intent.putExtra(EXTRA_HOST_NAME, guestName);
-//            intent.putExtra(EXTRA_MATCH_ID, value)
+            intent.putExtra(EXTRA_IS_HOST, Id.getName(context));
+            intent.putExtra("HOSTNAME",match.players.get(0).playerID);
+            intent.putExtra(EXTRA_HOST_NAME, match.players.get(1).playerID);
+            intent.putExtra(EXTRA_MATCH_ID, match.matchID);
             context.startActivity(intent);
         }
     }
+
+    private static ResolveInfo getInstalledGameInfo(Context context, String packageName) {
+        for (ResolveInfo info : getInstalledLoungeGames(context)) {
+            Log.i("installed adapter", packageName + " = " + info.activityInfo.packageName);
+            if (packageName.contains("/")) {
+                if (packageName.split("/")[0].equalsIgnoreCase(info.activityInfo.packageName)) {
+                    return info;
+                }
+
+            }
+        }
+    return null;
+}
 
     static Drawable getGameIcon(Context context, String packageName) {
         ResolveInfo info = null; // getInstalledGameInfo(context, packageName);
