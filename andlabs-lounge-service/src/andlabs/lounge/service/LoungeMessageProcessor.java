@@ -182,8 +182,8 @@ public abstract class LoungeMessageProcessor {
 		JSONObject json = (JSONObject) pPayload.getJSONObject("move");
 		Bundle b = new Bundle();
 
-		for (Iterator<String> i = json.keys(); i.hasNext();) {
-			String key = i.next();
+		for (Iterator<?> i = json.keys(); i.hasNext();) {
+			String key = (String) i.next();
 			b.putString(key, json.getString(key));
 			Ln.i("processGameMessage(): converting - key: %s / Value: %s", key, json.getString(key));
 		}
