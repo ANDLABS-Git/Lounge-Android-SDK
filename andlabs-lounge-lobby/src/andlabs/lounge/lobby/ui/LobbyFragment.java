@@ -227,7 +227,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         Match match = (Match) mAdapter.getChild(groupPosition, childPosition);
 
         if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) { // TODO Adopt here
-            mLoungeLobbyController.joinMatch(match.matchID, game.gameID);
+            mLoungeLobbyController.joinMatch(game.gameID, match.matchID);
             // Lounge.join(match.getMatchId(),game.getPgkName()); // join Game
         } else {
             // open joined game
