@@ -7,12 +7,12 @@ import io.socket.SocketIOException;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import roboguice.util.Ln;
-
 import andlabs.lounge.model.Game;
 import android.content.Intent;
 import android.os.Bundle;
@@ -80,7 +80,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 	private LoungeMessageProcessor mLoungeMessageProcessor = new LoungeMessageProcessor() {
 
 		@Override
-		public void triggerUpdate(HashMap<String, Game> pInvolvedGames, HashMap<String, Game> pOpenGames) {
+		public void triggerUpdate(ConcurrentHashMap<String, Game> pInvolvedGames, ConcurrentHashMap<String, Game> pOpenGames) {
 			Ln.v("LoungeMessageProcessor.triggerUpdate(): pInvolvedGames = %s, pOpenGames = %s", pInvolvedGames, pOpenGames);
 			Message message = new Message();
 			message.what = 7;

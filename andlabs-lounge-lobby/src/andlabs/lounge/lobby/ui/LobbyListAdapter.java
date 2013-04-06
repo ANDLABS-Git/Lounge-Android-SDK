@@ -61,9 +61,8 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     private List<Game> mJoinedGames = new ArrayList<Game>();
     private List<Game> mOpenGames = new ArrayList<Game>();
     private LayoutInflater mInflater;
-    private Handler handler = new Handler();
 
-    private PlayParser parser;
+    private PlayParser mParser;
 
     private ColorAnimatorTask anmimatorTask;
 
@@ -79,7 +78,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         mInflater = (LayoutInflater) pContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.anmimatorTask = new ColorAnimatorTask(pContext, 0, 1, 1000);
         mContext=pContext;
-        this.parser = PlayParser.getInstance(pContext);
+        mParser = PlayParser.getInstance(pContext);
     }
 
     public void setJoinedGames(List<Game> pRunningGames) {
@@ -341,16 +340,13 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
         }
 
-        final Drawable promo = this.parser.getResult(game.gameID);
+        final Drawable promo = mParser.getResult(game.gameID);
         if (promo != null) {
             convertView.findViewById(R.id.promo).setBackgroundDrawable(promo);
         }
         
         final ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
         icon.setImageDrawable(getAppIcon(game.gameID));
-
-       
-
     }
 
     private Drawable getAppIcon(String gameID) {

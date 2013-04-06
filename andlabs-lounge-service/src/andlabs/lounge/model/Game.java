@@ -2,6 +2,7 @@ package andlabs.lounge.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Game implements Serializable {
 
@@ -10,7 +11,7 @@ public class Game implements Serializable {
 
     // Not in game but in match public int totalSpots;
     // Not in game but in match public String status;
-    public HashMap<String, Match> matches = new HashMap<String, Match>();
+    public ConcurrentHashMap<String, Match> matches = new ConcurrentHashMap<String, Match>();
 
 
     @Override

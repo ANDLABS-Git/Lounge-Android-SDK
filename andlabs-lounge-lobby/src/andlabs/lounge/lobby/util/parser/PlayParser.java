@@ -83,9 +83,9 @@ public class PlayParser {
         return mResults.get(packageName);
     }
 
-    private void notifyListener(PlayResult result) {
+    private void notifyListener() {
         for (PlayListener listener : mListener) {
-            listener.onPlayResult(result);
+            listener.onPlayResult(mResults);
         }
 
         if (mQueries.size() > 0) {
@@ -107,15 +107,15 @@ public class PlayParser {
             Drawable cached = readFileFromInternalStorage(packageName, imageHeight);
 
             if (cached != null) {
-                Log.d(TAG, "Added cached result for " + packageName);
+                // Log.d(TAG, "Added cached result for " + packageName);
                 mResults.put(packageName, cached);
-                notifyListener(new PlayResult(cached, packageName));
+                notifyListener();
             } else {
 
                 mPackagesInQueue.add(packageName);
                 mQueries.add(new QueryData(packageName, imageWidth, imageHeight));
 
-                Log.d(TAG, "Added play query for " + packageName);
+                // Log.d(TAG, "Added play query for " + packageName);
                 if (!mIsQuerying) {
                     queryNext();
                 }
@@ -132,9 +132,10 @@ public class PlayParser {
             final int imageWidth = data.getWidth();
             final int imageHeight = data.getHeight();
 
-            Log.d(TAG, "**************************************************************");
+            // Log.d(TAG,
+            // "**************************************************************");
 
-            Log.d(TAG, "Started play query for " + packageName);
+            // Log.d(TAG, "Started play query for " + packageName);
 
             UrlDownloadTask urlTask = new UrlDownloadTask(packageName, imageWidth, imageHeight);
             urlTask.execute(PLAY_BASE_URL + packageName);
@@ -301,7 +302,7 @@ public class PlayParser {
     }
 
     public interface PlayListener {
-        public void onPlayResult(PlayResult result);
+        public void onPlayResult(Map<String, Drawable> pResults);
     }
 
     private class QueryData implements Comparable<QueryData> {
@@ -377,6 +378,8 @@ public class PlayParser {
             Log.d(TAG, "Image URL for " + pParams[0] + " is " + url);
 
             if (url != null) {
+                Log.d(TAG, "**************************************************************");
+                Log.d(TAG, "Downloading banner for " + pParams[0]);
 
                 InputStream is = null;
                 try {
@@ -407,7 +410,7 @@ public class PlayParser {
 
         protected void onPostExecute(Drawable result) {
             if (result != null) {
-                notifyListener(new PlayResult(result, mPackageName));
+                notifyListener();
             }
         };
     }
