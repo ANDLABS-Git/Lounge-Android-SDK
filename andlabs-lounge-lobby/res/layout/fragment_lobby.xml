@@ -20,8 +20,7 @@ limitations under the License.
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:layout_gravity="bottom"
-        android:background="#90472C" >
-
+        android:background="@color/orange" >
     </FrameLayout>
 
     <LinearLayout
@@ -46,7 +45,6 @@ limitations under the License.
             android:dividerHeight="2dp"
             android:groupIndicator="@null"
             android:scrollingCache="false" >
-
         </ExpandableListView>
     </LinearLayout>
 
@@ -54,21 +52,6 @@ limitations under the License.
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom" >
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-       android:layout_gravity="top"
-        android:layout_height="10dp"
-        android:layout_marginTop="125dp" >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"
-            android:background="#90472C"
-            android:orientation="vertical" >
-        </LinearLayout>
     </LinearLayout>
 
     <SlidingDrawer
@@ -81,7 +64,6 @@ limitations under the License.
         android:orientation="vertical" >
 
         <FrameLayout
-            android:id="@+id/handle"
             android:layout_width="match_parent"
             android:layout_height="80dp" >
 
@@ -90,53 +72,60 @@ limitations under the License.
                 android:layout_height="10dp"
                 android:layout_gravity="bottom"
                 android:background="#90472C" >
-
             </FrameLayout>
 
+            <!-- Sliding drawer hack -->
             <FrameLayout
+                android:id="@+id/handle"
                 android:layout_width="80dp"
-                android:layout_height="69dp"
+                android:layout_height="75dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="-10dp"
-                android:layout_marginTop="10dp"
-                android:background="#90472C" >
+                android:paddingTop="16dp" >
 
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="5dp"
-                    android:src="@drawable/ic_lobby_host_core" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#90472C" >
 
-                <ImageView
-                    android:id="@+id/ic_lobby_host_static_pulse"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="5dp"
-                    android:src="@drawable/ic_lobby_host_static_pulse" />
+                    <ImageView
+                        android:id="@+id/imageView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="-5dp"
+                        android:src="@drawable/ic_lobby_host_core" />
 
-                <ImageView
-                    android:id="@+id/ic_lobby_host_pulse"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_lobby_host_pulse"
-                    android:visibility="invisible" />
+                    <ImageView
+                        android:id="@+id/ic_lobby_host_static_pulse"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="-5dp"
+                        android:src="@drawable/ic_lobby_host_static_pulse" />
+
+                    <ImageView
+                        android:id="@+id/ic_lobby_host_pulse"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_lobby_host_pulse"
+                        android:visibility="invisible" />
+                </FrameLayout>
             </FrameLayout>
-
         </FrameLayout>
 
-        <FrameLayout
+        <include
             android:id="@+id/content"
-            android:layout_width="wrap_content"
-            android:layout_height="560dp"
-            android:background="#f32b2b2b" >
-
-            <include layout="@layout/host_game_drawer" />
-
-        </FrameLayout>
+            layout="@layout/lobby_drawer" />
     </SlidingDrawer>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="125dp"
+        android:background="#90472C" >
+    </LinearLayout>
 
 </FrameLayout>
