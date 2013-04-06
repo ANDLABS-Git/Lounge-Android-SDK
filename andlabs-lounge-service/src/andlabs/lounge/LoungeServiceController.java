@@ -39,7 +39,9 @@ public class LoungeServiceController {
 
             case 1:
                 Ln.v("Handler.handleMessage(): Server connected ... process login");
-                mLoungeServiceCallback.onStart();
+                if (mLoungeServiceCallback != null) {
+                    mLoungeServiceCallback.onStart();
+                }
                 break;
 
             case 7:
@@ -48,11 +50,29 @@ public class LoungeServiceController {
                 } catch (ConcurrentModificationException e) {
                     Ln.w("LoungeServiceController", e.getMessage());
                 }
-                Serializable involvedGames = message.getData().getSerializable("involvedGameList");
-                Serializable openGames = message.getData().getSerializable("openGameList");
-                mLoungeServiceCallback.onOpenGamesUpdate((ConcurrentHashMap<String, Game>) openGames);
-                mLoungeServiceCallback.onRunningGamesUpdate((ConcurrentHashMap<String, Game>) involvedGames);
+                if (mLoungeServiceCallback != null) {
+
+                    Serializable involvedGames = message.getData().getSerializable("involvedGameList");
+                    Serializable openGames = message.getData().getSerializable("openGameList");
+                    mLoungeServiceCallback.onOpenGamesUpdate((ConcurrentHashMap<String, Game>) openGames);
+                    mLoungeServiceCallback.onRunningGamesUpdate((ConcurrentHashMap<String, Game>) involvedGames);
+                }
                 break;
+                
+            case 18:
+                try {
+                    Ln.v("Handler.handleMessage(): Getting new message: %s", message.getData());
+                } catch (ConcurrentModificationException e) {
+                    Ln.w("LoungeServiceController", e.getMessage());
+                }
+                
+                if (mLoungeServiceCallback != null) {
+                    
+                    
+                    String matchId = message.getData().getString("matchID");
+                    Bundle data = message.getData().getBundle("data");
+                    mLoungeServiceCallback.onGameMessage(matchId, data);
+                }
 
             default:
                 Ln.v("Handler.handleMessage(): message = %s", message);

@@ -200,15 +200,15 @@ public abstract class LoungeMessageProcessor {
         final String matchID = pPayload.getString("matchID");
 
         JSONObject json = (JSONObject) pPayload.getJSONObject("move");
-        Bundle b = new Bundle();
+        Bundle bundle = new Bundle();
 
         for (Iterator<?> i = json.keys(); i.hasNext();) {
             String key = (String) i.next();
-            b.putString(key, json.getString(key));
+            bundle.putString(key, json.getString(key));
             Ln.i("processGameMessage(): converting - key: %s / Value: %s", key, json.getString(key));
         }
         if (!pStream) {
-            mMatchMoves.put(matchID, b);
+            mMatchMoves.put(matchID, bundle);
         }
 
         if (!mPlayerID.equals(pPayload.getString("playerID"))) {// We react only
@@ -221,7 +221,7 @@ public abstract class LoungeMessageProcessor {
             triggerUpdate(mInvolvedGames, mOpenGames);
         }
 
-        // TODO: forward moves to app
+        onGameMove(matchID, bundle);
     }
 
 
