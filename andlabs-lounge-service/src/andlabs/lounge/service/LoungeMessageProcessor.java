@@ -77,7 +77,7 @@ public abstract class LoungeMessageProcessor {
                 Ln.v("processMessage(): payload = %s", jsonArray);
 
                 ArrayList<Player> players = new ArrayList<Player>();
-                boolean involvedGame = false;
+                boolean involvedInMatchFlag = false;
                 for (int index = 0; index < jsonArray.length(); index++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(index);
                     final String _id = jsonObject.getString("_id");
@@ -91,7 +91,7 @@ public abstract class LoungeMessageProcessor {
                     players.add(player);
 
                     if (player.playerID.equals(mPlayerID)) {
-                        involvedGame = true;
+                        involvedInMatchFlag = true;
                     }
                 }
 
@@ -106,7 +106,7 @@ public abstract class LoungeMessageProcessor {
                                                                    // packageID.
 
                 Game game = null;
-                if (involvedGame) {
+                if (involvedInMatchFlag) {
                     game = mInvolvedGames.get(gameID);
                 } else {
                     game = mOpenGames.get(gameID);
@@ -139,7 +139,7 @@ public abstract class LoungeMessageProcessor {
 
                 final boolean closedFlag = "closed".equals(match.status);
                 if (!closedFlag) {
-                    if (involvedGame) { // the user is involved
+                    if (involvedInMatchFlag) { // the user is involved
                         mInvolvedGames.put(game.gameID, game);
                     } else {
                         mOpenGames.put(game.gameID, game);
