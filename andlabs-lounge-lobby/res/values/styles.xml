@@ -26,17 +26,33 @@
     <color name="blue">#154452</color>
     <color name="yellow">#928B15</color>
     <color name="white">#fff</color>
-    
+    <color name="whiteNoAlpha">#4a4a4a</color>
+
+    <!-- Style for the default lounge button -->
     <style name="button">
         <item name="android:background">@drawable/btn_default_holo_light</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">13dp</item>
         <item name="android:background">@drawable/btn_default_holo_dark</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/defaultTextSize</item>
         <item name="android:textStyle">bold</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
+     <!-- Style for the default lounge button -->
+    <style name="textView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/defaultTextSize</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    
+    <dimen name="grayBottomLineHeight">52dp</dimen>
+    <dimen name="dividorHeight">10dp</dimen>
+    <dimen name="defaultTextSize">18dp</dimen>
 
 </resources>

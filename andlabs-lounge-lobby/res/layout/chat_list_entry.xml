@@ -31,34 +31,35 @@
 
         <TextView
             android:id="@+id/sender"
+            style="@style/textView"
             android:layout_width="55dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="85dp"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
             android:singleLine="true"
-            android:text="Absender"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:text="Sender" />
 
         <TextView
             android:id="@+id/msg_text"
+            style="@style/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="85dp"
-            android:text="Message"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textStyle="normal"
+            android:text="Message" />
     </LinearLayout>
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/textView1"
-        android:layout_gravity="top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="top"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="25dp"
         android:text="12:32"
-        android:textColor="#80ffffff" />
+        android:textColor="#80ffffff"
+        android:visibility="gone" />
 
 </FrameLayout>

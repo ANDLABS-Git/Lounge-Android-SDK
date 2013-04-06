@@ -6,7 +6,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="10dp"
+        android:layout_height="@dimen/dividorHeight"
         android:layout_gravity="top"
         android:background="@color/orange" >
     </FrameLayout>
@@ -14,7 +14,7 @@
     <View
         android:layout_width="70dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/dividorHeight"
         android:background="@color/whiteAlpha" />
 
     <ListView
@@ -31,9 +31,11 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:padding="2dp"
-        android:layout_gravity="bottom" >
+        android:layout_height="@dimen/grayBottomLineHeight"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/dividorHeight"
+        android:background="@color/whiteNoAlpha"
+        android:padding="2dp" >
 
         <Button
             android:id="@+id/btn_host"
@@ -50,6 +52,13 @@
             android:text="@string/practise" />
     </LinearLayout>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dividorHeight"
+        android:layout_gravity="bottom"
+        android:background="@color/orange" >
+    </FrameLayout>
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
@@ -60,12 +69,5 @@
         android:textColor="#fff"
         android:textSize="18dp"
         android:textStyle="bold" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:layout_gravity="bottom"
-        android:layout_marginLeft="70dp"
-        android:background="@color/whiteAlpha" />
 
 </FrameLayout>

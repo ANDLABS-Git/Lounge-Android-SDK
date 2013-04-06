@@ -17,59 +17,65 @@
     android:layout_height="match_parent" >
 
     <View
-        android:layout_width="280dp"
-        android:layout_height="10dp"
-        android:layout_marginTop="125dp"
-        android:background="@color/green"
-    />
-    <View
-        android:layout_width="70dp"
-        android:layout_height="10dp"
-        android:layout_marginTop="125dp"
-        android:layout_alignParentRight="true"
-        android:background="@color/blue"
-    />
-
-    <View android:id="@+id/bottom"
-        android:layout_height="10dp"
-        android:background="@color/green"
         android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/green" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dividorHeight"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="125dp"
+        android:background="@color/green" />
+
+    <View
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dividorHeight"
         android:layout_alignParentBottom="true"
-    />
+        android:background="@color/green" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/grayBottomLineHeight"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/dividorHeight"
+        android:background="@color/whiteNoAlpha" />
 
     <ImageButton
         android:id="@+id/btn_send"
-        android:layout_width="wrap_content"
-        android:layout_height="44dp"
+        android:layout_width="60dp"
+        android:layout_height="@dimen/grayBottomLineHeight"
         android:layout_above="@id/bottom"
         android:layout_alignParentRight="true"
-        android:src="@drawable/ic_chat_send" 
-        android:background="#10ffffff"
-        android:paddingRight="5dp"
+        android:background="@drawable/btn_default_holo_dark"
         android:paddingLeft="5dp"
-    />
+        android:paddingRight="5dp"
+        android:src="@drawable/ic_chat_send" />
 
-    <EditText 
+    <EditText
         android:id="@+id/msg_field"
-        android:layout_width="wrap_content"
-        android:layout_height="44dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/grayBottomLineHeight"
         android:layout_above="@id/bottom"
-        android:layout_toLeftOf="@id/btn_send"
         android:layout_marginLeft="10dp"
+        android:layout_toLeftOf="@id/btn_send"
         android:background="#0000"
-        android:singleLine="true"
-        android:textStyle="bold"
         android:ems="12"
-    />
+        style="@style/textView"
+        android:singleLine="true"
+        android:textStyle="bold" />
 
     <ListView
-        android:id="@android:id/list"
+        android:id="@+id/list"
+        android:layout_marginTop="135dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/msg_field"
-        android:transcriptMode="alwaysScroll" 
         android:scrollingCache="false"
-        android:stackFromBottom="true">
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll" >
     </ListView>
 
 </RelativeLayout>

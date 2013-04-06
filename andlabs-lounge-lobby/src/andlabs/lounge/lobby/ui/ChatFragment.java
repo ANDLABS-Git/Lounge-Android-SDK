@@ -60,9 +60,9 @@ public class ChatFragment extends Fragment implements ChatListener, OnClickListe
 
     @Override
     public View onCreateView(final LayoutInflater infl, ViewGroup p, Bundle b) {
-        final View chat = infl.inflate(R.layout.chat, p, false);
+        final View chat = infl.inflate(R.layout.fragment_chat, p, false);
         mChatEditText = ((EditText) chat.findViewById(R.id.msg_field));
-        ((ImageButton) chat.findViewById(R.id.btn_msgSend)).setOnClickListener(this);
+        ((ImageButton) chat.findViewById(R.id.btn_send)).setOnClickListener(this);
         ((ListView) chat.findViewById(R.id.list)).setAdapter(new BaseAdapter() {
 
             @Override

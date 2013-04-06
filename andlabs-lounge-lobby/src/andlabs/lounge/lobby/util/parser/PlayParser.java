@@ -277,7 +277,7 @@ public class PlayParser {
                 inputStream = response.getEntity().getContent();
                 return inputStream;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
