@@ -5,12 +5,12 @@ import java.util.HashMap;
 
 public class Game implements Serializable {
 
-	public String gameID;
-	public String gameName;
+    public String gameID;
+    public String gameName;
 
-	// Not in game but in match public int totalSpots;
-	// Not in game but in match public String status;
-	public HashMap<String, Match> matches = new HashMap<String, Match>();
+    // Not in game but in match public int totalSpots;
+    // Not in game but in match public String status;
+    public HashMap<String, Match> matches = new HashMap<String, Match>();
 
 
     @Override
