@@ -8,10 +8,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -30,6 +32,8 @@ import android.util.Log;
 
 public class PlayParser {
 
+    private static final String TAG = "PlayParser";
+
     private static final int CONNECT_TIMEOUT = 15000 /* milliseconds */;
 
     private static final String PLAY_BASE_URL = "https://play.google.com/store/apps/details?id=";
@@ -43,6 +47,8 @@ public class PlayParser {
     private static final int DEFAULT_HEIGHT_DP = 80;
 
     private Queue<QueryData> mQueries = new PriorityQueue<PlayParser.QueryData>();
+
+    private Set<String> mPackagesInQueue = new HashSet<String>();
 
     private List<PlayListener> mListener = new ArrayList<PlayParser.PlayListener>();
 
@@ -96,11 +102,22 @@ public class PlayParser {
 
     public void queryPlay(final String packageName, final int imageWidth, final int imageHeight) {
 
-        if (packageName != null) {
-            mQueries.add(new QueryData(packageName, imageWidth, imageHeight));
+        if (packageName != null && !mResults.containsKey(packageName) && !mPackagesInQueue.contains(packageName)) {
 
-            if (!mIsQuerying) {
-                queryNext();
+            Drawable cached = readFileFromInternalStorage(packageName, imageHeight);
+
+            if (cached != null) {
+                mResults.put(packageName, cached);
+                notifyListener(new PlayResult(cached, packageName));
+            } else {
+
+                mPackagesInQueue.add(packageName);
+                mQueries.add(new QueryData(packageName, imageWidth, imageHeight));
+
+                Log.d(TAG, "Added play query for " + packageName);
+                if (!mIsQuerying) {
+                    queryNext();
+                }
             }
         }
     }
@@ -114,15 +131,12 @@ public class PlayParser {
             final int imageWidth = data.getWidth();
             final int imageHeight = data.getHeight();
 
-            Drawable cached = readFileFromInternalStorage(packageName, imageHeight);
+            Log.d(TAG, "**************************************************************");
 
-            if (cached != null) {
-                mResults.put(packageName, cached);
-                notifyListener(new PlayResult(cached, packageName));
-            } else {
-                UrlDownloadTask urlTask = new UrlDownloadTask(packageName, imageWidth, imageHeight);
-                urlTask.execute(PLAY_BASE_URL + packageName);
-            }
+            Log.d(TAG, "Started play query for " + packageName);
+
+            UrlDownloadTask urlTask = new UrlDownloadTask(packageName, imageWidth, imageHeight);
+            urlTask.execute(PLAY_BASE_URL + packageName);
         } else {
             mIsQuerying = false;
         }
@@ -187,6 +201,8 @@ public class PlayParser {
 
             out = mContext.openFileOutput(packageName, Context.MODE_PRIVATE);
             out.write(returnByteArray);
+
+            Log.d(TAG, "Saved promo graphic for " + packageName);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -345,35 +361,47 @@ public class PlayParser {
         protected Drawable doInBackground(String... pParams) {
             String html = null;
             try {
+                Log.d(TAG, "Downloading HTML for " + pParams[0]);
                 html = downloadUrl(pParams[0]);
+                Log.d(TAG, "Received HTML for " + pParams[0] + "\n" + html);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             String url = parseImageUrl(html);
-            if(url != null) {
+            if (url != null) {
                 url += mImageWidth;
             }
 
-            InputStream is = null;
-            try {
-                if( url != null) {
+            Log.d(TAG, "Image URL for " + pParams[0] + " is " + url);
+
+            if (url != null) {
+
+                InputStream is = null;
+                try {
                     is = downloadStream(url);
-                }
-                if (is != null) {
-                    writeFileToInternalStorage(is, mPackageName);
-                    return readFileFromInternalStorage(mPackageName, mImageHeight);
-                }
-                return null;
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (is != null) {
+                        writeFileToInternalStorage(is, mPackageName);
+                        Log.d(TAG, "Saved stream for " + pParams[0]);
+
+                        return readFileFromInternalStorage(mPackageName, mImageHeight);
+                    } else {
+                        queryNext();
+                    }
+                    return null;
+                } finally {
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
+            } else {
+                queryNext();
             }
+            return null;
         }
 
         protected void onPostExecute(Drawable result) {
