@@ -5,12 +5,11 @@
     android:layout_height="70dp"
     android:gravity="center_vertical"
     android:orientation="horizontal" >
-    
-           <View 
+
+    <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/blackHighAlpha"
-        />
+        android:background="@color/blackHighAlpha" />
 
     <ImageView
         android:id="@+id/icon"
@@ -47,8 +46,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/blackHighAlpha" >
+            android:background="@color/blackHighAlpha"
+            android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/count"
@@ -59,15 +58,13 @@
                 android:textColor="@android:color/white"
                 android:textSize="11dp"
                 android:textStyle="bold" />
-
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            
-            android:background="@color/blacLowAlpha"  >
+            android:background="@color/blacLowAlpha"
+            android:orientation="vertical" >
 
             <ImageView
                 android:id="@+id/expandableListIcon"
@@ -79,21 +76,19 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="4dp"
                 android:src="@drawable/arrows" />
-
         </LinearLayout>
     </LinearLayout>
 
-<LinearLayout
-    android:id="@+id/involvedGameIndicator"
-    android:layout_width="10dp"
-    android:visibility="invisible"
-    android:layout_height="match_parent"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentTop="true"
-    android:layout_gravity="right"
-    android:background="@color/orange"
-    android:orientation="vertical" >
-
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/involvedGameIndicator"
+        android:layout_width="10dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="right"
+        android:background="@color/orange"
+        android:orientation="vertical"
+        android:visibility="invisible" >
+    </LinearLayout>
 
 </FrameLayout>

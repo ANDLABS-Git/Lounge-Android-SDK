@@ -1,6 +1,7 @@
 package andlabs.lounge.lobby;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Map;
 
 import roboguice.util.Ln;
@@ -23,13 +24,11 @@ public class LoungeLobbyController {
             Ln.v("LoungeServiceCallback.theAnswerIs42(): Universal Answer ;-)");
         }
 
-
         @Override
         public void onStart() {
             Ln.v("LoungeServiceCallback.onStart():");
             mLoungeServiceController.login(mUserName);
         }
-
 
         @Override
         public void onConnect() {
@@ -38,7 +37,6 @@ public class LoungeLobbyController {
 
         }
 
-
         @Override
         public void onDisconnect() {
             Ln.v("LoungeServiceCallback.onDisconnect():");
@@ -46,20 +44,25 @@ public class LoungeLobbyController {
 
         }
 
-
         @Override
         public void onOpenGamesUpdate(Map<String, Game> pGames) {
-            Ln.v("LoungeServiceCallback.onOpenGamesUpdate(): pGames = %s", pGames);
+            try {
+                Ln.v("LoungeServiceCallback.onOpenGamesUpdate(): pGames = %s", pGames);
+            } catch (ConcurrentModificationException e) {
+                Ln.v("ConcurrentModificationException", e.getMessage());
+            }
             mLoungeLobbyCallback.onOpenGamesUpdate(new ArrayList<Game>(pGames.values()));
         }
 
-
         @Override
         public void onRunningGamesUpdate(Map<String, Game> pGames) {
-            Ln.v("LoungeServiceCallback.onRunningGamesUpdate(): pGames = %s", pGames);
+            try {
+                Ln.v("LoungeServiceCallback.onRunningGamesUpdate(): pGames = %s", pGames);
+            } catch (ConcurrentModificationException e) {
+                Ln.v("ConcurrentModificationException", e.getMessage());
+            }
             mLoungeLobbyCallback.onRunningGamesUpdate(new ArrayList<Game>(pGames.values()));
         }
-
 
         @Override
         public void onError(String message) {
@@ -68,7 +71,6 @@ public class LoungeLobbyController {
 
     };
 
-
     public void bindServiceTo(Context pContext) {
         Ln.v("bindServiceTo()");
         mUserName = Id.getName(pContext);
@@ -76,18 +78,15 @@ public class LoungeLobbyController {
         mLoungeServiceController.bindServiceTo(pContext);
     }
 
-
     public void registerCallback(LoungeLobbyCallback pLoungeLobbyCallback) {
         Ln.v("registerCallback(): pLoungeLobbyCallback = %s", pLoungeLobbyCallback);
         mLoungeLobbyCallback = pLoungeLobbyCallback;
     }
 
-
     public void unregisterCallback(LoungeLobbyCallback pLoungeLobbyCallback) {
         Ln.v("unregisterCallback(): pLoungeLobbyCallback = %s", pLoungeLobbyCallback);
         mLoungeLobbyCallback = null;
     }
-
 
     public void unbindServiceFrom(Context pContext) {
         Ln.v("unbindServiceFrom()");
@@ -95,12 +94,10 @@ public class LoungeLobbyController {
         mLoungeServiceController.unregisterCallback(mLoungeServiceCallback);
     }
 
-
     public void openMatch(String pPackageId, String pDisplayName) {
         Ln.v("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName);
         mLoungeServiceController.openMatch(pPackageId, pDisplayName);
     }
-
 
     public void joinMatch(String pPackageId, String pMatchId) {
         Ln.v("joinGame(): pPackageId = %s, pMatchId = %s", pPackageId, pMatchId);

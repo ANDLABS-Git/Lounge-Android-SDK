@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,9 +24,9 @@ public abstract class LoungeMessageProcessor {
     private Map<String, Bundle> mMatchMoves;
 
     // All games currently in the lounge in which the user is involved
-    private HashMap<String, Game> mInvolvedGames = new HashMap<String, Game>();
+    private ConcurrentHashMap<String, Game> mInvolvedGames = new ConcurrentHashMap<String, Game>();
     // All games currently in the lounge in which the user is not involved
-    private HashMap<String, Game> mOpenGames = new HashMap<String, Game>();
+    private ConcurrentHashMap<String, Game> mOpenGames = new ConcurrentHashMap<String, Game>();
     // All matches of all games, for easier manipulation
     private HashMap<String, Match> mMatches = new HashMap<String, Match>();
 
@@ -37,7 +38,7 @@ public abstract class LoungeMessageProcessor {
     }
 
 
-    public abstract void triggerUpdate(HashMap<String, Game> pInvolvedGames, HashMap<String, Game> pOpenGames);
+    public abstract void triggerUpdate(ConcurrentHashMap<String, Game> pInvolvedGames, ConcurrentHashMap<String, Game> pOpenGames);
 
 
     public abstract void onGameMove(String pMatchID, Bundle pParams);
