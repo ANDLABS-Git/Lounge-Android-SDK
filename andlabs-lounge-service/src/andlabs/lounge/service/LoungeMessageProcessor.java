@@ -116,13 +116,13 @@ public abstract class LoungeMessageProcessor {
 
                     if (openGame != null) {
                         openGame.matches.remove(matchID);
-                        if (openGame.matches.size() == 0) {
+                        if (openGame.matches.isEmpty()) {
                             mOpenGames.remove(gameID);
                         }
                     }
                     if (involvedGame != null) {
                         involvedGame.matches.remove(matchID);
-                        if (involvedGame.matches.size() == 0) {
+                        if (involvedGame.matches.isEmpty()) {
                             mInvolvedGames.remove(gameID);
                         }
                     }
@@ -131,7 +131,7 @@ public abstract class LoungeMessageProcessor {
 
                     if (openGame != null) {
                         openGame.matches.remove(matchID);
-                        if (openGame.matches.size() == 0) {
+                        if (openGame.matches.isEmpty()) {
                             mOpenGames.remove(gameID);
                         }
                     }
@@ -145,13 +145,19 @@ public abstract class LoungeMessageProcessor {
 
                 } else {
 
-                    if (openGame == null) {
-                        openGame = new Game();
-                        openGame.gameID = gameID;
-                        openGame.gameName = payload.getString("gameName");
-                        mOpenGames.put(gameID, openGame);
+                    if (match.totalSpots > match.players.size()) {
+                        if (openGame == null) {
+                            openGame = new Game();
+                            openGame.gameID = gameID;
+                            openGame.gameName = payload.getString("gameName");
+                            mOpenGames.put(gameID, openGame);
+                        }
+                        openGame.matches.put(matchID, match);
+                    } else {
+                        if (openGame != null && openGame.matches.isEmpty()) {
+                            mOpenGames.remove(gameID);
+                        }
                     }
-                    openGame.matches.put(matchID, match);
 
                 }
 
