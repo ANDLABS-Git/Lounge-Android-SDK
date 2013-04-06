@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/match"
     android:layout_width="match_parent"
+    
     android:layout_height="wrap_content"
     >
 
@@ -12,6 +13,7 @@
         android:background="@color/whiteAlpha" />
 
     <LinearLayout
+        android:id="@+id/involvedGameIndicator"
         android:layout_width="10dp"
         android:layout_height="match_parent"
         android:layout_gravity="right"
@@ -44,12 +46,14 @@
 
                 <TextView
                     android:id="@+id/playerLbl1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="110dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="5dp"
                     android:gravity="right"
-                    android:text="TextView"
+                      android:singleLine="true"
+                    android:ellipsize="end"
+                    android:text="123456789ABCDE"
                     android:textColor="@android:color/white"
                     android:textSize="16dp" />
 
@@ -78,13 +82,16 @@
 
                 <TextView
                     android:id="@+id/playerLbl2"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
-                    android:text="TextView"
+                    android:layout_marginRight="10dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="123456789ABCDE"
                     android:textColor="@android:color/white"
                     android:textSize="16dp" />
+
             </TableRow>
         </TableRow>
     </TableLayout>

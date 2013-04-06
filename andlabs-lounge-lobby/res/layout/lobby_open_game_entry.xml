@@ -21,13 +21,15 @@
 
     <TextView
         android:id="@+id/hostname"
-        android:layout_width="wrap_content"
+        android:layout_width="177dp"
+        android:singleLine="true"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="80dp"
         android:layout_marginRight="5dp"
         android:layout_toRightOf="@+id/imageView1"
-        android:text="hostname"
+        android:ellipsize="end"
+        android:text="123456789ABCDEFGH"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/white" />
 
@@ -42,6 +44,14 @@
         android:text="playercount"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/white" />
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/joinInProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginRight="20dp" />
 
     <LinearLayout
         android:id="@+id/joinBtn"
@@ -74,5 +84,14 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
     </LinearLayout>
+
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/playstoreIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/playstoreicon" />
 
 </FrameLayout>

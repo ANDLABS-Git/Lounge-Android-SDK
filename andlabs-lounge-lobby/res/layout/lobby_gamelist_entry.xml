@@ -86,6 +86,7 @@
 <LinearLayout
     android:id="@+id/involvedGameIndicator"
     android:layout_width="10dp"
+    android:visibility="invisible"
     android:layout_height="match_parent"
     android:layout_alignParentRight="true"
     android:layout_alignParentTop="true"
