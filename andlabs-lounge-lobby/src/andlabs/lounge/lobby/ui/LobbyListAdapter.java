@@ -67,6 +67,8 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     private PackageManager mPackageManager;
 
+    private boolean mSeparatorFlag;
+
 
     public LobbyListAdapter(Context pContext) {
         mInflater = (LayoutInflater) pContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -78,13 +80,19 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     public void setJoinedGames(List<Game> pRunningGames) {
         mJoinedGames = pRunningGames;
+        setSeparatorFlag();
     }
 
 
     public void setOpenGames(List<Game> pOpenGames) {
         mOpenGames = pOpenGames;
+        setSeparatorFlag();
     }
 
+    private void setSeparatorFlag() {
+        mSeparatorFlag = mJoinedGames.size() > 0 && mOpenGames.size() > 0;
+
+    }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
