@@ -77,7 +77,7 @@ public abstract class LoungeMessageProcessor {
                 Ln.v("processMessage(): payload = %s", jsonArray);
 
                 ArrayList<Player> players = new ArrayList<Player>();
-                boolean involvedGame = false;
+                boolean involvedInMatchFlag = false;
                 for (int index = 0; index < jsonArray.length(); index++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(index);
                     final String _id = jsonObject.getString("_id");
@@ -91,60 +91,68 @@ public abstract class LoungeMessageProcessor {
                     players.add(player);
 
                     if (player.playerID.equals(mPlayerID)) {
-                        involvedGame = true;
+                        involvedInMatchFlag = true;
                     }
                 }
 
                 // When the game is already known, update the known data, else
                 // create a new game object.
-                final String gameID = payload.getString("gameID"); // TODO:
-                                                                   // is it
-                                                                   // called
-                                                                   // gameID or
-                                                                   // packageID?
-                                                                   // spec says
-                                                                   // packageID.
-
-                Game game = null;
-                if (involvedGame) {
-                    game = mInvolvedGames.get(gameID);
-                } else {
-                    game = mOpenGames.get(gameID);
-                }
-                if (game == null) {
-                    game = new Game();
-                    game.gameID = gameID;
-                    game.gameName = payload.getString("gameName");
-                }
-
+                final String gameID = payload.getString("gameID");
+                Game involvedGame = mInvolvedGames.get(gameID);
+                Game openGame = mOpenGames.get(gameID);
                 final String matchID = payload.getString("matchID");
-                Match match = game.matches.get(matchID);
+                Match match = mMatches.get(matchID);
                 if (match == null) {
                     match = new Match();
                     match.matchID = matchID;
-                    game.matches.put(matchID, match);
                     mMatches.put(matchID, match);
                 }
-                match.players = new ArrayList<Player>();
-                JSONArray playerArray = payload.getJSONArray("playerIDs");
-                for (int index = 0; index < playerArray.length(); index++) {
-                    JSONObject jsonObject = playerArray.getJSONObject(index);
-
-                    String player = jsonObject.getString("_id");
-                    match.players.add(mPlayers.get(player));
-                }
-
+                match.players = players;
                 match.totalSpots = payload.getInt("totalSpots");
                 match.status = payload.getString("status");
 
-                final boolean closedFlag = "closed".equals(match.status);
-                if (!closedFlag) {
-                    if (involvedGame) { // the user is involved
-                        mInvolvedGames.put(game.gameID, game);
-                    } else {
-                        mOpenGames.put(game.gameID, game);
+                if ("closed".equals(match.status)) {
+
+                    if (openGame != null) {
+                        openGame.matches.remove(matchID);
+                        if (openGame.matches.size() == 0) {
+                            mOpenGames.remove(gameID);
+                        }
                     }
-                } // TODO else, remove it if existing
+                    if (involvedGame != null) {
+                        involvedGame.matches.remove(matchID);
+                        if (involvedGame.matches.size() == 0) {
+                            mInvolvedGames.remove(gameID);
+                        }
+                    }
+
+                } else if (involvedInMatchFlag) {
+
+                    if (openGame != null) {
+                        openGame.matches.remove(matchID);
+                        if (openGame.matches.size() == 0) {
+                            mOpenGames.remove(gameID);
+                        }
+                    }
+                    if (involvedGame == null) {
+                        involvedGame = new Game();
+                        involvedGame.gameID = gameID;
+                        involvedGame.gameName = payload.getString("gameName");
+                        mInvolvedGames.put(gameID, involvedGame);
+                    }
+                    involvedGame.matches.put(matchID, match);
+
+                } else {
+
+                    if (openGame == null) {
+                        openGame = new Game();
+                        openGame.gameID = gameID;
+                        openGame.gameName = payload.getString("gameName");
+                        mOpenGames.put(gameID, openGame);
+                    }
+                    openGame.matches.put(matchID, match);
+
+                }
 
                 triggerUpdate(mInvolvedGames, mOpenGames);
             }
