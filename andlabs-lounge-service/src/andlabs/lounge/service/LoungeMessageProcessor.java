@@ -159,15 +159,7 @@ public abstract class LoungeMessageProcessor {
 
             // Set checkedInGame and checkedInMatch on the player's object
             if ("checkIn".equals(pVerb)) {
-                // PAYLOAD { gameID:"packageID", matchID: "matchID", playerID: "playerID"}
-                final String gameID = payload.getString("gameID");
-                final String playerID = payload.getString("playerID");
-                Player player = mPlayers.get(playerID);
-
-                player.gameID = gameID;
-                player.matchID = payload.has("matchID") ? payload.getString("matchID") : gameID;
-
-                triggerUpdate(mInvolvedGames, mOpenGames);
+                processCheckIn(payload);
             }
 
             // Update match and game state to updatesAvailable (or similar)
@@ -188,6 +180,19 @@ public abstract class LoungeMessageProcessor {
             Ln.e(e, "caught exception while parsing payload");
         }
     }
+
+
+    // PAYLOAD { gameID:"gameID", matchID: "matchID", playerID: "playerID" }
+    private void processCheckIn(JSONObject pPayload) throws JSONException {
+        final String gameID = pPayload.getString("gameID");
+        final String playerID = pPayload.getString("playerID");
+        Player player = mPlayers.get(playerID);
+
+        player.gameID = gameID;
+        player.matchID = pPayload.has("matchID") ? pPayload.getString("matchID") : gameID;
+
+        triggerUpdate(mInvolvedGames, mOpenGames);
+   }
 
 
     private void processGameMessage(JSONObject pPayload, boolean pStream) throws JSONException {
