@@ -82,6 +82,12 @@ public abstract class LoungeMessageProcessor {
 					JSONObject jsonObject = jsonArray.getJSONObject(index);
 					final String _id = jsonObject.getString("_id");
 					Player player = mPlayers.get(_id);
+					if (player == null) {
+					    player = new Player();
+					    player._id = _id;
+					    player.playerID = jsonObject.getString("playerID");
+					    mPlayers.put(_id, player);
+					}
                     players.add(player);
 
 					if (player.playerID.equals(mPlayerID)) {
