@@ -205,7 +205,7 @@ public abstract class LoungeMessageProcessor {
     private void processGameMessage(JSONObject pPayload, boolean pStream) throws JSONException {
         final String matchID = pPayload.getString("matchID");
 
-        JSONObject json = (JSONObject) pPayload.getJSONObject("move");
+        JSONObject json = new JSONObject(pPayload.getString("move"));
         Bundle bundle = new Bundle();
 
         for (Iterator<?> i = json.keys(); i.hasNext();) {
