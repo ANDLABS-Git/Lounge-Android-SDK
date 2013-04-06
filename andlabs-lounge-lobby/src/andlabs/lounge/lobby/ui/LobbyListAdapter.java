@@ -73,10 +73,12 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     private boolean mSeparatorFlag;
 
+    private Context mContext;
+
     public LobbyListAdapter(Context pContext) {
         mInflater = (LayoutInflater) pContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.anmimatorTask = new ColorAnimatorTask(pContext, 0, 1, 1000);
-
+        mContext=pContext;
         this.parser = PlayParser.getInstance(pContext);
     }
 
@@ -343,18 +345,27 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         if (promo != null) {
             convertView.findViewById(R.id.promo).setBackgroundDrawable(promo);
         }
+        
+        final ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
+        icon.setImageDrawable(getAppIcon(game.gameID));
 
-        for (ResolveInfo info : installedGames) {
-            Log.i("installed adapter",game.gameID + " = "+info.activityInfo.packageName);
-            if (game.gameID.equalsIgnoreCase(info.activityInfo.packageName)) {
-                final ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
-                icon.setImageDrawable(info.loadIcon(this.mPackageManager));
-            }
-
-        }
+       
 
     }
 
+    private Drawable getAppIcon(String gameID) {
+        for (ResolveInfo info : installedGames) {
+            Log.i("installed adapter", gameID + " = " + info.activityInfo.packageName);
+            if (gameID.contains("/")) {
+                if (gameID.split("/")[0].equalsIgnoreCase(info.activityInfo.packageName)) {
+                   return info.loadIcon(mPackageManager);
+                }
+
+            }
+        }
+        return mContext.getResources().getDrawable(R.drawable.playstoreicon);
+    }
+ 
     @Override
     public boolean hasStableIds() {
         return false;
