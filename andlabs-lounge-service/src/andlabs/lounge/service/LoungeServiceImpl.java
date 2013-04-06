@@ -144,7 +144,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 	public void login(String playerId) throws RemoteException {
 		Ln.v("login(): playerId = %s", playerId);
 		try {
-			mLoungeMessageProcessor.setMyPlayerId(playerId);
+            mLoungeMessageProcessor.setMyPlayerId(playerId);
 			mSocketIO.emit("login", new JSONObject().put("playerID", playerId));
 		} catch (JSONException e) {
 			Ln.e(e, "login(): caught exception while sending login");

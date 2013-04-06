@@ -18,215 +18,223 @@ import android.os.Bundle;
 
 public abstract class LoungeMessageProcessor {
 
-	private HashMap<String, Player> mPlayers = new HashMap<String, Player>();
+    private HashMap<String, Player> mPlayers = new HashMap<String, Player>();
 
-	private Map<String, Bundle> mMatchMoves;
+    private Map<String, Bundle> mMatchMoves;
 
-	// All games currently in the lounge in which the user is involved
-	private HashMap<String, Game> mInvolvedGames = new HashMap<String, Game>();
-	// All games currently in the lounge in which the user is not involved
-	private HashMap<String, Game> mOpenGames = new HashMap<String, Game>();
-	// All matches of all games, for easier manipulation
-	private HashMap<String, Match> mMatches = new HashMap<String, Match>();
+    // All games currently in the lounge in which the user is involved
+    private HashMap<String, Game> mInvolvedGames = new HashMap<String, Game>();
+    // All games currently in the lounge in which the user is not involved
+    private HashMap<String, Game> mOpenGames = new HashMap<String, Game>();
+    // All matches of all games, for easier manipulation
+    private HashMap<String, Match> mMatches = new HashMap<String, Match>();
 
-	private String mPlayerID;
-
-
-	public void setMyPlayerId(String pPlayerId) {
-		mPlayerID = pPlayerId;
-	}
+    private String mPlayerID;
 
 
-	public abstract void triggerUpdate(HashMap<String, Game> pInvolvedGames, HashMap<String, Game> pOpenGames);
+    public void setMyPlayerId(String pPlayerId) {
+        mPlayerID = pPlayerId;
+    }
 
 
-	public abstract void onGameMove(String pMatchID, Bundle pParams);
+    public abstract void triggerUpdate(HashMap<String, Game> pInvolvedGames, HashMap<String, Game> pOpenGames);
 
 
-	public void processMessage(String pVerb, Object[] pPayload) {
-		Ln.v("processMessage(): processing %s message: %s", pVerb, Arrays.toString(pPayload));
-		try {
-			JSONObject payload = new JSONObject(pPayload[0].toString());
+    public abstract void onGameMove(String pMatchID, Bundle pParams);
 
-			// Create map with all players
-			if ("login".equals(pVerb)) {
-				JSONArray jsonArray = payload.getJSONArray("playerList");
-				Ln.v("processMessage(): %s", jsonArray);
-				for (int index = 0; index < jsonArray.length(); index++) {
-					JSONObject jsonObject = jsonArray.getJSONObject(index);
-					Ln.v("processMessage(): processing player %s", jsonObject);
-					addPlayer(jsonObject);
-				}
-			}
 
-			// Add new player to the map
-			if ("addPlayer".equals(pVerb)) {
-				addPlayer(payload);
-			}
+    public void processMessage(String pVerb, Object[] pPayload) {
+        Ln.v("processMessage(): processing %s message: %s", pVerb, Arrays.toString(pPayload));
+        try {
+            JSONObject payload = new JSONObject(pPayload[0].toString());
 
-			// Match was created or joined by someone.
-			// If the status is "created", it is a new match, else a match is updated.
-			// Needs to split into games / matches in which the user is involved and others
-			if ("joinMatch".equals(pVerb)) {
+            // Create map with all players
+            if ("login".equals(pVerb)) {
+                JSONArray jsonArray = payload.getJSONArray("playerList");
+                Ln.v("processMessage(): %s", jsonArray);
+                for (int index = 0; index < jsonArray.length(); index++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(index);
+                    Ln.v("processMessage(): processing player %s", jsonObject);
+                    addPlayer(jsonObject);
+                }
+            }
 
-				// PAYLOAD { gameID: "packageID", matchID: “matchID”, gameName:”AppName”, totalSpots: ”totalSpots”,
-				//           status:”join/running”, gameType: “move/stream”, playerIDs: [player] }
-				// where each player is of type {_id: “uuid”, playerID: “playerID”}
+            // Add new player to the map
+            if ("addPlayer".equals(pVerb)) {
+                addPlayer(payload);
+            }
 
-				JSONArray jsonArray = payload.getJSONArray("playerIDs");
-				Ln.v("processMessage(): payload = %s", jsonArray);
+            // Match was created or joined by someone.
+            // If the status is "created", it is a new match, else a match is updated.
+            // Needs to split into games / matches in which the user is involved and others
+            if ("joinMatch".equals(pVerb)) {
 
-				ArrayList<Player> players = new ArrayList<Player>();
-				boolean involvedGame = false;
-				for (int index = 0; index < jsonArray.length(); index++) {
-					JSONObject jsonObject = jsonArray.getJSONObject(index);
-					final String _id = jsonObject.getString("_id");
-					Player player = mPlayers.get(_id);
-					if (player == null) {
-					    player = new Player();
-					    player._id = _id;
-					    player.playerID = jsonObject.getString("playerID");
-					    mPlayers.put(_id, player);
-					}
+                // PAYLOAD { gameID: "packageID", matchID: “matchID”, gameName:”AppName”, totalSpots: ”totalSpots”,
+                // status:”join/running”, gameType: “move/stream”, playerIDs: [player] }
+                // where each player is of type {_id: “uuid”, playerID: “playerID”}
+
+                JSONArray jsonArray = payload.getJSONArray("playerIDs");
+                Ln.v("processMessage(): payload = %s", jsonArray);
+
+                ArrayList<Player> players = new ArrayList<Player>();
+                boolean involvedInMatchFlag = false;
+                for (int index = 0; index < jsonArray.length(); index++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(index);
+                    final String _id = jsonObject.getString("_id");
+                    Player player = mPlayers.get(_id);
+                    if (player == null) {
+                        player = new Player();
+                        player._id = _id;
+                        player.playerID = jsonObject.getString("playerID");
+                        mPlayers.put(_id, player);
+                    }
                     players.add(player);
 
-					if (player.playerID.equals(mPlayerID)) {
-						involvedGame = true;
-					}
-				}
+                    if (player.playerID.equals(mPlayerID)) {
+                        involvedInMatchFlag = true;
+                    }
+                }
 
-				// When the game is already known, update the known data, else
-				// create a new game object.
-				final String gameID = payload.getString("gameID"); // TODO:
-																	// is it
-																	// called
-																	// gameID or
-																	// packageID?
-																	// spec says
-																	// packageID.
+                // When the game is already known, update the known data, else
+                // create a new game object.
+                final String gameID = payload.getString("gameID");
+                Game involvedGame = mInvolvedGames.get(gameID);
+                Game openGame = mOpenGames.get(gameID);
+                final String matchID = payload.getString("matchID");
+                Match match = mMatches.get(matchID);
+                if (match == null) {
+                    match = new Match();
+                    match.matchID = matchID;
+                    mMatches.put(matchID, match);
+                }
+                match.players = players;
+                match.totalSpots = payload.getInt("totalSpots");
+                match.status = payload.getString("status");
 
-				Game game = null;
-				if (involvedGame) {
-					game = mInvolvedGames.get(gameID);
-				} else {
-					game = mOpenGames.get(gameID);
-				}
-				if (game == null) {
-					game = new Game();
-					game.gameID = gameID;
-					game.gameName = payload.getString("gameName");
-				}
+                if ("closed".equals(match.status)) {
 
-				final String matchID = payload.getString("matchID");
-				Match match = game.matches.get(matchID);
-				if (match == null) {
-					match = new Match();
-					match.matchID = matchID;
-					game.matches.put(matchID, match);
-					mMatches.put(matchID, match);
-				}
-				match.players=new ArrayList<Player>();
-				JSONArray playerArray = payload.getJSONArray("playerIDs");
-				for (int index = 0; index < playerArray.length(); index++) {
-					JSONObject jsonObject = playerArray.getJSONObject(index);
-					
-					String player = jsonObject.getString("_id");
-					match.players.add(mPlayers.get(player));
-				}
-				
-				match.totalSpots = payload.getInt("totalSpots");
-				match.status = payload.getString("status");
+                    if (openGame != null) {
+                        openGame.matches.remove(matchID);
+                        if (openGame.matches.size() == 0) {
+                            mOpenGames.remove(gameID);
+                        }
+                    }
+                    if (involvedGame != null) {
+                        involvedGame.matches.remove(matchID);
+                        if (involvedGame.matches.size() == 0) {
+                            mInvolvedGames.remove(gameID);
+                        }
+                    }
 
-				final boolean closedFlag = "closed".equals(match.status);
-				if (!closedFlag) {
-					if (involvedGame) { // the user is involved
-						mInvolvedGames.put(game.gameID, game);
-					} else {
-						mOpenGames.put(game.gameID, game);
-					}
-				} // TODO else, remove it if existing
+                } else if (involvedInMatchFlag) {
 
-				triggerUpdate(mInvolvedGames, mOpenGames);
-			}
+                    if (openGame != null) {
+                        openGame.matches.remove(matchID);
+                        if (openGame.matches.size() == 0) {
+                            mOpenGames.remove(gameID);
+                        }
+                    }
+                    if (involvedGame == null) {
+                        involvedGame = new Game();
+                        involvedGame.gameID = gameID;
+                        involvedGame.gameName = payload.getString("gameName");
+                        mInvolvedGames.put(gameID, involvedGame);
+                    }
+                    involvedGame.matches.put(matchID, match);
 
-			// Set checkedInGame and checkedInMatch on the player's object
-			if ("checkIn".equals(pVerb)) {
-				// PAYLOAD { gameID:"packageID", matchID: "matchID", playerID: "playerID"}
-				final String gameID = payload.getString("gameID");
-				final String playerID = payload.getString("playerID");
-				Player player = mPlayers.get(playerID);
+                } else {
 
-				player.gameID = gameID;
-				player.matchID = payload.has("matchID") ? payload.getString("matchID") : gameID;
+                    if (openGame == null) {
+                        openGame = new Game();
+                        openGame.gameID = gameID;
+                        openGame.gameName = payload.getString("gameName");
+                        mOpenGames.put(gameID, openGame);
+                    }
+                    openGame.matches.put(matchID, match);
 
-				triggerUpdate(mInvolvedGames, mOpenGames);
-			}
+                }
 
-			// Update match and game state to updatesAvailable (or similar)
-			if ("moveMatch".equals(pVerb)) {
-				processGameMessage(payload, false);
-			}
+                triggerUpdate(mInvolvedGames, mOpenGames);
+            }
 
-			if ("stream".equals(pVerb)) {
-				processGameMessage(payload, true);
-			}
+            // Set checkedInGame and checkedInMatch on the player's object
+            if ("checkIn".equals(pVerb)) {
+                // PAYLOAD { gameID:"packageID", matchID: "matchID", playerID: "playerID"}
+                final String gameID = payload.getString("gameID");
+                final String playerID = payload.getString("playerID");
+                Player player = mPlayers.get(playerID);
 
-			// Process the last move data and update match and game state to
-			// updatesAvailable (or similar)
-			if ("lastMove".equals(pVerb)) {
-				// TODO
-			}
-		} catch (JSONException e) {
-			Ln.e(e, "caught exception while parsing payload");
-		}
-	}
+                player.gameID = gameID;
+                player.matchID = payload.has("matchID") ? payload.getString("matchID") : gameID;
 
+                triggerUpdate(mInvolvedGames, mOpenGames);
+            }
 
-	private void processGameMessage(JSONObject pPayload, boolean pStream) throws JSONException {
-		final String matchID = pPayload.getString("matchID");
+            // Update match and game state to updatesAvailable (or similar)
+            if ("moveMatch".equals(pVerb)) {
+                processGameMessage(payload, false);
+            }
 
-		JSONObject json = (JSONObject) pPayload.getJSONObject("move");
-		Bundle b = new Bundle();
+            if ("stream".equals(pVerb)) {
+                processGameMessage(payload, true);
+            }
 
-		for (Iterator<?> i = json.keys(); i.hasNext();) {
-			String key = (String) i.next();
-			b.putString(key, json.getString(key));
-			Ln.i("processGameMessage(): converting - key: %s / Value: %s", key, json.getString(key));
-		}
-		if (!pStream) {
-			mMatchMoves.put(matchID, b);
-		}
-
-		if (!mPlayerID.equals(pPayload.getString("playerID"))) {// We react only
-																// to moves not
-																// send by the
-																// user
-			// TODO: set to false when the move was received by the game
-			mMatches.get(matchID).playerOnTurn = mPlayerID;
-
-			triggerUpdate(mInvolvedGames, mOpenGames);
-		}
-
-		// TODO: forward moves to app
-	}
+            // Process the last move data and update match and game state to
+            // updatesAvailable (or similar)
+            if ("lastMove".equals(pVerb)) {
+                // TODO
+            }
+        } catch (JSONException e) {
+            Ln.e(e, "caught exception while parsing payload");
+        }
+    }
 
 
-	private Player addPlayer(JSONObject jsonObject) throws JSONException {
-	    String _id = jsonObject.getString("_id");
-	    Player player = mPlayers.get(_id);
-	    if (player == null) {
-	        player = new Player();
-	        player._id = _id;
-		player.playerID = jsonObject.getString("playerID");
-	        mPlayers.put(player._id, player);
-	    }
-		if (jsonObject.has("gameID")) {
-			player.gameID = jsonObject.getString("gameID");
-		}
-		if (jsonObject.has("matchID")) {
-			player.matchID = jsonObject.getString("matchID");
-		}
-		return player;
-	}
+    private void processGameMessage(JSONObject pPayload, boolean pStream) throws JSONException {
+        final String matchID = pPayload.getString("matchID");
+
+        JSONObject json = (JSONObject) pPayload.getJSONObject("move");
+        Bundle b = new Bundle();
+
+        for (Iterator<?> i = json.keys(); i.hasNext();) {
+            String key = (String) i.next();
+            b.putString(key, json.getString(key));
+            Ln.i("processGameMessage(): converting - key: %s / Value: %s", key, json.getString(key));
+        }
+        if (!pStream) {
+            mMatchMoves.put(matchID, b);
+        }
+
+        if (!mPlayerID.equals(pPayload.getString("playerID"))) {// We react only
+                                                                // to moves not
+                                                                // send by the
+                                                                // user
+            // TODO: set to false when the move was received by the game
+            mMatches.get(matchID).playerOnTurn = mPlayerID;
+
+            triggerUpdate(mInvolvedGames, mOpenGames);
+        }
+
+        // TODO: forward moves to app
+    }
+
+
+    private Player addPlayer(JSONObject jsonObject) throws JSONException {
+        String _id = jsonObject.getString("_id");
+        Player player = mPlayers.get(_id);
+        if (player == null) {
+            player = new Player();
+            player._id = _id;
+            player.playerID = jsonObject.getString("playerID");
+            mPlayers.put(player._id, player);
+        }
+        if (jsonObject.has("gameID")) {
+            player.gameID = jsonObject.getString("gameID");
+        }
+        if (jsonObject.has("matchID")) {
+            player.matchID = jsonObject.getString("matchID");
+        }
+        return player;
+    }
 
 }
