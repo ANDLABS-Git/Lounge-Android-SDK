@@ -6,8 +6,11 @@ import andlabs.lounge.lobby.LoungeConstants;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -36,6 +39,28 @@ public class MainActivity extends Activity implements LoungeGameCallback {
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_HOST_NAME));
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_GUEST_NAME));
        lounge= new LoungeGameController();
+       
+       ((Button)findViewById(R.id.checkInBtn)).setOnClickListener(new OnClickListener() {
+        
+        @Override
+        public void onClick(View v) {
+            // TODO Auto-generated method stub
+            Log.i("LoungeDebugger" , "Checkin "+getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+            lounge.checkin(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+        }
+    });
+       
+       ((Button)findViewById(R.id.sendBtn)).setOnClickListener(new OnClickListener() {
+           
+           @Override
+           public void onClick(View v) {
+               // TODO Auto-generated method stub
+               Bundle b = new Bundle();
+               Log.i("LoungeDebugger" , "move :"+key.getText().toString()+ " "+ value.getText().toString());
+               b.putString(key.getText().toString(), value.getText().toString());
+               lounge.sendGameMove(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID), b);
+           }
+       });
         
     }
     
@@ -61,13 +86,14 @@ public class MainActivity extends Activity implements LoungeGameCallback {
     }
     
     public void send(View v){
-        Bundle b = new Bundle();
-        b.putString(key.getText().toString(), value.getText().toString());
-        lounge.sendGameMove(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID), b);
+//        Bundle b = new Bundle();
+//        b.putString(key.getText().toString(), value.getText().toString());
+//        lounge.sendGameMove(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID), b);
     }
     
     public void checkIn(View v){
-        lounge.checkin(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+        
+//        lounge.checkin(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
     }
 
     @Override
