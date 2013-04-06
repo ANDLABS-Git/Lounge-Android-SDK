@@ -178,9 +178,9 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 		Ln.v("joinMatch(): pGameId = %s, pMatchId = %s", pGameId, pMatchId);
 		try {
 			// PAYLOAD { gameID: ”packageID”, matchID: “matchID” }
-			mSocketIO.emit("checkin", new JSONObject().put("gameID", pGameId).put("matchID", pMatchId));
+			mSocketIO.emit("join", new JSONObject().put("gameID", pGameId).put("matchID", pMatchId));
 		} catch (JSONException e) {
-			Ln.e(e, "joinMatch(): caught exception while sending checkin");
+			Ln.e(e, "joinMatch(): caught exception while sending join");
 		}
 	}
 
