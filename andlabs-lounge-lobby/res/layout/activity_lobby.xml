@@ -29,29 +29,28 @@
 
     <FrameLayout
         android:id="@+id/header"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="80dp"
-         >
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp" >
 
         <TextView
             android:id="@+id/lobbySection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|left"
-            android:layout_marginLeft="240dp"
             android:layout_marginTop="20dp"
             android:text="Statistics"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="15dp" />
+            android:textColor="@android:color/white"
+            android:textSize="15dp"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
-            android:layout_marginLeft="240dp"
             android:src="@drawable/loungeogo" />
     </FrameLayout>
 
@@ -75,8 +74,8 @@
             android:id="@+id/ic_tab_lobby"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:onClick="onNavigationClicked"
             android:src="@drawable/ic_tab_lobby" />
 
@@ -84,8 +83,8 @@
             android:id="@+id/ic_tab_chat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:onClick="onNavigationClicked"
             android:src="@drawable/ic_tab_chat" />
 
@@ -93,8 +92,8 @@
             android:id="@+id/ic_tab_stat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:onClick="onNavigationClicked"
             android:src="@drawable/ic_tab_stat" />
 
@@ -102,8 +101,8 @@
             android:id="@+id/ic_tab_about"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:onClick="onNavigationClicked"
             android:src="@drawable/ic_tab_about" />
     </LinearLayout>

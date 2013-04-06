@@ -90,14 +90,11 @@ public class PlayParser {
     }
 
     public void queryPlay(final String packageName) {
-        queryPlay(packageName, Math.min(MAX_WIDTH, mContext.getResources()
-                .getDisplayMetrics().widthPixels),
-                (int) (DEFAULT_HEIGHT_DP * mContext.getResources()
-                        .getDisplayMetrics().density));
+        queryPlay(packageName, Math.min(MAX_WIDTH, mContext.getResources().getDisplayMetrics().widthPixels),
+                (int) (DEFAULT_HEIGHT_DP * mContext.getResources().getDisplayMetrics().density));
     }
 
-    public void queryPlay(final String packageName, final int imageWidth,
-            final int imageHeight) {
+    public void queryPlay(final String packageName, final int imageWidth, final int imageHeight) {
 
         if (packageName != null) {
             mQueries.add(new QueryData(packageName, imageWidth, imageHeight));
@@ -117,14 +114,14 @@ public class PlayParser {
             final int imageWidth = data.getWidth();
             final int imageHeight = data.getHeight();
 
-			Drawable cached = readFileFromInternalStorage(packageName, imageHeight);
+            Drawable cached = readFileFromInternalStorage(packageName, imageHeight);
 
             if (cached != null) {
                 mResults.put(packageName, cached);
                 notifyListener(new PlayResult(cached, packageName));
             } else {
-				UrlDownloadTask urlTask = new UrlDownloadTask(packageName, imageWidth, imageHeight);
-				urlTask.execute(PLAY_BASE_URL + packageName);
+                UrlDownloadTask urlTask = new UrlDownloadTask(packageName, imageWidth, imageHeight);
+                urlTask.execute(PLAY_BASE_URL + packageName);
             }
         } else {
             mIsQuerying = false;
@@ -132,11 +129,10 @@ public class PlayParser {
     }
 
     private String parseImageUrl(String html) {
-        if (html.contains(PLAY_PATTERN_START)) {
+        if (html != null && html.contains(PLAY_PATTERN_START)) {
             int start = html.indexOf(PLAY_PATTERN_START);
             start += PLAY_PATTERN_START.length() + 1;
-            final String secondHalf = html.subSequence(start, start + 300)
-                    .toString();
+            final String secondHalf = html.subSequence(start, start + 300).toString();
 
             int end = secondHalf.indexOf(PLAY_PATTERN_END);
 
@@ -160,8 +156,13 @@ public class PlayParser {
             is = downloadStream(url);
 
             // Convert the InputStream into a string
-            String contentAsString = convertStreamToString(is);
-            return contentAsString;
+            if (is != null) {
+                String contentAsString = convertStreamToString(is);
+                return contentAsString;
+            } else {
+                return null;
+            }
+
             // Makes sure that the InputStream is closed after the app is
             // finished using it.
         } finally {
@@ -213,8 +214,7 @@ public class PlayParser {
             final Bitmap bitmap = new BitmapDrawable(is).getBitmap();
             int y = (bitmap.getHeight() - height) / 2;
 
-            return new BitmapDrawable(Bitmap.createBitmap(bitmap, 0, y,
-                    bitmap.getWidth(), height));
+            return new BitmapDrawable(Bitmap.createBitmap(bitmap, 0, y, bitmap.getWidth(), height));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -231,8 +231,7 @@ public class PlayParser {
     }
 
     private String convertStreamToString(final InputStream inputStream) {
-        final BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(inputStream));
+        final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();
         String line = null;
         try {
@@ -262,8 +261,7 @@ public class PlayParser {
         }
 
         HttpParams clientParams = client.getParams();
-        HttpConnectionParams
-                .setConnectionTimeout(clientParams, CONNECT_TIMEOUT);
+        HttpConnectionParams.setConnectionTimeout(clientParams, CONNECT_TIMEOUT);
         HttpConnectionParams.setSoTimeout(clientParams, CONNECT_TIMEOUT);
 
         try {
@@ -337,8 +335,7 @@ public class PlayParser {
         private int mImageHeight;
         private String mPackageName;
 
-        public UrlDownloadTask(String packageName, int imageWidth,
-                int imageHeight) {
+        public UrlDownloadTask(String packageName, int imageWidth, int imageHeight) {
             mPackageName = packageName;
             mImageWidth = imageWidth;
             mImageHeight = imageHeight;
@@ -353,15 +350,19 @@ public class PlayParser {
                 e.printStackTrace();
             }
 
-            String url = parseImageUrl(html) + mImageWidth;
+            String url = parseImageUrl(html);
+            if(url != null) {
+                url += mImageWidth;
+            }
 
             InputStream is = null;
             try {
-                is = downloadStream(url);
+                if( url != null) {
+                    is = downloadStream(url);
+                }
                 if (is != null) {
                     writeFileToInternalStorage(is, mPackageName);
-                    return readFileFromInternalStorage(mPackageName,
-                            mImageHeight);
+                    return readFileFromInternalStorage(mPackageName, mImageHeight);
                 }
                 return null;
             } finally {

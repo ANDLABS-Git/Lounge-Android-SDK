@@ -26,31 +26,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:background="#154452"
+            android:background="@color/blue"
             android:orientation="vertical" >
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:layout_marginTop="45dp" >
+            android:layout_marginTop="45dp"
+            android:background="@color/blue" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.8"
-                android:background="#154452"
-                android:orientation="vertical" >
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.2"
-                android:background="#928B15"
-                android:orientation="vertical" >
-            </LinearLayout>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -168,10 +153,10 @@
     </LinearLayout>
 
     <ImageView
-        android:scaleType="fitXY"
-        android:id="@+id/imageView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="135dp"
+        android:scaleType="fitXY"
         android:src="@drawable/stats" />
 
 </FrameLayout>
