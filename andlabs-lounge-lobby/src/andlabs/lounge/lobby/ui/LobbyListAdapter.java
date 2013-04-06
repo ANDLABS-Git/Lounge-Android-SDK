@@ -20,6 +20,8 @@ package andlabs.lounge.lobby.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import roboguice.util.Ln;
+
 import andlabs.lounge.lobby.R;
 import andlabs.lounge.lobby.util.ColorAnimatorTask;
 import andlabs.lounge.lobby.util.parser.PlayParser;
@@ -111,6 +113,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
+        Ln.v("getChildId(): groupPosition = %d, childPosition = %d", groupPosition, childPosition);
         // TODO Auto-generated method stub
         return 0;
     }
@@ -118,6 +121,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        Ln.v("getChildView(): groupPosition = %d, childPosition = %d, isLastChild = %b", groupPosition, childPosition, isLastChild);
 
         int type = getChildType(groupPosition, childPosition);
         if (convertView == null || convertView.getId() != type) {
@@ -167,7 +171,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     }
 
 
-    private void fillOpenGameView(final int groupPosition, int childPosition, View convertView) {
+    private void fillOpenGameView(final int groupPosition, final int childPosition, View convertView) {
         TextView hostname = (TextView) convertView.findViewById(R.id.hostname);
         TextView playercount = (TextView) convertView.findViewById(R.id.playercount);
         final Match match = (Match) getChild(groupPosition, childPosition);
@@ -177,6 +181,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
             @Override
             public void onClick(View v) {
+                Ln.v("OnClickListener.onClick(groupPosition = %d, childPosition = %d", groupPosition, childPosition);
                 // Lounge.join(match.getMatchId(),
                 // content.get(groupPosition).getPgkName());
 
@@ -242,6 +247,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
+        Ln.v("getChildrenCount(): groupPosition = %d", groupPosition);
         Game game = null;
         if (groupPosition < mJoinedGames.size()) {
             game = mJoinedGames.get(groupPosition);
@@ -255,6 +261,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getGroup(int groupPosition) {
+        Ln.v("getChildrenCount(): groupPosition = %d", groupPosition);
         Game game = null;
         if (groupPosition < mJoinedGames.size()) {
             game = mJoinedGames.get(groupPosition);
@@ -291,6 +298,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        Ln.v("getGroupView(): groupPosition = %d, isExpanded = %b", groupPosition, isExpanded);
 
         Object group = getGroup(groupPosition);
         int type = getGroupType(groupPosition);
