@@ -22,7 +22,6 @@ import java.util.List;
 import andlabs.lounge.lobby.LoungeLobbyCallback;
 import andlabs.lounge.lobby.LoungeLobbyController;
 import andlabs.lounge.lobby.R;
-import andlabs.lounge.lobby.mock.TestData;
 import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
@@ -35,17 +34,17 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ListView;
-import android.widget.SlidingDrawer;
 import android.widget.Toast;
 
 public class LobbyFragment extends Fragment implements OnChildClickListener {
@@ -69,20 +68,17 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
         }
 
-
         @Override
         public void onNewChatLog(List<ChatMessage> chatLog) {
             // TODO Auto-generated method stub
 
         }
 
-
         @Override
         public void onChatDataUpdated(List<ChatMessage> data) {
             // TODO Auto-generated method stub
 
         }
-
 
         @Override
         public void onRunningGamesUpdate(final ArrayList<Game> pGames) {
@@ -91,6 +87,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
                 @Override
                 public void run() {
                     if (pGames != null) {
+                        queryPlay(pGames);
                         mAdapter.setJoinedGames(pGames);
                         mAdapter.notifyDataSetChanged();
                     }
@@ -99,7 +96,6 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
             });
         }
 
-
         @Override
         public void onOpenGamesUpdate(final ArrayList<Game> pGames) {
             getActivity().runOnUiThread(new Runnable() {
@@ -107,6 +103,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
                 @Override
                 public void run() {
                     if (pGames != null) {
+                        queryPlay(pGames);
                         mAdapter.setOpenGames(pGames);
                         mAdapter.notifyDataSetChanged();
                     }
@@ -118,7 +115,8 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
     };
     private PackageManager mPackageManager;
     private List<ResolveInfo> installedGames;
-
+    private View mStaticBeacon;
+    private View mPulseBeacon;
 
     @Override
     public View onCreateView(final LayoutInflater pLayoutInflater, ViewGroup pViewGroup, Bundle pBundle) {
@@ -127,44 +125,32 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         lobbyList.setDividerHeight(0);
         lobbyList.setDivider(null);
 
-        ViewTreeObserver vto = lobbyList.getViewTreeObserver();
-
-        vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-
-            @Override
-            public void onGlobalLayout() {
-                lobbyList.setIndicatorBounds(lobbyList.getRight() - 40, lobbyList.getWidth());
-            }
-        });
         mAdapter = new LobbyListAdapter(getActivity());
-
-        List<Game> joinedGames = TestData.getJoinedGames();
-        List<Game> openGames = TestData.getOpenGames();
-
-        final PlayParser parser = PlayParser.getInstance(getActivity());
-
-        for (Game element : joinedGames) {
-            parser.queryPlay(element.gameID);
-        }
-
-        parser.addListener(new PlayListener() {
-
-            @Override
-            public void onPlayResult(PlayResult pResult) {
-                mAdapter.notifyDataSetChanged();
-            }
-        });
 
         // mAdapter.setJoinedGames(joinedGames);
         // mAdapter.setOpenGames(openGames);
         lobbyList.setAdapter(mAdapter);
         lobbyList.setOnChildClickListener(this);
 
+//        final SlidingDrawer drawer = (SlidingDrawer) view.findViewById(R.id.slidingDrawer);
+//
+//        mStaticBeacon = view.findViewById(R.id.ic_lobby_host_static_pulse);
+//        mPulseBeacon = view.findViewById(R.id.ic_lobby_host_pulse);
+//        startAnimatingHostMode();
+
+        // drawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
+        //
+        // @Override
+        // public void onDrawerClosed() {
+        // stopAnimatingHostMode();
+        // }
+        // });
+
         this.mHostList = (ListView) view.findViewById(R.id.installed_games);
 
         this.mPackageManager = getActivity().getPackageManager();
         final Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(CATEGORY); // TODO: What was it?
+        intent.addCategory(CATEGORY);
         this.installedGames = this.mPackageManager.queryIntentActivities(intent, 0);
         mAdapter.setInstalledGames(installedGames, mPackageManager);
 
@@ -186,6 +172,45 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         return view;
     }
 
+    private void queryPlay(List<Game> games) {
+        final PlayParser parser = PlayParser.getInstance(getActivity());
+
+        for (int index = 0; index < games.size(); index++) {
+            final Game element = games.get(index);
+            Log.d("game", element.toString());
+            parser.queryPlay(getPackageNameFromGameId(element.gameID));
+        }
+
+        parser.addListener(new PlayListener() {
+
+            @Override
+            public void onPlayResult(PlayResult pResult) {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void startAnimatingHostMode() {
+        mPulseBeacon.setVisibility(View.VISIBLE);
+        mStaticBeacon.setVisibility(View.INVISIBLE);
+
+        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
+        mPulseBeacon.startAnimation(animation);
+    }
+
+    private void stopAnimatingHostMode() {
+        mPulseBeacon.setVisibility(View.INVISIBLE);
+        mStaticBeacon.setVisibility(View.VISIBLE);
+    }
+
+    private String getPackageNameFromGameId(String gameID) {
+
+        if (gameID.contains("/")) {
+            return gameID.split("/")[0];
+        }
+
+        return gameID;
+    }
 
     @Override
     public void onStart() {
@@ -193,13 +218,11 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         mLoungeLobbyController.bindServiceTo(getActivity());
     }
 
-
     @Override
     public void onResume() {
         mLoungeLobbyController.registerCallback(mLoungeLobbyCallback);
         super.onResume();
     }
-
 
     @Override
     public void onPause() {
@@ -207,13 +230,11 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         super.onPause();
     }
 
-
     @Override
     public void onStop() {
         mLoungeLobbyController.unbindServiceFrom(getActivity());
         super.onStop();
     }
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -221,13 +242,14 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
     }
 
-
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
         Game game = (Game) mAdapter.getGroup(groupPosition);
         Match match = (Match) mAdapter.getChild(groupPosition, childPosition);
 
-        if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) { // TODO Adopt here
+        if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) { // TODO
+                                                                      // Adopt
+                                                                      // here
             mLoungeLobbyController.joinMatch(game.gameID, match.matchID);
             // Lounge.join(match.getMatchId(),game.getPgkName()); // join Game
         } else {
