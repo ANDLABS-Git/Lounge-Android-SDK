@@ -208,7 +208,6 @@ public abstract class LoungeMessageProcessor {
 	private Player addPlayer(JSONObject jsonObject) throws JSONException {
 		Player player = new Player();
 		player._id = jsonObject.getString("_id");
-		player.socketID = jsonObject.getString("socketID");
 		player.playerID = jsonObject.getString("playerID");
 		if (jsonObject.has("gameID")) {
 			player.gameID = jsonObject.getString("gameID");
