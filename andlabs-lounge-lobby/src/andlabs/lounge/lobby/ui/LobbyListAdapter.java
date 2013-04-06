@@ -98,16 +98,9 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        Game game = null;
-        if (groupPosition < mJoinedGames.size()) {
-            game = mJoinedGames.get(groupPosition);
-        } else if (groupPosition == mJoinedGames.size()) {
-            Log.e("LobbyListAdapter", "should not happend", new Throwable());
-        } else {
-            game = mOpenGames.get(groupPosition - 1 - mJoinedGames.size());
-        }
+        Ln.v("getChild(): groupPosition = %d, childPosition = %d", groupPosition, childPosition);
+        Game game = (Game) getGroup(groupPosition);
         return game.matches.values().toArray()[childPosition];
-
     }
 
 
@@ -251,9 +244,10 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         Game game = null;
         if (groupPosition < mJoinedGames.size()) {
             game = mJoinedGames.get(groupPosition);
-        } else if (groupPosition == mJoinedGames.size()) {
+        } else if (mSeparatorFlag && groupPosition == mJoinedGames.size()) {
         } else {
-            game = mOpenGames.get(groupPosition - 1 - mJoinedGames.size());
+            int index = groupPosition - mJoinedGames.size() - (mSeparatorFlag ? 1 : 0);
+            game = mOpenGames.get(index);
         }
         return (game != null) ? game.matches.size() : 0;
     }
@@ -265,15 +259,10 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         Game game = null;
         if (groupPosition < mJoinedGames.size()) {
             game = mJoinedGames.get(groupPosition);
-        } else if (groupPosition == mJoinedGames.size() && mJoinedGames.size() > 0) {
-
+        } else if (mSeparatorFlag && groupPosition == mJoinedGames.size()) {
         } else {
-            int sep = mJoinedGames.size() > 0 ? 1 : 0;
-            int joined = mJoinedGames.size();
-            int position = groupPosition - sep - joined;
-            game = mOpenGames.get(position);
-            Log.d("group", "position = " + position + ", groupPosition = " + groupPosition);
-            Log.d("group", "item = " + game);
+            int index = groupPosition - mJoinedGames.size() - (mSeparatorFlag ? 1 : 0);
+            game = mOpenGames.get(index);
         }
         return (game != null) ? game : mSeparator;
     }
