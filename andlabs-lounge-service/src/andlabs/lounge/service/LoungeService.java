@@ -34,4 +34,10 @@ public class LoungeService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    @Override
+    public void onDestroy() {
+        Ln.v("onDestroy():");
+        super.onDestroy();
+    }
+
 }
