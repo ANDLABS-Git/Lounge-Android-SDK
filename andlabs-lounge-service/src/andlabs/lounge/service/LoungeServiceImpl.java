@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import roboguice.util.Ln;
 import andlabs.lounge.model.Game;
@@ -230,9 +231,10 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 			JSONObject payload = new JSONObject().put("gameID", pPackageId).put("matchId", pMatchId);
 			JSONObject bundleJson = new JSONObject();
 			for (String key : pMoveBundle.keySet()) {
-				bundleJson.put(key, pMoveBundle.get(key));
+				bundleJson.put(key, pMoveBundle.get(key)); 
+			
 			}
-			payload.put("move", bundleJson);
+			 payload.put("move", bundleJson.toString());
 			mSocketIO.emit("move", payload);
 		} catch (JSONException e) {
 			Ln.e(e, "move(): caught exception while sending move");

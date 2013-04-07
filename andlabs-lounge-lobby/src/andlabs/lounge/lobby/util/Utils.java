@@ -29,10 +29,9 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 
-public class Utils implements LoungeConstants{
+public class Utils implements LoungeConstants {
 
     private static final String TAG = "Lounge";
-
 
     private static List<ResolveInfo> getInstalledLoungeGames(Context ctx) {
         Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -40,14 +39,13 @@ public class Utils implements LoungeConstants{
         return ctx.getPackageManager().queryIntentActivities(intent, 0);
     }
 
-   public static void launchGameApp(Context context, String packageName, Match match) {
+    public static void launchGameApp(Context context, String packageName, Match match) {
         final ResolveInfo info = getInstalledGameInfo(context, packageName);
         if (info != null) {
             final Intent intent = new Intent();
-            intent.setComponent(new ComponentName(info.activityInfo.packageName,
-                    info.activityInfo.name));
+            intent.setComponent(new ComponentName(info.activityInfo.packageName, info.activityInfo.name));
             intent.putExtra(EXTRA_IS_HOST, Id.getName(context));
-            intent.putExtra("HOSTNAME",match.players.get(0).playerID);
+            intent.putExtra("HOSTNAME", match.players.get(0).playerID);
             intent.putExtra(EXTRA_HOST_NAME, match.players.get(1).playerID);
             intent.putExtra(EXTRA_MATCH_ID, match.matchID);
             context.startActivity(intent);
@@ -57,15 +55,12 @@ public class Utils implements LoungeConstants{
     private static ResolveInfo getInstalledGameInfo(Context context, String packageName) {
         for (ResolveInfo info : getInstalledLoungeGames(context)) {
             Log.i("installed adapter", packageName + " = " + info.activityInfo.packageName);
-            if (packageName.contains("/")) {
-                if (packageName.split("/")[0].equalsIgnoreCase(info.activityInfo.packageName)) {
-                    return info;
-                }
-
+            if (packageName.equalsIgnoreCase(info.activityInfo.packageName)) {
+                return info;
             }
         }
-    return null;
-}
+        return null;
+    }
 
     static Drawable getGameIcon(Context context, String packageName) {
         ResolveInfo info = null; // getInstalledGameInfo(context, packageName);
@@ -78,15 +73,12 @@ public class Utils implements LoungeConstants{
 
     static void openPlay(Context context, String packageName) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri
-                .parse("http://play.google.com/store/apps/details?id="
-                        + packageName));
+        intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=" + packageName));
 
         context.startActivity(intent);
     }
 
-    public static int ipc(Context context, int colorA, int colorB,
-            float proportion) {
+    public static int ipc(Context context, int colorA, int colorB, float proportion) {
         float[] hsva = new float[3];
         float[] hsvb = new float[3];
         Color.colorToHSV(context.getResources().getColor(colorA), hsva);
