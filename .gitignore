@@ -30,6 +30,7 @@ andlabs-lounge-lobby/gen
 andlabs-lounge-starter/.settings
 andlabs-lounge-starter/bin
 andlabs-lounge-starter/gen
+<<<<<<< HEAD
 LoungeDebugger/bin/classes/andlabs/lounge/lobby/R$anim.class
 LoungeDebugger/bin/classes/andlabs/loungedebugger/MainActivity$1.class
 LoungeDebugger/bin/classes/andlabs/loungedebugger/MainActivity$2.class
@@ -68,3 +69,8 @@ LoungeDebugger/bin/classes/andlabs/loungedebugger/R$string.class
 LoungeDebugger/bin/classes/andlabs/loungedebugger/R$style.class
 LoungeDebugger/gen/andlabs/lounge/lobby/R.java
 LoungeDebugger/gen/andlabs/lounge/service/R.java
+=======
+andlabs-lounge-debugger/.settings
+andlabs-lounge-debugger/bin
+andlabs-lounge-debugger/gen
+>>>>>>> 0d502f46b1866635ba20ba9de43683524dcf597c

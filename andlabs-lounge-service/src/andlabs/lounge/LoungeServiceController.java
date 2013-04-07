@@ -3,9 +3,9 @@ package andlabs.lounge;
 import java.io.Serializable;
 import java.util.ConcurrentModificationException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import roboguice.util.Ln;
-
 import andlabs.lounge.model.Game;
 import andlabs.lounge.service.LoungeService;
 import andlabs.lounge.service.LoungeServiceDef;
@@ -50,8 +50,8 @@ public class LoungeServiceController {
                 }
                 Serializable involvedGames = message.getData().getSerializable("involvedGameList");
                 Serializable openGames = message.getData().getSerializable("openGameList");
-                mLoungeServiceCallback.onOpenGamesUpdate((Map<String, Game>) openGames);
-                mLoungeServiceCallback.onRunningGamesUpdate((Map<String, Game>) involvedGames);
+                mLoungeServiceCallback.onOpenGamesUpdate((ConcurrentHashMap<String, Game>) openGames);
+                mLoungeServiceCallback.onRunningGamesUpdate((ConcurrentHashMap<String, Game>) involvedGames);
                 break;
 
             default:

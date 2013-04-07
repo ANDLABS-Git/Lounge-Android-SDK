@@ -18,6 +18,7 @@ package andlabs.lounge.lobby.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import andlabs.lounge.lobby.LoungeLobbyCallback;
 import andlabs.lounge.lobby.LoungeLobbyController;
@@ -26,12 +27,12 @@ import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;
-import andlabs.lounge.lobby.util.parser.PlayResult;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -184,7 +185,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         parser.addListener(new PlayListener() {
 
             @Override
-            public void onPlayResult(PlayResult pResult) {
+            public void onPlayResult(Map<String, Drawable> pResults) {
                 mAdapter.notifyDataSetChanged();
             }
         });

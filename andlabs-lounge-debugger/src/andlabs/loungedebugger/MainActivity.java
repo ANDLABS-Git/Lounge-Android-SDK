@@ -65,10 +65,17 @@ public class MainActivity extends Activity implements LoungeGameCallback {
     }
     
     @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+        lounge.registerCallback(this);
+    }
+    
+    @Override
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
-        lounge.registerCallback(this);
+     
         lounge.bindServiceTo(this);
         
     }
