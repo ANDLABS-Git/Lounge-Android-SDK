@@ -122,6 +122,7 @@ public class LoungeServiceController {
 
     public void unbindServiceFrom(Context pContext) {
         Ln.v("unbindServiceFrom()");
+        /*
         try {
             if (mLoungeService != null) {
                 mLoungeService.disconnect();
@@ -129,6 +130,7 @@ public class LoungeServiceController {
         } catch (RemoteException e) {
             Ln.e(e, "unbindServiceFrom(): caught exception while disconnecting");
         }
+        */
         pContext.unbindService(mServiceConnection);
     }
 
