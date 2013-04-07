@@ -21,6 +21,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+
 public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
     private Messenger mMessenger;
@@ -33,11 +34,13 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
         }
 
+
         @Override
         public void onMessage(String arg0, IOAcknowledge arg1) {
             Ln.d("IOCallback.onMessage(): arg0 = %s", arg0);
 
         }
+
 
         @Override
         public void onError(SocketIOException arg0) {
@@ -45,11 +48,13 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
         }
 
+
         @Override
         public void onDisconnect() {
             Ln.d("IOCallback.onDisconnect():");
 
         }
+
 
         @Override
         public void onConnect() {
@@ -63,6 +68,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
                 Ln.e(e, "IOCallback.onConnect(): caught exception while sending message");
             }
         }
+
 
         @Override
         public void on(String arg0, IOAcknowledge arg1, Object... arg2) {
@@ -109,6 +115,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
     };
 
+
     public LoungeServiceImpl(Intent intent) {
         super();
         Ln.v("LoungeServiceImpl():");
@@ -123,6 +130,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     }
 
+
     @Override
     public void connect() throws RemoteException {
         Ln.v("connect():");
@@ -134,6 +142,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     }
 
+
     @Override
     public void disconnect() throws RemoteException {
         Ln.v("disconnect():");
@@ -141,6 +150,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             mSocketIO.disconnect();
         }
     }
+
 
     @Override
     public void login(String playerId) throws RemoteException {
@@ -153,19 +163,19 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     }
 
+
     @Override
     public void chat(String message) throws RemoteException {
         // TODO Auto-generated method stub
 
     }
 
+
     @Override
     public void openMatch(String pPackageId, String pDisplayName) throws RemoteException {
         Ln.v("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName);
         try {
-            // PAYLOAD {gameID: "packageID", gameName: ”AppName”,
-            // maximumPlayers: “MaximumAllowedPlayersInGame” , gameType:
-            // “move/stream”}
+			// PAYLOAD {gameID: "packageID", gameName: ”AppName”, maximumPlayers: “MaximumAllowedPlayersInGame” , gameType: “move/stream”}
             JSONObject payload = new JSONObject().put("gameID", pPackageId).put("gameName", pDisplayName);
             payload.put("maximumPlayers", 2).put("gameType", "move");
             mSocketIO.emit("join", payload);
@@ -173,6 +183,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             Ln.e(e, "openMatch(): caught exception while sending join");
         }
     }
+
 
     @Override
     public void joinMatch(String pGameId, String pMatchId) throws RemoteException {
@@ -185,6 +196,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     }
 
+
     @Override
     public void checkin(String pGameId, String pMatchId) throws RemoteException {
         Ln.v("checkin(): pGameId = %s, pMatchId = %s", pGameId, pMatchId);
@@ -196,12 +208,12 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     }
 
+
     @Override
     public void update(String pGameId, String pMatchId, String pStatus) throws RemoteException {
         Ln.v("update(): pGameId = %s", pGameId);
         try {
-            // PAYLOAD { gameID: “packageID”, matchID: “matchID”, status:
-            // “open/running/close” }
+			// PAYLOAD { gameID: “packageID”, matchID: “matchID”, status: “open/running/close” }
             JSONObject payload = new JSONObject();
             payload.put("gameID", pGameId).put("matchID", pMatchId).put("status", pStatus);
             mSocketIO.emit("update", payload);
@@ -210,12 +222,13 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     }
 
+
     @Override
     public void move(String pPackageId, String pMatchId, Bundle pMoveBundle) throws RemoteException {
         Ln.v("move(): pPackageId = %s, pMatchId = %s", pPackageId, pMatchId);
         try {
             // PAYLOAD { gameID: “packageID”, matchID: “matchID”, move: {... } }
-            JSONObject payload = new JSONObject().put("gameID", pPackageId).put("matchID", pMatchId);
+			JSONObject payload = new JSONObject().put("gameID", pPackageId).put("matchId", pMatchId);
             JSONObject bundleJson = new JSONObject();
             for (String key : pMoveBundle.keySet()) {
                 bundleJson.put(key, pMoveBundle.get(key));
