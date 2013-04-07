@@ -17,7 +17,7 @@ public class LoungeLobbyController {
 
     private String mUserName;
     private LoungeLobbyCallback mLoungeLobbyCallback;
-    private LoungeServiceController mLoungeServiceController = new LoungeServiceController();
+    private LoungeServiceController mLoungeServiceController = LoungeServiceController.getInstance();
     private LoungeServiceCallback mLoungeServiceCallback = new LoungeServiceCallback() {
 
         @Override

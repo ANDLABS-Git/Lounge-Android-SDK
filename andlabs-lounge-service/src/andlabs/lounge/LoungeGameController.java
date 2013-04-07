@@ -13,7 +13,7 @@ public class LoungeGameController {
 
     private String mPackageId;
     private LoungeGameCallback mLoungeGameCallback;
-    private LoungeServiceController mLoungeServiceController = new LoungeServiceController();
+    private LoungeServiceController mLoungeServiceController = LoungeServiceController.getInstance();
     private LoungeServiceCallback mLoungeServiceCallback = new LoungeServiceCallback() {
 
         @Override
@@ -76,8 +76,8 @@ public class LoungeGameController {
 
 
     public void bindServiceTo(Context pContext) {
-        mPackageId = pContext.getApplicationInfo().packageName;
         Ln.v("bindServiceTo()");
+        mPackageId = pContext.getApplicationInfo().packageName;
         mLoungeServiceController.registerCallback(mLoungeServiceCallback);
         mLoungeServiceController.bindServiceTo(pContext);
     }
