@@ -7,10 +7,13 @@ import android.os.IBinder;
 
 public class LoungeService extends Service {
 
+    private LoungeServiceImpl mLoungeService;
+
     @Override
     public IBinder onBind(Intent intent) {
         Ln.v("onBind(): arg0 = %s", intent);
-        return new LoungeServiceImpl(intent);
+        mLoungeService = new LoungeServiceImpl(intent);
+        return mLoungeService;
     }
 
 
@@ -37,6 +40,13 @@ public class LoungeService extends Service {
     @Override
     public void onDestroy() {
         Ln.v("onDestroy():");
+        try {
+            if (mLoungeService != null) {
+                mLoungeService.disconnect();
+            }
+        } catch (RemoteException e) {
+            Ln.e(e, "unbindServiceFrom(): caught exception while disconnecting");
+        }
         super.onDestroy();
     }
 
