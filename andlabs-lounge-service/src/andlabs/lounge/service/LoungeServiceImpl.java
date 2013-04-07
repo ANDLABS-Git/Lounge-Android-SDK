@@ -228,7 +228,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         Ln.v("move(): pPackageId = %s, pMatchId = %s", pPackageId, pMatchId);
         try {
             // PAYLOAD { gameID: “packageID”, matchID: “matchID”, move: {... } }
-			JSONObject payload = new JSONObject().put("gameID", pPackageId).put("matchId", pMatchId);
+			JSONObject payload = new JSONObject().put("gameID", pPackageId).put("matchID", pMatchId);
             JSONObject bundleJson = new JSONObject();
             for (String key : pMoveBundle.keySet()) {
                 bundleJson.put(key, pMoveBundle.get(key));
