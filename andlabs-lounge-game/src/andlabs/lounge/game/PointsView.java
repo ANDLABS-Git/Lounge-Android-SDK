@@ -36,7 +36,6 @@ public class PointsView extends View {
         mMatchId = pMatchId;
     }
 
-
     @Override
     protected void onDraw(Canvas pCanvas) {
 
@@ -54,15 +53,17 @@ public class PointsView extends View {
     public void addMyPoint(Point point) {
         mMyPoints.add(point);
         Bundle move = new Bundle();
-        move.putString("x", point.x / mDp +"");
-        move.putString("y", point.y / mDp +"");
-        
+        move.putString("x", point.x / mDp + "");
+        move.putString("y", point.y / mDp + "");
+
         mController.sendGameMove(mMatchId, move);
         invalidate();
 
     }
 
     public void addOthersPoint(Point point) {
+        Point newPoint = new Point();
+        newPoint.set((int) (point.x * mDp), (int) (point.y * mDp));
         mOthersPoints.add(point);
         invalidate();
 
