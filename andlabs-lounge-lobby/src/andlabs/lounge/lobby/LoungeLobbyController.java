@@ -11,6 +11,7 @@ import andlabs.lounge.LoungeServiceController;
 import andlabs.lounge.lobby.util.Id;
 import andlabs.lounge.model.Game;
 import android.content.Context;
+import android.os.Bundle;
 
 public class LoungeLobbyController {
 
@@ -67,6 +68,12 @@ public class LoungeLobbyController {
         @Override
         public void onError(String message) {
             Ln.e("LoungeServiceCallback.onError(): %s", message);
+        }
+
+        @Override
+        public void onGameMessage(String pMatchID, Bundle pData) {
+            // TODO Auto-generated method stub
+            
         }
 
     };

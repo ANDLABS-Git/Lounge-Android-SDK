@@ -2,7 +2,8 @@ package andlabs.lounge;
 
 import java.io.Serializable;
 import java.util.ConcurrentModificationException;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import roboguice.util.Ln;
@@ -23,7 +24,7 @@ import android.os.RemoteException;
 
 public class LoungeServiceController {
 
-    private LoungeServiceCallback mLoungeServiceCallback;
+    private Set<LoungeServiceCallback> mLoungeServiceCallbackSet = new HashSet<LoungeServiceCallback>();
 
     @SuppressLint("HandlerLeak")
     Messenger mMessenger = new Messenger(new Handler() {
@@ -34,12 +35,15 @@ public class LoungeServiceController {
             switch (message.what) {
 
             case 42:
-                mLoungeServiceCallback.theAnswerIs42();
+                for (LoungeServiceCallback loungeServiceCallback : mLoungeServiceCallbackSet)
+                    loungeServiceCallback.theAnswerIs42();
                 break;
 
             case 1:
                 Ln.v("Handler.handleMessage(): Server connected ... process login");
-                mLoungeServiceCallback.onStart();
+                for (LoungeServiceCallback loungeServiceCallback : mLoungeServiceCallbackSet) {
+                    loungeServiceCallback.onStart();
+                }
                 break;
 
             case 7:
@@ -50,9 +54,24 @@ public class LoungeServiceController {
                 }
                 Serializable involvedGames = message.getData().getSerializable("involvedGameList");
                 Serializable openGames = message.getData().getSerializable("openGameList");
-                mLoungeServiceCallback.onOpenGamesUpdate((ConcurrentHashMap<String, Game>) openGames);
-                mLoungeServiceCallback.onRunningGamesUpdate((ConcurrentHashMap<String, Game>) involvedGames);
+                for (LoungeServiceCallback loungeServiceCallback : mLoungeServiceCallbackSet) {
+                    loungeServiceCallback.onOpenGamesUpdate((ConcurrentHashMap<String, Game>) openGames);
+                    loungeServiceCallback.onRunningGamesUpdate((ConcurrentHashMap<String, Game>) involvedGames);
+                }
                 break;
+
+            case 18:
+                try {
+                    Ln.v("Handler.handleMessage(): Getting new message: %s", message.getData());
+                } catch (ConcurrentModificationException e) {
+                    Ln.w("LoungeServiceController", e.getMessage());
+                }
+
+                String matchId = message.getData().getString("matchID");
+                Bundle data = message.getData().getBundle("data");
+                for (LoungeServiceCallback loungeServiceCallback : mLoungeServiceCallbackSet) {
+                    loungeServiceCallback.onGameMessage(matchId, data);
+                }
 
             default:
                 Ln.v("Handler.handleMessage(): message = %s", message);
@@ -93,12 +112,12 @@ public class LoungeServiceController {
 
     public void registerCallback(LoungeServiceCallback pLoungeServiceCallback) {
         Ln.v("registerCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
-        mLoungeServiceCallback = pLoungeServiceCallback;
+        mLoungeServiceCallbackSet.add(pLoungeServiceCallback);
     }
 
     public void unregisterCallback(LoungeServiceCallback pLoungeServiceCallback) {
         Ln.v("unregisterCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
-        mLoungeServiceCallback = null;
+        mLoungeServiceCallbackSet.remove(pLoungeServiceCallback);
     }
 
     public void unbindServiceFrom(Context pContext) {

@@ -98,7 +98,18 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         @Override
         public void onGameMove(String pMatchID, Bundle pParams) {
 			Ln.v("LoungeMessageProcessor.onGameMove(): pMatchID = %s, pParams = %s", pMatchID, pParams);
-
+			Message message = new Message();
+            message.what = 18;
+            Bundle bundle = new Bundle();
+            bundle.putString("matchID", pMatchID);
+            bundle.putBundle("data", pParams);
+            message.setData(bundle);
+            try {
+                mMessenger.send(message);
+            } catch (RemoteException e) {
+                Ln.e(e, "LoungeMessageProcessor.triggerUpdate(): caught exception while sending message");
+            }
+			
         }
 
 	};

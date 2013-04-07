@@ -63,7 +63,16 @@ public class LoungeGameController {
             Ln.e("LoungeServiceCallback.onError(): %s", message);
         }
 
+
+
+        @Override
+        public void onGameMessage(String pMatchID, Bundle pMsg) {
+            if(pMatchID.equals(mCheckinMatchId) && mLoungeGameCallback != null) {
+                mLoungeGameCallback.onGameMessage(pMsg);
+            }
+        }
     };
+    private String mCheckinMatchId;
 
 
     public void bindServiceTo(Context pContext) {
@@ -95,11 +104,13 @@ public class LoungeGameController {
 
     public void checkin(String pMatchId) {
         Ln.v("checkin(): pMatchId = %s", pMatchId);
+        mCheckinMatchId = pMatchId;
         mLoungeServiceController.checkin(mPackageId, pMatchId);
     }
 
 
     private void checkout(String pMatchId) {
+        mCheckinMatchId = null;
         Ln.v("checkout(): pMatchId = %s", pMatchId);
         // TODO wire it to the corresponding LoungeServiceController method
     }

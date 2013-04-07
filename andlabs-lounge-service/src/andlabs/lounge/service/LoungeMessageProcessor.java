@@ -116,13 +116,13 @@ public abstract class LoungeMessageProcessor {
 
                     if (openGame != null) {
                         openGame.matches.remove(matchID);
-                        if (openGame.matches.size() == 0) {
+                        if (openGame.matches.isEmpty()) {
                             mOpenGames.remove(gameID);
                         }
                     }
                     if (involvedGame != null) {
                         involvedGame.matches.remove(matchID);
-                        if (involvedGame.matches.size() == 0) {
+                        if (involvedGame.matches.isEmpty()) {
                             mInvolvedGames.remove(gameID);
                         }
                     }
@@ -131,7 +131,7 @@ public abstract class LoungeMessageProcessor {
 
                     if (openGame != null) {
                         openGame.matches.remove(matchID);
-                        if (openGame.matches.size() == 0) {
+                        if (openGame.matches.isEmpty()) {
                             mOpenGames.remove(gameID);
                         }
                     }
@@ -145,13 +145,19 @@ public abstract class LoungeMessageProcessor {
 
                 } else {
 
-                    if (openGame == null) {
-                        openGame = new Game();
-                        openGame.gameID = gameID;
-                        openGame.gameName = payload.getString("gameName");
-                        mOpenGames.put(gameID, openGame);
+                    if (match.totalSpots > match.players.size()) {
+                        if (openGame == null) {
+                            openGame = new Game();
+                            openGame.gameID = gameID;
+                            openGame.gameName = payload.getString("gameName");
+                            mOpenGames.put(gameID, openGame);
+                        }
+                        openGame.matches.put(matchID, match);
+                    } else {
+                        if (openGame != null && openGame.matches.isEmpty()) {
+                            mOpenGames.remove(gameID);
+                        }
                     }
-                    openGame.matches.put(matchID, match);
 
                 }
 
@@ -199,16 +205,16 @@ public abstract class LoungeMessageProcessor {
     private void processGameMessage(JSONObject pPayload, boolean pStream) throws JSONException {
         final String matchID = pPayload.getString("matchID");
 
-        JSONObject json = (JSONObject) pPayload.getJSONObject("move");
-        Bundle b = new Bundle();
+        JSONObject json = new JSONObject(pPayload.getString("move"));
+        Bundle bundle = new Bundle();
 
         for (Iterator<?> i = json.keys(); i.hasNext();) {
             String key = (String) i.next();
-            b.putString(key, json.getString(key));
+            bundle.putString(key, json.getString(key));
             Ln.i("processGameMessage(): converting - key: %s / Value: %s", key, json.getString(key));
         }
         if (!pStream) {
-            mMatchMoves.put(matchID, b);
+            mMatchMoves.put(matchID, bundle);
         }
 
         if (!mPlayerID.equals(pPayload.getString("playerID"))) {// We react only
@@ -221,7 +227,7 @@ public abstract class LoungeMessageProcessor {
             triggerUpdate(mInvolvedGames, mOpenGames);
         }
 
-        // TODO: forward moves to app
+        onGameMove(matchID, bundle);
     }
 
 
