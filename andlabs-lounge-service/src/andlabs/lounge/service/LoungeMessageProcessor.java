@@ -21,7 +21,7 @@ public abstract class LoungeMessageProcessor {
 
     private HashMap<String, Player> mPlayers = new HashMap<String, Player>();
 
-    private Map<String, Bundle> mMatchMoves;
+    private Map<String, Bundle> mMatchMoves = new HashMap<String, Bundle>();;
 
     // All games currently in the lounge in which the user is involved
     private ConcurrentHashMap<String, Game> mInvolvedGames = new ConcurrentHashMap<String, Game>();
