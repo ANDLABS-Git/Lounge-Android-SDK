@@ -223,16 +223,16 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 
 	@Override
-	public void move(String pPackageId, String pMatchId, Bundle pMoveBundle) throws RemoteException {
-		Ln.v("move(): pPackageId = %s, pMatchId = %s", pPackageId, pMatchId);
+	public void move(String pGameId, String pMatchId, Bundle pMoveBundle) throws RemoteException {
+		Ln.v("move(): pPackageId = %s, pMatchId = %s", pGameId, pMatchId);
 		try {
 			// PAYLOAD { gameID: “packageID”, matchID: “matchID”, move: {... } }
-			JSONObject payload = new JSONObject().put("gameID", pPackageId).put("matchId", pMatchId);
+			JSONObject payload = new JSONObject().put("gameID", pGameId).put("matchId", pMatchId);
 			JSONObject bundleJson = new JSONObject();
 			for (String key : pMoveBundle.keySet()) {
 				bundleJson.put(key, pMoveBundle.get(key));
 			}
-			payload.put("move", bundleJson);
+			payload.put("move", bundleJson.toString());
 			mSocketIO.emit("move", payload);
 		} catch (JSONException e) {
 			Ln.e(e, "move(): caught exception while sending move");
