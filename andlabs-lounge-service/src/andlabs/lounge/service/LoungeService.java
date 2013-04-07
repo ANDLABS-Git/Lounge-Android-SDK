@@ -4,6 +4,7 @@ import roboguice.util.Ln;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.RemoteException;
 
 public class LoungeService extends Service {
 

@@ -2,21 +2,23 @@ package andlabs.lounge.game;
 
 import andlabs.lounge.LoungeGameCallback;
 import andlabs.lounge.LoungeGameController;
+import andlabs.lounge.lobby.LoungeConstants;
 import andlabs.lounge.lobby.ui.LobbyActivity;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
 
+    private PointsView mView;
 	LoungeGameController mLoungeGameController = new LoungeGameController();
 
 	LoungeGameCallback mLoungeGameCallback = new LoungeGameCallback() {
 
 		@Override
 		public void onCheckIn(String player) {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -30,8 +32,10 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onGameMessage(Bundle msg) {
-			// TODO Auto-generated method stub
-
+		    
+		    Point point = new Point();
+		    point.set((int)Float.parseFloat(msg.getString("x")), (int)(Float.parseFloat(msg.getString("y"))));
+		    mView.addOthersPoint(point);
 		}
 
 
@@ -47,7 +51,10 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		startActivity(new Intent(this, LobbyActivity.class));
+		
+		mView = new PointsView(this, getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID), mLoungeGameController);
+		
+		setContentView(mView);
 	}
 
 
@@ -70,6 +77,7 @@ public class MainActivity extends Activity {
 	@Override
 	public void onResume() {
 		mLoungeGameController.registerCallback(mLoungeGameCallback);
+		mLoungeGameController.checkin(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
 		super.onResume();
 	}
 
