@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import roboguice.util.Ln;
+
 import andlabs.lounge.lobby.LoungeLobbyCallback;
 import andlabs.lounge.lobby.LoungeLobbyController;
 import andlabs.lounge.lobby.R;
@@ -36,7 +38,6 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -175,11 +176,11 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
     }
 
     private void queryPlay(List<Game> games) {
+        Ln.v("queryPlay(): games = %s", games);
         final PlayParser parser = PlayParser.getInstance(getActivity());
 
         for (int index = 0; index < games.size(); index++) {
             final Game element = games.get(index);
-            Log.d("game", element.toString());
             parser.queryPlay(getPackageNameFromGameId(element.gameID));
         }
 
@@ -246,9 +247,10 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+        Ln.v("onChildClick(): groupPosition = %d, childPosition = %d", groupPosition, childPosition);
         Game game = (Game) mAdapter.getGroup(groupPosition);
         Match match = (Match) mAdapter.getChild(groupPosition, childPosition);
-
+        Ln.d("onChildClick(): game = %s, match = %s", game, match);
         if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) { // TODO
                                                                       // Adopt
                                                                       // here

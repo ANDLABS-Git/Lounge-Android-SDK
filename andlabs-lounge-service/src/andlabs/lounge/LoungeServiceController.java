@@ -135,9 +135,11 @@ public class LoungeServiceController {
 
     public void bindServiceTo(Context pContext) {
         Ln.v("bindServiceTo()");
-        Intent serviceIntent = new Intent(pContext, LoungeService.class);
-        serviceIntent.putExtra("client-messenger", mMessenger);
-        pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        if (mLoungeService == null) {
+            Intent serviceIntent = new Intent(pContext, LoungeService.class);
+            serviceIntent.putExtra("client-messenger", mMessenger);
+            pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     public void registerCallback(LoungeServiceCallback pLoungeServiceCallback) {
@@ -152,16 +154,9 @@ public class LoungeServiceController {
 
     public void unbindServiceFrom(Context pContext) {
         Ln.v("unbindServiceFrom()");
-        /*
-        try {
-            if (mLoungeService != null) {
-                mLoungeService.disconnect();
-            }
-        } catch (RemoteException e) {
-            Ln.e(e, "unbindServiceFrom(): caught exception while disconnecting");
+        if (mLoungeServiceCallbackSet.isEmpty()) {
+            pContext.unbindService(mServiceConnection);
         }
-        */
-        pContext.unbindService(mServiceConnection);
     }
 
     public void login(String pPlayerName) {

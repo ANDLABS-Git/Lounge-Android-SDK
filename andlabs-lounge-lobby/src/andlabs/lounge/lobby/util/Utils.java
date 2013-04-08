@@ -18,6 +18,8 @@ package andlabs.lounge.lobby.util;
 
 import java.util.List;
 
+import roboguice.util.Ln;
+
 import andlabs.lounge.lobby.LoungeConstants;
 import andlabs.lounge.model.Match;
 import android.content.ComponentName;
@@ -49,12 +51,14 @@ public class Utils implements LoungeConstants {
             intent.putExtra(EXTRA_HOST_NAME, match.players.get(1).playerID);
             intent.putExtra(EXTRA_MATCH_ID, match.matchID);
             context.startActivity(intent);
+        } else {
+            Ln.w("launchGameApp(): unable to start the game %s", packageName);
         }
     }
 
     private static ResolveInfo getInstalledGameInfo(Context context, String packageName) {
         for (ResolveInfo info : getInstalledLoungeGames(context)) {
-            Log.i("installed adapter", packageName + " = " + info.activityInfo.packageName);
+            Ln.d("getInstalledGameInfo(): packageName = %s (%s)", packageName, info.activityInfo.packageName);
             if (packageName.equalsIgnoreCase(info.activityInfo.packageName)) {
                 return info;
             }
