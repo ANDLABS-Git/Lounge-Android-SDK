@@ -20,4 +20,6 @@ interface LoungeServiceDef {
 
 	void move(in String pPackageId, in String pMatchId, in Bundle pMoveBundle);
 
+	void stream(in String pPackageId, in String pMatchId, in Bundle pMoveBundle);
+
 }

@@ -151,7 +151,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
                 break;
 
             case TYPE_OPENGAME:
-                fillOpenGameView(groupPosition, childPosition, convertView);
+                fillOpenMatchView(groupPosition, childPosition, convertView);
                 break;
             }
 
@@ -162,13 +162,13 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    private void fillOpenGameView(final int groupPosition, final int childPosition, final View convertView) {
+    private void fillOpenMatchView(final int groupPosition, final int childPosition, final View convertView) {
         TextView hostname = (TextView) convertView.findViewById(R.id.hostname);
         TextView playercount = (TextView) convertView.findViewById(R.id.playercount);
         final Match match = (Match) getChild(groupPosition, childPosition);
         final Game game = (Game) getGroup(groupPosition);
         hostname.setText(match.players.get(0).playerID);
-        playercount.setText(match.matchID.substring(10, match.matchID.length()));
+        playercount.setText(match.players.size() + "/" + match.totalSpots);
         final LinearLayout joinBtn = (LinearLayout) convertView.findViewById(R.id.joinBtn);
         if (isGameInstalled(game.gameID)) {
             convertView.findViewById(R.id.playstoreIcon).setVisibility(View.GONE);

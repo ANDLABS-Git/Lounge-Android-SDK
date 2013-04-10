@@ -217,7 +217,7 @@ public abstract class LoungeMessageProcessor {
             mMatchMoves.put(matchID, bundle);
         }
 
-        if (!mPlayerID.equals(pPayload.getString("playerID"))) {// We react only
+        if (!pPayload.has("playerID") || !mPlayerID.equals(pPayload.getString("playerID"))) {// We react only
                                                                 // to moves not
                                                                 // send by the
                                                                 // user

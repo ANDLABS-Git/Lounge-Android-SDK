@@ -121,4 +121,8 @@ public class LoungeGameController {
         mLoungeServiceController.sendGameMove(mPackageId, pMatchId, pMoveBundle);
     }
 
+    public void streamGameMessage(String pMatchId, Bundle pMoveBundle) {
+        Ln.v("streamGameMessage(): pMatchId = %s, pMoveBundle = %s", pMatchId, pMoveBundle);
+        mLoungeServiceController.streamGameMessage(mPackageId, pMatchId, pMoveBundle);
+    }
 }

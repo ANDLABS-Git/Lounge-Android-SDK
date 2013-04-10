@@ -184,7 +184,15 @@ public class LoungeServiceController {
         } catch (RemoteException e) {
             Ln.e(e, "sendGameMove(): caught exception while opening a game move");
         }
-
+    }
+    
+    public void streamGameMessage(String pPackageId, String pMatchId, Bundle pMoveBundle) {
+        Ln.v("streamGameMessage(): pPackageId = %s, pMatchId = %s, pMoveBundle = %s", pPackageId, pMatchId, pMoveBundle);
+        try {
+            mLoungeService.stream(pPackageId, pMatchId, pMoveBundle);
+        } catch (RemoteException e) {
+            Ln.e(e, "streamGameMessage(): caught exception while opening a game move");
+        }
     }
 
 }
