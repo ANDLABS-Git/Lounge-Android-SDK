@@ -2,34 +2,45 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/promo"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="@dimen/lobbyListItemHeight"
     android:gravity="center_vertical"
     android:orientation="horizontal" >
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/blackHighAlpha" />
+        android:layout_gravity="left|top"
+        android:layout_marginLeft="70dp"
+        android:background="@color/whiteAlpha" />
 
     <ImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="left|top"
         android:layout_margin="10dp"
         android:src="@drawable/playstoreicon" />
+
+    <View
+        android:id="@+id/promoOverlay"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|top"
+        android:background="@color/whiteAlpha"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/gamename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="2dp"
-        android:layout_toLeftOf="@+id/icon"
-        android:background="@color/whiteAlpha"
+        android:layout_gravity="top|left"
+        android:layout_marginLeft="75dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/blackLowAlpha"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/white"
+        android:textSize="22dp"
         android:textStyle="bold" />
 
     <LinearLayout
@@ -46,7 +57,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/blackHighAlpha"
+            android:background="@android:color/black"
             android:orientation="vertical" >
 
             <TextView
@@ -63,7 +74,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/blacLowAlpha"
+            android:background="@color/blackLowAlpha"
             android:orientation="vertical" >
 
             <ImageView
@@ -82,9 +93,7 @@
     <LinearLayout
         android:id="@+id/involvedGameIndicator"
         android:layout_width="10dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_height="@dimen/lobbyListItemHeight"
         android:layout_gravity="right"
         android:background="@color/orange"
         android:orientation="vertical"

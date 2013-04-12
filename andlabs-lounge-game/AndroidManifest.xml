@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="andlabs.lounge.lobby.ui.LobbyActivity"
+            android:name="andlabs.lounge.lobby.ui.LoungeActivity"
             android:label="ANDLABS LOUNGE"
             android:screenOrientation="portrait" >
             <intent-filter>

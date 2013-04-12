@@ -127,7 +127,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
                     break;
 
                 case TYPE_OPENGAME:
-                    convertView = mInflater.inflate(R.layout.lobby_open_game_entry, null);
+                    convertView = mInflater.inflate(R.layout.lobby_match_list_open_entry, null);
                     break;
                 }
 
@@ -161,7 +161,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         hostname.setText(match.players.get(0).playerID);
         playercount.setText(match.players.size() + "/" + match.totalSpots);
         final LinearLayout joinBtn = (LinearLayout) convertView.findViewById(R.id.joinBtn);
-        if (isGameInstalled(game.gameID)) {
+        if (Utils.isGameInstalled(mContext, game.gameID)) {
             convertView.findViewById(R.id.playstoreIcon).setVisibility(View.GONE);
         } else {
             joinBtn.setVisibility(View.GONE);
@@ -312,7 +312,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     private void createGameView(Game game, View convertView, boolean isInvolved) {
         // Set the game's name
         ((TextView) convertView.findViewById(R.id.gamename)).setText(game.gameName);
-        // Set the games matchcount
+        // Set the game's matchcount
         ((TextView) convertView.findViewById(R.id.count)).setText(Integer.toString(game.matches.size()));
 
         // Set Indicator for whether the game is one the player is involved in
@@ -320,15 +320,18 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         if (isInvolved) {
             convertView.findViewById(R.id.involvedGameIndicator).setVisibility(View.VISIBLE);
         } else {
-            convertView.findViewById(R.id.involvedGameIndicator).setVisibility(View.GONE);
+            // Don't use gone in here! If you do, the size of convertView is shrinked on 2.x devices!
+            convertView.findViewById(R.id.involvedGameIndicator).setVisibility(View.INVISIBLE);
         }
 
         // Set the promo graphic if available
         final Drawable promo = mParser.getResult(game.gameID);
         if (promo != null) {
             convertView.findViewById(R.id.promo).setBackgroundDrawable(promo);
+            convertView.findViewById(R.id.promoOverlay).setVisibility(View.VISIBLE);
         } else {
             convertView.findViewById(R.id.promo).setBackgroundDrawable(null);
+            convertView.findViewById(R.id.promoOverlay).setVisibility(View.GONE);
         }
 
         // Set the application's icon or the Play Store's icon if it's not
@@ -377,18 +380,5 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     @Override
     public int getGroupTypeCount() {
         return 3;
-    }
-
-    private boolean isGameInstalled(String gameID) {
-        if (installedGames == null) {
-            installedGames = Utils.getInstalledLoungeGames(mContext);
-        }
-
-        for (ResolveInfo info : installedGames) {
-            if (gameID.equalsIgnoreCase(info.activityInfo.packageName)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -80,6 +80,17 @@ public class Utils implements LoungeConstants {
 
         context.startActivity(intent);
     }
+    
+    public static boolean isGameInstalled(Context pContext, String pGameID) {
+            List<ResolveInfo>installedGames = Utils.getInstalledLoungeGames(pContext);
+
+        for (ResolveInfo info : installedGames) {
+            if (pGameID.equalsIgnoreCase(info.activityInfo.packageName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static int ipc(Context context, int colorA, int colorB, float proportion) {
         float[] hsva = new float[3];
