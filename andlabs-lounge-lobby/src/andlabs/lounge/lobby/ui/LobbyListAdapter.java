@@ -80,11 +80,10 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     public void setOpenGames(List<Game> pOpenGames) {
         mOpenGames = pOpenGames;
-        setSeparatorFlag();
     }
 
     private void setSeparatorFlag() {
-        mSeparatorFlag = mJoinedGames.size() > 0 && mOpenGames.size() > 0;
+        mSeparatorFlag = mJoinedGames.size() > 0;
 
     }
 
@@ -255,7 +254,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     @Override
     public int getGroupCount() {
         int groupCount = mJoinedGames.size() + mOpenGames.size();
-        if (mJoinedGames.size() > 0 && mOpenGames.size() > 0) {
+        if (mJoinedGames.size() > 0) {
             groupCount += 1;
         }
         return groupCount;
