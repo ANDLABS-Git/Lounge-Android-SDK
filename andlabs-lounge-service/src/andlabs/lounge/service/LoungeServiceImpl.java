@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import roboguice.util.Ln;
 import andlabs.lounge.model.Game;
@@ -144,6 +143,22 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 
     @Override
+    public void reconnect() throws RemoteException {
+        Ln.v("reconnect():");
+        try {
+            Message message = new Message();
+            message.what = 1;
+            message.setData(Bundle.EMPTY);
+            mMessenger.send(message);
+        } catch (RemoteException e) {
+            Ln.e(e, "reconnect(): caught exception while sending message");
+        } catch (NullPointerException npe) {
+            Ln.e(npe, "reconnect(): caught exception while sending message");
+        }
+    }
+
+
+    @Override
     public void disconnect() throws RemoteException {
         Ln.v("disconnect():");
         if (mSocketIO != null) {
@@ -232,7 +247,6 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             JSONObject bundleJson = new JSONObject();
             for (String key : pMoveBundle.keySet()) {
                 bundleJson.put(key, pMoveBundle.get(key));
-
             }
             payload.put("move", bundleJson.toString());
             mSocketIO.emit("move", payload);

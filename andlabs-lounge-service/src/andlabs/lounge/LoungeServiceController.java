@@ -121,6 +121,12 @@ public class LoungeServiceController {
             Intent serviceIntent = new Intent(pContext, LoungeService.class);
             serviceIntent.putExtra("client-messenger", mMessenger);
             pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            try {
+                mLoungeService.reconnect();
+            } catch (RemoteException e) {
+                Ln.e(e, "bindServiceTo(): caught exception while reconnecting");
+            }
         }
     }
 

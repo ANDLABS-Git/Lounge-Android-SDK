@@ -4,6 +4,8 @@ interface LoungeServiceDef {
 
 	void connect();
 
+	void reconnect();
+
 	void disconnect();
 
 	void login(in String playerId);
