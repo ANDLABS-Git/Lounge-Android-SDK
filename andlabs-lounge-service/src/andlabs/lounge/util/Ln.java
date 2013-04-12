@@ -71,7 +71,7 @@ public class Ln {
     }
 
     private static void log(final int pType, final Throwable t, final Object s1, final Object... args) {
-        if (BuildConfig.DEBUG || pType == Log.ERROR) {
+        if (pType == Log.ERROR || BuildConfig.DEBUG) {
             final StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[4];
 
             final String fullClassName = stackTraceElement.getClassName();

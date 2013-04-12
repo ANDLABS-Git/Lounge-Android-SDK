@@ -31,11 +31,11 @@ import android.net.Uri;
 
 public class Utils implements LoungeConstants {
 
-    private static final String TAG = "Lounge";
+    public static final String CATEGORY = "eu.andlabs.lounge";
 
-    private static List<ResolveInfo> getInstalledLoungeGames(Context ctx) {
+    public static List<ResolveInfo> getInstalledLoungeGames(Context ctx) {
         Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory("eu.andlabs.lounge");
+        intent.addCategory(CATEGORY);
         return ctx.getPackageManager().queryIntentActivities(intent, 0);
     }
 
@@ -48,6 +48,7 @@ public class Utils implements LoungeConstants {
             intent.putExtra("HOSTNAME", match.players.get(0).playerID);
             intent.putExtra(EXTRA_HOST_NAME, match.players.get(1).playerID);
             intent.putExtra(EXTRA_MATCH_ID, match.matchID);
+            
             context.startActivity(intent);
         } else {
             Ln.w("launchGameApp(): unable to start the game %s", packageName);
@@ -64,8 +65,8 @@ public class Utils implements LoungeConstants {
         return null;
     }
 
-    static Drawable getGameIcon(Context context, String packageName) {
-        ResolveInfo info = null; // getInstalledGameInfo(context, packageName);
+    public static Drawable getGameIcon(Context context, String packageName) {
+        ResolveInfo info = getInstalledGameInfo(context, packageName);
         if (info == null) {
             return null;
         } else {
@@ -73,7 +74,7 @@ public class Utils implements LoungeConstants {
         }
     }
 
-    static void openPlay(Context context, String packageName) {
+    public static void openPlay(Context context, String packageName) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=" + packageName));
 

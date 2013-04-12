@@ -50,17 +50,14 @@ import android.widget.Toast;
 
 public class LobbyFragment extends Fragment implements OnChildClickListener {
 
-    public static final String CATEGORY = "eu.andlabs.lounge";
-    private SparseIntArray listPositions = new SparseIntArray();
     private ExpandableListView lobbyList;
     private LobbyListAdapter mAdapter;
     private ListView mHostList;
     private HostGameAdapter hostAdapter;
-    private static final String TAG = "Lounge";
-    private static final int GAMES = 0;
+    private View mStaticBeacon;
+    private View mPulseBeacon;
 
     LoungeLobbyController mLoungeLobbyController = new LoungeLobbyController();
-
     LoungeLobbyCallback mLoungeLobbyCallback = new LoungeLobbyCallback() {
 
         @Override
@@ -114,10 +111,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         }
 
     };
-    private PackageManager mPackageManager;
-    private List<ResolveInfo> installedGames;
-    private View mStaticBeacon;
-    private View mPulseBeacon;
+   
 
     @Override
     public View onCreateView(final LayoutInflater pLayoutInflater, ViewGroup pViewGroup, Bundle pBundle) {
@@ -128,8 +122,6 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
         mAdapter = new LobbyListAdapter(getActivity());
 
-        // mAdapter.setJoinedGames(joinedGames);
-        // mAdapter.setOpenGames(openGames);
         lobbyList.setAdapter(mAdapter);
         lobbyList.setOnChildClickListener(this);
 
@@ -149,14 +141,8 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
         this.mHostList = (ListView) view.findViewById(R.id.installed_games);
 
-        this.mPackageManager = getActivity().getPackageManager();
-        final Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(CATEGORY);
-        this.installedGames = this.mPackageManager.queryIntentActivities(intent, 0);
-        mAdapter.setInstalledGames(installedGames, mPackageManager);
-
         this.mHostList = (ListView) view.findViewById(R.id.installed_games);
-        this.hostAdapter = new HostGameAdapter(installedGames, getActivity(), mPackageManager);
+        this.hostAdapter = new HostGameAdapter(getActivity());
         this.mHostList.setAdapter(hostAdapter);
         this.mHostList.setOnItemClickListener(hostAdapter);
 
@@ -253,10 +239,9 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
                                                                       // Adopt
                                                                       // here
             mLoungeLobbyController.joinMatch(game.gameID, match.matchID);
-            // Lounge.join(match.getMatchId(),game.getPgkName()); // join Game
         } else {
             // open joined game
-            if (match.status.equalsIgnoreCase("running")) {
+            if ("running".equalsIgnoreCase(match.status)) {
                 Utils.launchGameApp(getActivity(), game.gameID, match);
             } else {
                 Toast.makeText(getActivity(), "Game not started yet", Toast.LENGTH_LONG).show();
@@ -264,5 +249,4 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         }
         return false;
     }
-
 }
