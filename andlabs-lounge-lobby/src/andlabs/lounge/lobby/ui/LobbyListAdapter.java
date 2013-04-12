@@ -20,27 +20,24 @@ package andlabs.lounge.lobby.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import roboguice.util.Ln;
-
 import andlabs.lounge.lobby.R;
 import andlabs.lounge.lobby.util.ColorAnimatorTask;
 import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.model.Player;
+import andlabs.lounge.util.Ln;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableRow;

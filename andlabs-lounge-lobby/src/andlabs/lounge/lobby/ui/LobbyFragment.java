@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import roboguice.util.Ln;
-
 import andlabs.lounge.lobby.LoungeLobbyCallback;
 import andlabs.lounge.lobby.LoungeLobbyController;
 import andlabs.lounge.lobby.R;
@@ -31,6 +29,7 @@ import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
+import andlabs.lounge.util.Ln;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;

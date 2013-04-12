@@ -18,10 +18,9 @@ package andlabs.lounge.lobby.util;
 
 import java.util.List;
 
-import roboguice.util.Ln;
-
 import andlabs.lounge.lobby.LoungeConstants;
 import andlabs.lounge.model.Match;
+import andlabs.lounge.util.Ln;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +28,6 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 
 public class Utils implements LoungeConstants {
 

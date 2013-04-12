@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import roboguice.util.Ln;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.service.LoungeService;
 import andlabs.lounge.service.LoungeServiceDef;
+import andlabs.lounge.util.Ln;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,6 +26,7 @@ public class LoungeServiceController {
 
     private Set<LoungeServiceCallback> mLoungeServiceCallbackSet = new HashSet<LoungeServiceCallback>();
 
+    //TODO: Use weak reference to get rid of leak
     @SuppressLint("HandlerLeak")
     Messenger mMessenger = new Messenger(new Handler() {
 
