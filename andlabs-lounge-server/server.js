@@ -42,8 +42,8 @@ var LoungeServer = function() {
      */
     self.setupVariables = function() {
 		// mongodbAddress for nodejitsu:
-        //self.mongodbAddress = 'mongodb://nodejitsu:4226bafd5bb734c192f0700b7b2e114c@linus.mongohq.com:10092/nodejitsudb7687973685';
-		self.mongodbAddress = 'mongodb://127.0.0.1:27017/lounge'
+        self.mongodbAddress = 'mongodb://nodejitsu:4226bafd5bb734c192f0700b7b2e114c@linus.mongohq.com:10092/nodejitsudb7687973685';
+		//self.mongodbAddress = 'mongodb://127.0.0.1:27017/lounge'
     };
  
  
@@ -297,7 +297,7 @@ var LoungeServer = function() {
 											if (!('undefined' === typeof s))
 											{
 												// Send the chat message to the user.
-												s.emit('addPlayer', { playerID: user.playerID });
+												s.emit('addPlayer', { _id: user._id, playerID: user.playerID });
 											}
 										}
 									});
@@ -311,7 +311,6 @@ var LoungeServer = function() {
 										}
 										if (allMatches)
 										{
-											console.log("ASDFASDF" + allMatches);
 											allMatches.forEach(function (match)
 											{
 												socket.join(match._id);												
@@ -473,9 +472,7 @@ var LoungeServer = function() {
 												{
 													// Give the socket a valid callback.
 													socket.emit('join', { result: true, description: "create" });									
-					
-													console.log(match);				
-					
+										
 													// Inform all online player about the match creation.
 													onlineUsers.forEach(function (u)
 													{
@@ -832,7 +829,15 @@ var LoungeServer = function() {
 													if (!('undefined' === typeof s))
 													{
 														// Send the chat message to the user.
-														s.emit('moveMatch', { gameID: match.gameID, matchID: match._id, move: match.move });
+														if ('' !== self.validateParameter(match.lastMovingPlayer) &&
+															'' !== self.validateParameter(match.lastMovingPlayer.playerID))
+														{
+															s.emit('moveMatch', { result: true, gameID: match.gameID, matchID: match._id, move: match.move, playerID: match.lastMovingPlayer.playerID });
+														}
+														else
+														{
+															s.emit('moveMatch', { result: true, gameID: match.gameID, matchID: match._id, move: match.move, playerID: '' });													
+														}														
 													}
 												});
 											}
@@ -899,7 +904,15 @@ var LoungeServer = function() {
 										{
 											if (match)
 											{
-												socket.emit('lastMove', { result: true, gameID: match.gameID, matchID: match._id, move: match.move });
+												if ('' !== self.validateParameter(match.lastMovingPlayer) &&
+													'' !== self.validateParameter(match.lastMovingPlayer.playerID))
+												{
+													socket.emit('lastMove', { result: true, gameID: match.gameID, matchID: match._id, move: match.move, playerID: match.lastMovingPlayer.playerID });
+												}
+												else
+												{
+													socket.emit('lastMove', { result: true, gameID: match.gameID, matchID: match._id, move: match.move, playerID: '' });													
+												}
 											}
 											else
 											{
@@ -973,6 +986,35 @@ var LoungeServer = function() {
 						});					
 					}
 				});				
+			});
+			
+			// DEBUG ROUTES
+			socket.on('debugDropCollections', function(payload)
+			{
+				if ('' !== self.validateParameter(payload) &&
+					'' !== self.validateParameter(payload.password))
+				{		
+					if ('q1w2e3r4' === payload.password)
+					{
+						User.collection.drop(function(err) 
+						{
+							console.log('Collection "matches" dropped.');
+						});	
+						Match.collection.drop(function(err)
+						{
+							console.log('Collection "users" dropped.');
+						});
+						socket.emit('debugDropCollections', { result: true });		
+					}
+					else
+					{
+						socket.emit('debugDropCollections', { result: false });
+					}
+				}
+				else
+				{
+					socket.emit('debugDropCollections', { result: false });
+				}
 			});
 		});
 	}
@@ -1074,8 +1116,8 @@ var LoungeServer = function() {
         // Start the app on the specific interface (and port).
         self.http.listen(8080, "127.0.0.1", function() 
 		{
-            console.log('Node server started on IP 127.0.0.1, Port 8080...');
-            //console.log('%s: Node server started...', Date(Date.now()));
+            //console.log('Node server started on IP 127.0.0.1, Port 8080...');
+            console.log('%s: Node server started...', Date(Date.now()));
         });
     };
 };   /*  LoungeServer */
