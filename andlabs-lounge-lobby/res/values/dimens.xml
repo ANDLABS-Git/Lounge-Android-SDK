@@ -12,8 +12,10 @@
   limitations under the License.
 -->
 
-    <dimen name="padding_small">8dp</dimen>
-    <dimen name="padding_medium">8dp</dimen>
-    <dimen name="padding_large">16dp</dimen>
+    <dimen name="grayBottomLineHeight">52dp</dimen>
+    <dimen name="dividorHeight">10dp</dimen>
+    <dimen name="defaultTextSize">18dp</dimen>
+    <dimen name="smallTextSize">16dp</dimen>
+    <dimen name="lobbyListItemHeight">70dp</dimen>
 
 </resources>

@@ -4,6 +4,8 @@ interface LoungeServiceDef {
 
 	void connect();
 
+	void reconnect();
+
 	void disconnect();
 
 	void login(in String playerId);
@@ -19,5 +21,7 @@ interface LoungeServiceDef {
 	void update(in String pPackageId, in String pMatchId, in String pStatus);
 
 	void move(in String pPackageId, in String pMatchId, in Bundle pMoveBundle);
+
+	void stream(in String pPackageId, in String pMatchId, in Bundle pMoveBundle);
 
 }

@@ -19,18 +19,19 @@ limitations under the License.
     android:layout_height="match_parent"
     android:background="#f32b2b2b" >
 
-    <FrameLayout
+    <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/dividorHeight"
         android:layout_gravity="top"
         android:background="@color/orange" >
-    </FrameLayout>
+    </View>
 
     <View
+        android:layout_gravity="top|left"
         android:layout_width="70dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dividorHeight"
-        android:background="@color/whiteAlpha" />
+        android:background="@color/whiteAlpha"
+        android:layout_marginTop="@dimen/dividorHeight" />
 
     <ListView
         android:id="@+id/installed_games"

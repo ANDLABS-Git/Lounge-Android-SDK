@@ -24,10 +24,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import roboguice.util.Ln;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.service.LoungeService;
 import andlabs.lounge.service.LoungeServiceDef;
+import andlabs.lounge.util.Ln;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -44,6 +44,7 @@ public class LoungeServiceController {
 
     private Set<LoungeServiceCallback> mLoungeServiceCallbackSet = new HashSet<LoungeServiceCallback>();
 
+    //TODO: Use weak reference to get rid of leak
     @SuppressLint("HandlerLeak")
     Messenger mMessenger = new Messenger(new Handler() {
 
@@ -139,6 +140,12 @@ public class LoungeServiceController {
             Intent serviceIntent = new Intent(pContext, LoungeService.class);
             serviceIntent.putExtra("client-messenger", mMessenger);
             pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            try {
+                mLoungeService.reconnect();
+            } catch (RemoteException e) {
+                Ln.e(e, "bindServiceTo(): caught exception while reconnecting");
+            }
         }
     }
 
@@ -202,7 +209,15 @@ public class LoungeServiceController {
         } catch (RemoteException e) {
             Ln.e(e, "sendGameMove(): caught exception while opening a game move");
         }
-
+    }
+    
+    public void streamGameMessage(String pPackageId, String pMatchId, Bundle pMoveBundle) {
+        Ln.v("streamGameMessage(): pPackageId = %s, pMatchId = %s, pMoveBundle = %s", pPackageId, pMatchId, pMoveBundle);
+        try {
+            mLoungeService.stream(pPackageId, pMatchId, pMoveBundle);
+        } catch (RemoteException e) {
+            Ln.e(e, "streamGameMessage(): caught exception while opening a game move");
+        }
     }
 
 }

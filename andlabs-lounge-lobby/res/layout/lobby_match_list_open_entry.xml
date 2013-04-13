@@ -17,37 +17,26 @@ limitations under the License.
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/open_game"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="right" >
-<View
+    android:layout_height="@dimen/lobbyListItemHeight" >
+
+    <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
+        android:layout_gravity="top|left"
         android:layout_marginLeft="70dp"
-        
         android:background="@color/whiteAlpha" />
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="10dp"
-        android:visibility="invisible"
-        android:src="@drawable/ic_launcher" />
 
     <TextView
         android:id="@+id/hostname"
-        android:layout_width="177dp"
-        android:singleLine="true"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_gravity="top|left"
         android:layout_marginLeft="80dp"
         android:layout_marginRight="5dp"
-        android:layout_toRightOf="@+id/imageView1"
         android:ellipsize="end"
+        android:singleLine="true"
         android:text="123456789ABCDEFGH"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/white" />
+        style="@style/textViewSmall" />
 
     <TextView
         android:id="@+id/playercount"
@@ -58,23 +47,20 @@ limitations under the License.
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="80dp"
         android:text="playercount"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/white" />
+        style="@style/textViewSmall" />
 
     <ProgressBar
-        android:visibility="gone"
         android:id="@+id/joinInProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
-        android:layout_marginRight="20dp" />
+        android:layout_marginRight="20dp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/joinBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
         android:layout_gravity="right|center"
         android:background="@color/whiteAlpha"
         android:gravity="center_vertical"
@@ -97,17 +83,26 @@ limitations under the License.
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
             android:text="Join"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white" />
+            style="@style/textViewSmall" />
     </LinearLayout>
 
     <ImageView
-        android:visibility="gone"
         android:id="@+id/playstoreIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
         android:layout_marginRight="20dp"
-        android:src="@drawable/playstoreicon" />
+        android:src="@drawable/playstoreicon"
+        android:visibility="gone" />
+
+    <!-- Some weird stuff: Only if this is in here and only if it's not gone, 
+    this layout will be shown with it's real height (70dp) -->
+    <LinearLayout
+        android:layout_width="1dp"
+        android:layout_height="@dimen/lobbyListItemHeight"
+        android:layout_gravity="left"
+        android:orientation="vertical"
+        android:visibility="invisible" >
+    </LinearLayout>
 
 </FrameLayout>

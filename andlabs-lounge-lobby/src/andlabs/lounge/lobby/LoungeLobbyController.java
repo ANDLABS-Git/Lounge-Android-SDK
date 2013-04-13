@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Map;
 
-import roboguice.util.Ln;
-
 import andlabs.lounge.LoungeServiceCallback;
 import andlabs.lounge.LoungeServiceController;
 import andlabs.lounge.lobby.util.Id;
 import andlabs.lounge.model.Game;
+import andlabs.lounge.util.Ln;
 import android.content.Context;
 import android.os.Bundle;
 

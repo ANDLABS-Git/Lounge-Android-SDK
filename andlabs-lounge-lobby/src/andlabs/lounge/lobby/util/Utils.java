@@ -18,10 +18,9 @@ package andlabs.lounge.lobby.util;
 
 import java.util.List;
 
-import roboguice.util.Ln;
-
 import andlabs.lounge.lobby.LoungeConstants;
 import andlabs.lounge.model.Match;
+import andlabs.lounge.util.Ln;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -29,15 +28,14 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 
 public class Utils implements LoungeConstants {
 
-    private static final String TAG = "Lounge";
+    public static final String CATEGORY = "eu.andlabs.lounge";
 
-    private static List<ResolveInfo> getInstalledLoungeGames(Context ctx) {
+    public static List<ResolveInfo> getInstalledLoungeGames(Context ctx) {
         Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory("eu.andlabs.lounge");
+        intent.addCategory(CATEGORY);
         return ctx.getPackageManager().queryIntentActivities(intent, 0);
     }
 
@@ -47,9 +45,15 @@ public class Utils implements LoungeConstants {
             final Intent intent = new Intent();
             intent.setComponent(new ComponentName(info.activityInfo.packageName, info.activityInfo.name));
             intent.putExtra(EXTRA_IS_HOST, Id.getName(context));
-            intent.putExtra("HOSTNAME", match.players.get(0).playerID);
-            intent.putExtra(EXTRA_HOST_NAME, match.players.get(1).playerID);
+            intent.putExtra(EXTRA_HOST_NAME, match.players.get(0).playerID);
             intent.putExtra(EXTRA_MATCH_ID, match.matchID);
+
+            final String[] players = new String[match.players.size()];
+            for (int i = 0; i < match.players.size(); i++) {
+                players[i] = match.players.get(i).playerID;
+            }
+            intent.putExtra(EXTRA_PLAYER_NAMES, players);
+
             context.startActivity(intent);
         } else {
             Ln.w("launchGameApp(): unable to start the game %s", packageName);
@@ -66,8 +70,8 @@ public class Utils implements LoungeConstants {
         return null;
     }
 
-    static Drawable getGameIcon(Context context, String packageName) {
-        ResolveInfo info = null; // getInstalledGameInfo(context, packageName);
+    public static Drawable getGameIcon(Context context, String packageName) {
+        ResolveInfo info = getInstalledGameInfo(context, packageName);
         if (info == null) {
             return null;
         } else {
@@ -75,11 +79,22 @@ public class Utils implements LoungeConstants {
         }
     }
 
-    static void openPlay(Context context, String packageName) {
+    public static void openPlay(Context context, String packageName) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=" + packageName));
 
         context.startActivity(intent);
+    }
+
+    public static boolean isGameInstalled(Context pContext, String pGameID) {
+        List<ResolveInfo> installedGames = Utils.getInstalledLoungeGames(pContext);
+
+        for (ResolveInfo info : installedGames) {
+            if (pGameID.equalsIgnoreCase(info.activityInfo.packageName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static int ipc(Context context, int colorA, int colorB, float proportion) {

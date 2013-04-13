@@ -80,6 +80,7 @@ public class TestData {
 		Game openGame = createGame(pPackageId, pTitle);
 
         Match match = new Match();
+        match.matchID = getRandomNumberString();
         match.totalSpots = 4;
 
         match.players.add(pPlayer);
@@ -88,6 +89,14 @@ public class TestData {
 
         return openGame;
 
+	}
+	
+	private static String getRandomNumberString() {
+	    final StringBuilder stringBuilder = new StringBuilder();
+	    for(int i = 0; i< 10; i++) {
+	       stringBuilder.append(i);
+	    }
+	    return stringBuilder.toString();
 	}
 
 }

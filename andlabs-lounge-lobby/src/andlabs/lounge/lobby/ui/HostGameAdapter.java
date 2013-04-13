@@ -21,8 +21,8 @@ package andlabs.lounge.lobby.ui;
 import java.util.List;
 
 import andlabs.lounge.lobby.R;
+import andlabs.lounge.lobby.util.Utils;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
@@ -45,10 +45,10 @@ public class HostGameAdapter extends BaseAdapter implements OnItemClickListener 
     private Context mContext;
 
 
-    public HostGameAdapter(List<ResolveInfo> installedGames, Context context, PackageManager packageManager) {
-        this.mContext = context;
-        mContent = installedGames;
-        this.mPackageManager = packageManager;
+    public HostGameAdapter(Context context) {
+        mContext = context;
+        mContent = Utils.getInstalledLoungeGames(context);
+        mPackageManager = context.getPackageManager();
     }
 
 

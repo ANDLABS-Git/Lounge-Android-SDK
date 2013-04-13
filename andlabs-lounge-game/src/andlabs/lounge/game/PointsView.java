@@ -44,7 +44,7 @@ public class PointsView extends View {
         }
 
         for (Point othersPoint : mOthersPoints) {
-            pCanvas.drawCircle(othersPoint.x - mRadius / 2, othersPoint.y - mRadius / 2, mRadius, mMyPaint);
+            pCanvas.drawCircle(othersPoint.x - mRadius / 2, othersPoint.y - mRadius / 2, mRadius, mOthersPaint);
         }
 
         super.onDraw(pCanvas);
@@ -53,18 +53,19 @@ public class PointsView extends View {
     public void addMyPoint(Point point) {
         mMyPoints.add(point);
         Bundle move = new Bundle();
-        move.putString("x", point.x / mDp + "");
-        move.putString("y", point.y / mDp + "");
+        move.putString("color", "#ff0000");
+        move.putInt("x", (int)(point.x / mDp) );
+        move.putInt("y", (int)(point.y / mDp) );
 
-        mController.sendGameMove(mMatchId, move);
+        mController.streamGameMessage(mMatchId, move);
         invalidate();
 
     }
 
     public void addOthersPoint(Point point) {
         Point newPoint = new Point();
-        newPoint.set((int) (point.x * mDp), (int) (point.y * mDp));
-        mOthersPoints.add(point);
+        newPoint.set((int) (point.x * mDp * 2), (int) (point.y * mDp * 2));
+        mOthersPoints.add(newPoint);
         invalidate();
 
     }

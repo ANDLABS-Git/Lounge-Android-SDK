@@ -29,10 +29,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import roboguice.util.Ln;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.model.Player;
+import andlabs.lounge.util.Ln;
 import android.os.Bundle;
 
 public abstract class LoungeMessageProcessor {
@@ -235,7 +235,7 @@ public abstract class LoungeMessageProcessor {
             mMatchMoves.put(matchID, bundle);
         }
 
-        if (!mPlayerID.equals(pPayload.getString("playerID"))) {// We react only
+        if (!pPayload.has("playerID") || !mPlayerID.equals(pPayload.getString("playerID"))) {// We react only
                                                                 // to moves not
                                                                 // send by the
                                                                 // user

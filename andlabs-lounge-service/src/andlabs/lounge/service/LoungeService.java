@@ -18,7 +18,7 @@
 
 package andlabs.lounge.service;
 
-import roboguice.util.Ln;
+import andlabs.lounge.util.Ln;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;

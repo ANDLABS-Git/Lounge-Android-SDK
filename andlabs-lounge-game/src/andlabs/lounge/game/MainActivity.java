@@ -3,9 +3,7 @@ package andlabs.lounge.game;
 import andlabs.lounge.LoungeGameCallback;
 import andlabs.lounge.LoungeGameController;
 import andlabs.lounge.lobby.LoungeConstants;
-import andlabs.lounge.lobby.ui.LobbyActivity;
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,14 +17,11 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onCheckIn(String player) {
-
 		}
 
 
 		@Override
 		public void onAllPlayerCheckedIn() {
-			// TODO Auto-generated method stub
-
 		}
 
 
@@ -41,8 +36,6 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onCheckOut(String player) {
-			// TODO Auto-generated method stub
-
 		}
 
 	};

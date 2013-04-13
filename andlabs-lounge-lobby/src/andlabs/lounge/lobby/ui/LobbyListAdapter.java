@@ -20,27 +20,24 @@ package andlabs.lounge.lobby.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import roboguice.util.Ln;
-
 import andlabs.lounge.lobby.R;
-import andlabs.lounge.lobby.util.ColorAnimatorTask;
+import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.model.Player;
+import andlabs.lounge.util.Ln;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
@@ -64,11 +61,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     private PlayParser mParser;
 
-    private ColorAnimatorTask anmimatorTask;
-
     private List<ResolveInfo> installedGames;
-
-    private PackageManager mPackageManager;
 
     private boolean mSeparatorFlag;
 
@@ -76,8 +69,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     public LobbyListAdapter(Context pContext) {
         mInflater = (LayoutInflater) pContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.anmimatorTask = new ColorAnimatorTask(pContext, 0, 1, 1000);
-        mContext=pContext;
+        mContext = pContext;
         mParser = PlayParser.getInstance(pContext);
     }
 
@@ -88,11 +80,10 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     public void setOpenGames(List<Game> pOpenGames) {
         mOpenGames = pOpenGames;
-        setSeparatorFlag();
     }
 
     private void setSeparatorFlag() {
-        mSeparatorFlag = mJoinedGames.size() > 0 && mOpenGames.size() > 0;
+        mSeparatorFlag = mJoinedGames.size() > 0;
 
     }
 
@@ -128,15 +119,14 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
                 switch (type) {
                 case TYPE_JOINEDGAME:
                     convertView = mInflater.inflate(R.layout.lobby_match_list_entry_2players, parent, false);
-                    fillJoinedGameView(groupPosition, childPosition, convertView);
-
                     break;
+
                 case TYPE_SEPARATOR:
                     convertView = mInflater.inflate(R.layout.lobby_seperator, null);
                     break;
 
                 case TYPE_OPENGAME:
-                    convertView = mInflater.inflate(R.layout.lobby_open_game_entry, null);
+                    convertView = mInflater.inflate(R.layout.lobby_match_list_open_entry, null);
                     break;
                 }
 
@@ -151,7 +141,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
                 break;
 
             case TYPE_OPENGAME:
-                fillOpenGameView(groupPosition, childPosition, convertView);
+                fillOpenMatchView(groupPosition, childPosition, convertView);
                 break;
             }
 
@@ -162,15 +152,15 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    private void fillOpenGameView(final int groupPosition, final int childPosition, final View convertView) {
+    private void fillOpenMatchView(final int groupPosition, final int childPosition, final View convertView) {
         TextView hostname = (TextView) convertView.findViewById(R.id.hostname);
         TextView playercount = (TextView) convertView.findViewById(R.id.playercount);
         final Match match = (Match) getChild(groupPosition, childPosition);
         final Game game = (Game) getGroup(groupPosition);
         hostname.setText(match.players.get(0).playerID);
-        playercount.setText(match.matchID.substring(10, match.matchID.length()));
+        playercount.setText(match.players.size() + "/" + match.totalSpots);
         final LinearLayout joinBtn = (LinearLayout) convertView.findViewById(R.id.joinBtn);
-        if (isGameInstalled(game.gameID)) {
+        if (Utils.isGameInstalled(mContext, game.gameID)) {
             convertView.findViewById(R.id.playstoreIcon).setVisibility(View.GONE);
         } else {
             joinBtn.setVisibility(View.GONE);
@@ -231,16 +221,6 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
             params1.rightMargin = 15;
             player1Beacon.setLayoutParams(params1);
         }
-
-        // if (match.isLocalPlayerOnTurn()) { // TODO: Adopt
-        //
-        // if (!this.anmimatorTask.isRunning()) {
-        // this.anmimatorTask.execute(new ViewColorAnimationHolder(
-        // convertView, R.color.blue, R.color.yellow));
-        // }
-        // this.anmimatorTask.add(player1Beacon, R.color.whiteAlpha,
-        // R.color.green);
-        // }
     }
 
     @Override
@@ -274,7 +254,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     @Override
     public int getGroupCount() {
         int groupCount = mJoinedGames.size() + mOpenGames.size();
-        if (mJoinedGames.size() > 0 && mOpenGames.size() > 0) {
+        if (mJoinedGames.size() > 0) {
             groupCount += 1;
         }
         return groupCount;
@@ -282,8 +262,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getGroupId(int groupPosition) {
-        // TODO Auto-generated method stub
-        return 0;
+        return groupPosition;
     }
 
     @Override
@@ -330,38 +309,40 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     }
 
     private void createGameView(Game game, View convertView, boolean isInvolved) {
+        // Set the game's name
         ((TextView) convertView.findViewById(R.id.gamename)).setText(game.gameName);
+        // Set the game's matchcount
         ((TextView) convertView.findViewById(R.id.count)).setText(Integer.toString(game.matches.size()));
 
+        // Set Indicator for whether the game is one the player is involved in
+        // or not
         if (isInvolved) {
             convertView.findViewById(R.id.involvedGameIndicator).setVisibility(View.VISIBLE);
         } else {
-            convertView.findViewById(R.id.involvedGameIndicator).setVisibility(View.GONE);
-
+            // Don't use gone in here! If you do, the size of convertView is shrinked on 2.x devices!
+            convertView.findViewById(R.id.involvedGameIndicator).setVisibility(View.INVISIBLE);
         }
 
+        // Set the promo graphic if available
         final Drawable promo = mParser.getResult(game.gameID);
         if (promo != null) {
             convertView.findViewById(R.id.promo).setBackgroundDrawable(promo);
+            convertView.findViewById(R.id.promoOverlay).setVisibility(View.VISIBLE);
+        } else {
+            convertView.findViewById(R.id.promo).setBackgroundDrawable(null);
+            convertView.findViewById(R.id.promoOverlay).setVisibility(View.GONE);
         }
-        
+
+        // Set the application's icon or the Play Store's icon if it's not
+        // installed
+        Drawable iconDrawable = Utils.getGameIcon(mContext, game.gameID);
+        if (iconDrawable == null) {
+            iconDrawable = mContext.getResources().getDrawable(R.drawable.playstoreicon);
+        }
         final ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
-        icon.setImageDrawable(getAppIcon(game.gameID));
+        icon.setImageDrawable(iconDrawable);
     }
 
-    private Drawable getAppIcon(String gameID) {
-        for (ResolveInfo info : installedGames) {
-            Log.i("installed adapter", gameID + " = " + info.activityInfo.packageName);
-            if (gameID.contains("/")) {
-                if (gameID.split("/")[0].equalsIgnoreCase(info.activityInfo.packageName)) {
-                   return info.loadIcon(mPackageManager);
-                }
-
-            }
-        }
-        return mContext.getResources().getDrawable(R.drawable.playstoreicon);
-    }
- 
     @Override
     public boolean hasStableIds() {
         return false;
@@ -392,30 +373,11 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildTypeCount() {
-        // TODO Auto-generated method stub
         return 3;
-    }
-
-    public void setInstalledGames(List<ResolveInfo> installedGames, PackageManager packageManager) {
-        this.installedGames = installedGames;
-        this.mPackageManager = packageManager;
-
-    }
-
-    private boolean isGameInstalled(String gameID) {
-        for (ResolveInfo info : installedGames) {
-            if (gameID.equalsIgnoreCase(info.activityInfo.packageName)) {
-                return true;
-            }
-
-        }
-        return false;
     }
 
     @Override
     public int getGroupTypeCount() {
-        // TODO Auto-generated method stub
         return 3;
     }
-
 }
