@@ -109,10 +109,10 @@ public class LoungeGameController {
     }
 
 
-    private void checkout(String pMatchId) {
+    void checkout(String pMatchId) {
         mCheckinMatchId = null;
         Ln.v("checkout(): pMatchId = %s", pMatchId);
-        // TODO wire it to the corresponding LoungeServiceController method
+        mLoungeServiceController.checkout(mPackageId,pMatchId);
     }
 
 
@@ -124,5 +124,10 @@ public class LoungeGameController {
     public void streamGameMessage(String pMatchId, Bundle pMoveBundle) {
         Ln.v("streamGameMessage(): pMatchId = %s, pMoveBundle = %s", pMatchId, pMoveBundle);
         mLoungeServiceController.streamGameMessage(mPackageId, pMatchId, pMoveBundle);
+
+    public void closeMatch(String pMatchId) {
+        Ln.v("closeMatch(): pMatchId = %s, ",pMatchId);
+        mLoungeServiceController.closeMatch(mPackageId,pMatchId);
     }
+
 }

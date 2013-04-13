@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import roboguice.util.Ln;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.service.LoungeService;
 import andlabs.lounge.service.LoungeServiceDef;
@@ -178,15 +179,26 @@ public class LoungeServiceController {
         } catch (RemoteException e) {
             Ln.e(e, "sendGameMove(): caught exception while opening a game move");
         }
+
     }
-    
-    public void streamGameMessage(String pPackageId, String pMatchId, Bundle pMoveBundle) {
-        Ln.v("streamGameMessage(): pPackageId = %s, pMatchId = %s, pMoveBundle = %s", pPackageId, pMatchId, pMoveBundle);
+
+    public void closeMatch(String pPackageId, String pMatchId2) {
+        Ln.v("closeMatch():  pMatchId = %s",  pPackageId);
         try {
-            mLoungeService.stream(pPackageId, pMatchId, pMoveBundle);
+            mLoungeService.closeMatch(pPackageId, pMatchId2);
         } catch (RemoteException e) {
-            Ln.e(e, "streamGameMessage(): caught exception while opening a game move");
+            Ln.e(e, "Error in closeMatch()");
         }
+
+    }
+
+    public void checkout(String pPackageId, String pMatchId) {
+        try {
+            mLoungeService.checkout(pPackageId,pMatchId);
+        } catch (RemoteException e) {
+            Ln.e(e, "Error in CheckOut() "+pMatchId);
+        }
+        
     }
 
 }
