@@ -1,3 +1,21 @@
+/*
+ *  Copyright (C) 2012,2013 ANDLABS. All rights reserved. 
+ *  Lounge@andlabs.com
+ *  lounge.andlabs.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package andlabs.lounge.service;
 
 import java.util.ArrayList;
@@ -11,17 +29,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import roboguice.util.Ln;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.model.Player;
+import andlabs.lounge.util.Ln;
 import android.os.Bundle;
 
 public abstract class LoungeMessageProcessor {
 
     private HashMap<String, Player> mPlayers = new HashMap<String, Player>();
 
-    private Map<String, Bundle> mMatchMoves = new HashMap<String, Bundle>();;
+    private Map<String, Bundle> mMatchMoves=new HashMap<String, Bundle>();
 
     // All games currently in the lounge in which the user is involved
     private ConcurrentHashMap<String, Game> mInvolvedGames = new ConcurrentHashMap<String, Game>();
@@ -217,7 +235,7 @@ public abstract class LoungeMessageProcessor {
             mMatchMoves.put(matchID, bundle);
         }
 
-        if (!mPlayerID.equals(pPayload.getString("playerID"))) {// We react only
+        if (!pPayload.has("playerID") || !mPlayerID.equals(pPayload.getString("playerID"))) {// We react only
                                                                 // to moves not
                                                                 // send by the
                                                                 // user

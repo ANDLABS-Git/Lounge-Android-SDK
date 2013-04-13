@@ -16,8 +16,8 @@
     <style name="AppTheme" parent="android:Theme.Light" />
 
     <color name="whiteAlpha">#25ffffff</color>
-    <color name="blackHighAlpha">#80000000</color>
-    <color name="blacLowAlpha">#50000000</color>
+    <color name="blackLowAlpha">#80000000</color>
+    <color name="blackHighAlpha">#50000000</color>
     <color name="btnBackground">#10ffffff</color>
     <color name="gray">#2b2b2b</color>
     <color name="black">#ffffff</color>
@@ -41,7 +41,7 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-     <!-- Style for the default lounge button -->
+    <!-- Style for the default lounge button -->
     <style name="textView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -50,9 +50,11 @@
         <item name="android:singleLine">true</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
+    <style name="textViewSmall" parent="@style/textView">
+        <item name="android:textSize">@dimen/defaultTextSize</item>
+    </style>
+
     
-    <dimen name="grayBottomLineHeight">52dp</dimen>
-    <dimen name="dividorHeight">10dp</dimen>
-    <dimen name="defaultTextSize">18dp</dimen>
 
 </resources>

@@ -2,9 +2,8 @@ package andlabs.lounge;
 
 import java.util.Map;
 
-import roboguice.util.Ln;
-
 import andlabs.lounge.model.Game;
+import andlabs.lounge.util.Ln;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -67,7 +66,8 @@ public class LoungeGameController {
 
         @Override
         public void onGameMessage(String pMatchID, Bundle pMsg) {
-            if(pMatchID.equals(mCheckinMatchId) && mLoungeGameCallback != null) {
+            if(pMatchID.equals(mCheckinMatchId) && mLoungeGameCallback != null) {  // TODO: move this condition to messageprocessor
+
                 mLoungeGameCallback.onGameMessage(pMsg);
             }
         }
@@ -104,7 +104,7 @@ public class LoungeGameController {
 
     public void checkin(String pMatchId) {
         Ln.v("checkin(): pMatchId = %s", pMatchId);
-        mCheckinMatchId = pMatchId;
+        mCheckinMatchId = pMatchId;  // TODO: move this to messageprocessor
         mLoungeServiceController.checkin(mPackageId, pMatchId);
     }
 
@@ -121,4 +121,8 @@ public class LoungeGameController {
         mLoungeServiceController.sendGameMove(mPackageId, pMatchId, pMoveBundle);
     }
 
+    public void streamGameMessage(String pMatchId, Bundle pMoveBundle) {
+        Ln.v("streamGameMessage(): pMatchId = %s, pMoveBundle = %s", pMatchId, pMoveBundle);
+        mLoungeServiceController.streamGameMessage(mPackageId, pMatchId, pMoveBundle);
+    }
 }
