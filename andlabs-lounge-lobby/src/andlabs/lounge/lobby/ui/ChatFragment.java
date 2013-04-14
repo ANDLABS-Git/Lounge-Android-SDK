@@ -32,108 +32,130 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * The chat fragment
+ * 
+ */
 public class ChatFragment extends Fragment implements ChatListener, OnClickListener {
 
     private ArrayList<ChatMessage> mConversation = new ArrayList<ChatMessage>();
     private EditText mChatEditText;
+    private ListView mChatList;
 
-
-    static ChatFragment newInstance(int num) {
-        ChatFragment f = new ChatFragment();
-        return f;
+    /**
+     * Create a new instance of this fragment
+     * 
+     * @param pNUm
+     * @return
+     */
+    static ChatFragment newInstance(final int pNUm) {
+        final ChatFragment fragment = new ChatFragment();
+        return fragment;
     }
 
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate(final Bundle pSavedInstanceState) {
+        super.onCreate(pSavedInstanceState);
+        // Make this fragment retain it's instance
         setRetainInstance(true);
     }
 
-
     @Override
     public void onStart() {
-        // ((LoungeActivity) getActivity()).getLounge().register(this);
         super.onStart();
     }
 
-
     @Override
-    public View onCreateView(final LayoutInflater infl, ViewGroup p, Bundle b) {
-        final View chat = infl.inflate(R.layout.fragment_chat, p, false);
+    public View onCreateView(final LayoutInflater pInflater, final ViewGroup pViewGroup, final Bundle pBundle) {
+
+        // Inflate the chat view
+        final View chat = pInflater.inflate(R.layout.fragment_chat, pViewGroup, false);
+        // Find the chat message field
         mChatEditText = ((EditText) chat.findViewById(R.id.msg_field));
+        // Set the onClickListener for the send-button
         ((ImageButton) chat.findViewById(R.id.btn_send)).setOnClickListener(this);
-        ((ListView) chat.findViewById(R.id.list)).setAdapter(new BaseAdapter() {
+        // Find the chat list view
+        mChatList = (ListView) chat.findViewById(R.id.list);
+
+        // Set the list view's adapter.
+        // TODO: refactor into own class
+        mChatList.setAdapter(new BaseAdapter() {
 
             @Override
             public int getCount() {
                 return mConversation.size();
             }
 
-
             @Override
-            public View getView(int position, View view, ViewGroup parent) {
-                if (view == null)
-                    view = infl.inflate(R.layout.chat_list_entry, null);
-                final ChatMessage msg = mConversation.get(position);
-                ((TextView) view.findViewById(R.id.sender)).setText(msg.getPlayerName());
-                ((TextView) view.findViewById(R.id.msg_text)).setText(msg.getMessage());
-                return view;
+            public View getView(final int pPosition, final View pView, final ViewGroup pParent) {
+                // We don't modify our parameters, we create copies
+                View view = pView;
+                if (view == null) {
+                    // If the view hasn't been created yet, do so
+                    view = pInflater.inflate(R.layout.chat_list_entry, null);
+                }
+
+                // Put content into the chat view
+                final ChatMessage message = mConversation.get(pPosition);
+                ((TextView) pView.findViewById(R.id.sender)).setText(message.getPlayerName());
+                ((TextView) pView.findViewById(R.id.msg_text)).setText(message.getMessage());
+                // TODO: Set message's timestamp
+
+                return pView;
             }
 
-
             @Override
-            public long getItemId(int position) {
-                return 0;
+            public long getItemId(final int pPosition) {
+                return pPosition;
             }
 
-
             @Override
-            public Object getItem(int position) {
-                return null;
+            public Object getItem(int pPosition) {
+                return mConversation.get(pPosition);
             }
         });
+        // React to enter-events of the keyboard by sending the entered message
         // http://code.google.com/p/android/issues/detail?id=2516
         mChatEditText.setOnKeyListener(new OnKeyListener() {
 
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            public boolean onKey(final View pView, final int pKeyCode, final KeyEvent pEvent) {
+                if (pKeyCode == KeyEvent.KEYCODE_ENTER && pEvent.getAction() == KeyEvent.ACTION_DOWN) {
                     onClick(null);
                     return true;
                 }
                 return false;
             }
         });
+
+        // Return this Fragment's view (yes, we are still in oCreateView())
         return chat;
     }
 
-
+    /**
+     * Callback method for received chat messages
+     */
     @Override
-    public void onChatMessageRecieved(ChatMessage msg) {
-        mConversation.add(msg);
-        ((BaseAdapter) ((ListView) getView().findViewById(R.id.list)).getAdapter()).notifyDataSetChanged();
+    public void onChatMessageRecieved(final ChatMessage pMessage) {
+        // Updatte conversations
+        mConversation.add(pMessage);
+        // Redraw list
+        ((BaseAdapter) mChatList.getAdapter()).notifyDataSetChanged();
     }
 
-
+    /**
+     * onClick for sending chat messages
+     */
     @Override
-    public void onClick(View v) {
-        ChatMessage msg = new ChatMessage();
-        msg.setMessage(mChatEditText.getText().toString());
+    public void onClick(final View pView) {
+        // Create a new chatMessage
+        final ChatMessage message = new ChatMessage();
+        // Add the chat text to the new message
+        message.setMessage(mChatEditText.getText().toString());
+        // Request focus on the chat textfield
         mChatEditText.requestFocusFromTouch();
+        // Reset the text in the chat textfield
         mChatEditText.setText("");
-        onChatMessageRecieved(msg);
-    }
-
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+        //TODO: Add sending messages and in this method, set the players name
     }
 }

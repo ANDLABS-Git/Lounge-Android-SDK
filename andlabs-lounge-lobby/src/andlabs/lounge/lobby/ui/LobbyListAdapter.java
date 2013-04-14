@@ -28,11 +28,8 @@ import andlabs.lounge.model.Match;
 import andlabs.lounge.model.Player;
 import andlabs.lounge.util.Ln;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -54,17 +51,12 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     public static final int TYPE_SEPARATOR = 1;
     public static final int TYPE_OPENGAME = 2;
 
-    // private List<LobbyListElement> content;
     private List<Game> mJoinedGames = new ArrayList<Game>();
     private List<Game> mOpenGames = new ArrayList<Game>();
-    private LayoutInflater mInflater;
-
     private PlayParser mParser;
-
-    private List<ResolveInfo> installedGames;
-
+    
+    private LayoutInflater mInflater;
     private boolean mSeparatorFlag;
-
     private Context mContext;
 
     public LobbyListAdapter(Context pContext) {

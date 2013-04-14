@@ -22,12 +22,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+/**
+ * The about fragment, currently used with a static layout
+ * 
+ */
 public class AboutFragment extends Fragment {
 
     @Override
-    public View onCreateView(final LayoutInflater lI, ViewGroup p, Bundle b) {
-        return lI.inflate(R.layout.fragment_about, p, false);
-
+    public View onCreateView(final LayoutInflater pLayoutInflater, final ViewGroup pViewGroup, final Bundle pBundle) {
+        return pLayoutInflater.inflate(R.layout.fragment_about, pViewGroup, false);
     }
-
 }
