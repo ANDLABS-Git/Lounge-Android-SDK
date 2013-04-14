@@ -42,39 +42,53 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SlidingDrawer;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.Toast;
 
+/**
+ * The fragment of the main lobby
+ * 
+ */
 public class LobbyFragment extends Fragment implements OnChildClickListener {
 
+    // The lobby's expandable list view
     private ExpandableListView mLobbyList;
+    // The lobby's list view's adapter
     private LobbyListAdapter mLobbyAdapter;
+    // The list view in the host game sliding drawer
     private ListView mHostList;
+    // The host game sliding drawer's adapter
     private HostGameAdapter mHostAdapter;
-    private View mStaticBeacon;
-    private View mPulseBeacon;
-
+    // The static handle-ImageView of the host sliding drawer
+    private ImageView mStaticHandle;
+    // The animated handle-ImageView of the host sliding drawer
+    private ImageView mPulseHandle;
+    // The lobby controller, needed for sending messages to the server
     LoungeLobbyController mLoungeLobbyController = new LoungeLobbyController();
+    // The lobby callback, needed for processing messages by the server
     LoungeLobbyCallback mLoungeLobbyCallback = new LoungeLobbyCallback() {
 
         @Override
         public void onNewChatMessage(ChatMessage chatMsg) {
             // TODO Auto-generated method stub
-
         }
 
         @Override
         public void onNewChatLog(List<ChatMessage> chatLog) {
             // TODO Auto-generated method stub
-
         }
 
         @Override
         public void onChatDataUpdated(List<ChatMessage> data) {
             // TODO Auto-generated method stub
-
         }
 
+        /**
+         * Called when the games the user is involved in are updated
+         */
         @Override
         public void onRunningGamesUpdate(final ArrayList<Game> pGames) {
             getActivity().runOnUiThread(new Runnable() {
@@ -82,8 +96,11 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
                 @Override
                 public void run() {
                     if (pGames != null) {
+                        // Query the play store for promo graphics
                         queryPlay(pGames);
+                        // Set the joined games
                         mLobbyAdapter.setJoinedGames(pGames);
+                        // Redraw the view
                         mLobbyAdapter.notifyDataSetChanged();
                     }
                 }
@@ -91,6 +108,9 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
             });
         }
 
+        /**
+         * Called when the games the user is not involved in are updated
+         */
         @Override
         public void onOpenGamesUpdate(final ArrayList<Game> pGames) {
             getActivity().runOnUiThread(new Runnable() {
@@ -98,8 +118,11 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
                 @Override
                 public void run() {
                     if (pGames != null) {
+                        // Query the play store for promo graphics
                         queryPlay(pGames);
+                        // Set the joined games
                         mLobbyAdapter.setOpenGames(pGames);
+                        // Redraw the view
                         mLobbyAdapter.notifyDataSetChanged();
                     }
                 }
@@ -108,64 +131,97 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         }
 
     };
-   
 
     @Override
-    public View onCreateView(final LayoutInflater pLayoutInflater, ViewGroup pViewGroup, Bundle pBundle) {
-        View view = pLayoutInflater.inflate(R.layout.fragment_lobby, pViewGroup, false);
+    public View onCreateView(final LayoutInflater pLayoutInflater, final ViewGroup pViewGroup, final Bundle pBundle) {
+        final View view = pLayoutInflater.inflate(R.layout.fragment_lobby, pViewGroup, false);
+        // Find the lobby list
         mLobbyList = (ExpandableListView) view.findViewById(R.id.list);
+        // Remove the lobby list's divider
+        // TODO: Check whether this can be set in XML
         mLobbyList.setDividerHeight(0);
         mLobbyList.setDivider(null);
 
+        // Set the lobby list's adapter
         mLobbyAdapter = new LobbyListAdapter(getActivity());
         mLobbyList.setAdapter(mLobbyAdapter);
 
+        // Set some test data.
+        // TODO: Remove
         mLobbyAdapter.setJoinedGames(TestData.getJoinedGames());
         mLobbyAdapter.setOpenGames(TestData.getOpenGames());
-        mLobbyList.setOnChildClickListener(this); //TODO make consistent with host drawer
 
-//        final SlidingDrawer drawer = (SlidingDrawer) view.findViewById(R.id.slidingDrawer);
-//
-//        mStaticBeacon = view.findViewById(R.id.ic_lobby_host_static_pulse);
-//        mPulseBeacon = view.findViewById(R.id.ic_lobby_host_pulse);
-//        startAnimatingHostMode();
+        // Set the click listener for
+        mLobbyList.setOnChildClickListener(this); // TODO make consistent with
+                                                  // host drawer - either put it
+                                                  // into the adapter or put the
+                                                  // host drawers listener into
+                                                  // this class.
 
-        // drawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
-        //
-        // @Override
-        // public void onDrawerClosed() {
-        // stopAnimatingHostMode();
-        // }
-        // });
+        // Animate the host drawer for some seconds to indicate it can be
+        // slided.
+        // TODO: Make it work
+        final SlidingDrawer drawer = (SlidingDrawer) view.findViewById(R.id.slidingDrawer);
 
+        mStaticHandle = (ImageView) view.findViewById(R.id.ic_lobby_host_static_pulse);
+        mPulseHandle = (ImageView) view.findViewById(R.id.ic_lobby_host_pulse);
+        startAnimatingHostMode();
 
+        // End the animation when the drawer is closed
+        drawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
+
+            @Override
+            public void onDrawerClosed() {
+                stopAnimatingHostMode();
+            }
+        });
+
+        // Find the host drawer's game view
         mHostList = (ListView) view.findViewById(R.id.installed_games);
+        // Set the list adapter of the host drawer
         mHostAdapter = new HostGameAdapter(getActivity());
         mHostList.setAdapter(mHostAdapter);
-        mHostList.setOnItemClickListener(mHostAdapter); //TODO make consistent with lobby list
+        // Set the click listener for the host game drawer
+        mHostList.setOnItemClickListener(mHostAdapter); // TODO make consistent
+                                                        // with lobby list-
+                                                        // either put this into
+                                                        // the HostGameAdapter
+                                                        // or put the
+                                                        // lobbyListAdapter's
+                                                        // click listener into
+                                                        // this class.
 
+        // Set the host game-onClickListener
         view.findViewById(R.id.btn_host).setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
+                // Host a the selected game
                 mLoungeLobbyController.openMatch(mHostAdapter.getSelectedItemPackage(), mHostAdapter.getSelectedItemName());
-
             }
         });
 
         return view;
     }
 
+    /**
+     * Calls the {@link PlayParser} for promo graphics of the passed
+     * {@link Game}s
+     * 
+     * @param games
+     */
     private void queryPlay(List<Game> games) {
         Ln.v("games = %s", games);
+        // Get an instance of the {@link PlayParser}
         final PlayParser parser = PlayParser.getInstance(getActivity());
 
+        // Query the {@link PlayParser} for promo graphics, one by one
         for (int index = 0; index < games.size(); index++) {
             final Game element = games.get(index);
-            parser.queryPlay(getPackageNameFromGameId(element.gameID));
+            parser.queryPlay(element.gameID);
         }
 
+        // Add a new listener to get notified if a new promo graphic arrives
         parser.addListener(new PlayListener() {
 
             @Override
@@ -175,69 +231,82 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         });
     }
 
+    /**
+     * Start the animation of the host game handle
+     */
     private void startAnimatingHostMode() {
-        mPulseBeacon.setVisibility(View.VISIBLE);
-        mStaticBeacon.setVisibility(View.INVISIBLE);
+        // Make the to-be-animated handle visible, the other one invisible
+        mPulseHandle.setVisibility(View.VISIBLE);
+        mStaticHandle.setVisibility(View.INVISIBLE);
 
+        // Load and start the animation
         Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
-        mPulseBeacon.startAnimation(animation);
+        mPulseHandle.startAnimation(animation);
     }
 
+    /**
+     * End the animation of the host game handle
+     */
     private void stopAnimatingHostMode() {
-        mPulseBeacon.setVisibility(View.INVISIBLE);
-        mStaticBeacon.setVisibility(View.VISIBLE);
+        // Make the to-be-animated handle invisible, the other one visible
+        mPulseHandle.setVisibility(View.INVISIBLE);
+        mStaticHandle.setVisibility(View.VISIBLE);
     }
 
-    private String getPackageNameFromGameId(String gameID) {
-
-        if (gameID.contains("/")) {
-            return gameID.split("/")[0];
-        }
-
-        return gameID;
-    }
-
+    /*
+     * Order of calls to the LoungeLobbyController:
+     * 
+     * 1. bindServiceTo() 2. registerCallback() 3. unregisterCallback() 4.
+     * unbindServiceFrom()
+     */
     @Override
     public void onStart() {
         super.onStart();
+        // Bind the lobby service
         mLoungeLobbyController.bindServiceTo(getActivity());
     }
 
     @Override
     public void onResume() {
+        // Register the lobby callback
         mLoungeLobbyController.registerCallback(mLoungeLobbyCallback);
         super.onResume();
     }
 
     @Override
     public void onPause() {
+        // Unregister the lobby callback
         mLoungeLobbyController.unregisterCallback(mLoungeLobbyCallback);
         super.onPause();
     }
 
     @Override
     public void onStop() {
+        // Unbind the service
         mLoungeLobbyController.unbindServiceFrom(getActivity());
         super.onStop();
     }
 
+    /**
+     * React to clicks on child elements of the lobby list view, meaning
+     * {@link Match}es
+     */
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-    }
-
-    @Override
-    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+    public boolean onChildClick(final ExpandableListView parent, final View v, final int groupPosition,
+            final int childPosition, final long id) {
         Ln.v(" groupPosition = %d, childPosition = %d", groupPosition, childPosition);
-        Game game = (Game) mLobbyAdapter.getGroup(groupPosition);
-        Match match = (Match) mLobbyAdapter.getChild(groupPosition, childPosition);
-        Ln.d(" game = %s, match = %s", game, match);
-        
-        // If  the game is open... 
-        if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) { 
+        // The selected game the clicked match is of
+        final Game game = (Game) mLobbyAdapter.getGroup(groupPosition);
+        // The selected match
+        final Match match = (Match) mLobbyAdapter.getChild(groupPosition, childPosition);
+        Ln.v(" game = %s, match = %s", game, match);
+
+        // If the game is open...
+        if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) {
             final String gameID = game.gameID;
-            if(Utils.isGameInstalled(getActivity(), gameID)) { // ...and installed, join it... 
+            if (Utils.isGameInstalled(getActivity(), gameID)) { // ...and
+                                                                // installed,
+                                                                // join it...
                 mLoungeLobbyController.joinMatch(gameID, match.matchID);
             } else { // ...otherwise, open the play store
                 Utils.openPlay(getActivity(), gameID);
@@ -247,6 +316,9 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
                 // If the game is already running, and you are involved
                 Utils.launchGameApp(getActivity(), game.gameID, match);
             } else {
+                // If the game is one the user is involved in but has not been
+                // started because it is waiting for players, show a simple
+                // toast
                 Toast.makeText(getActivity(), "Game not started yet", Toast.LENGTH_LONG).show();
             }
         }
