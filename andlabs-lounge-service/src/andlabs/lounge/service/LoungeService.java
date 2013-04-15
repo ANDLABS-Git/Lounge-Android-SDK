@@ -8,16 +8,32 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.os.RemoteException;
 
 public class LoungeService extends Service {
 
-    private LoungeServiceImpl mLoungeService;
+    private Messenger mMessenger;
+    private LoungeServiceImpl mLoungeService = new LoungeServiceImpl();
+    private LoungeServiceImpl.MessageHandler mMessageHandler = new LoungeServiceImpl.MessageHandler() {
+        
+        @Override
+        public void send(Message message) {
+            try {
+                mMessenger.send(message);
+            } catch (RemoteException e) {
+                Ln.e(e, "MessageHandler.send(): caught exception while sending message %d", message.what);
+            }
+        }
+    };
+
 
     @Override
     public IBinder onBind(Intent intent) {
         Ln.v("onBind(): arg0 = %s", intent);
-        mLoungeService = new LoungeServiceImpl(intent);
+        mMessenger = intent.getParcelableExtra("client-messenger");
+        mLoungeService.setMessageHandler(mMessageHandler);
         return mLoungeService;
     }
 

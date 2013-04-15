@@ -14,15 +14,20 @@ import org.json.JSONObject;
 
 import andlabs.lounge.model.Game;
 import andlabs.lounge.util.Ln;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.os.Messenger;
 import android.os.RemoteException;
 
 public class LoungeServiceImpl extends LoungeServiceDef.Stub {
+    
+    protected interface MessageHandler {
 
-    private Messenger mMessenger;
+        void send(Message message);
+
+    }
+
+    private MessageHandler mMessageHandler;
+
     private SocketIO mSocketIO;
 
 
@@ -60,15 +65,11 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         @Override
         public void onConnect() {
             Ln.d("IOCallback.onConnect():");
-            
-            try {
-                Message message = new Message();
-                message.what = 1;
-                message.setData(Bundle.EMPTY);
-                mMessenger.send(message);
-            } catch (RemoteException e) {
-                Ln.e(e, "IOCallback.onConnect(): caught exception while sending message");
-            }
+
+            Message message = Message.obtain();
+            message.what = 1;
+            message.setData(Bundle.EMPTY);
+            mMessageHandler.send(message);
         }
 
         @Override
@@ -84,51 +85,42 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         @Override
         public void triggerUpdate(ConcurrentHashMap<String, Game> pInvolvedGames, ConcurrentHashMap<String, Game> pOpenGames) {
             Ln.v("LoungeMessageProcessor.triggerUpdate(): pInvolvedGames = %s, pOpenGames = %s", pInvolvedGames, pOpenGames);
-            Message message = new Message();
+            Message message = Message.obtain();
             message.what = 7;
             Bundle bundle = new Bundle();
             bundle.putSerializable("involvedGameList", pInvolvedGames);
             bundle.putSerializable("openGameList", pOpenGames);
             message.setData(bundle);
-            try {
-                mMessenger.send(message);
-            } catch (RemoteException e) {
-                Ln.e(e, "LoungeMessageProcessor.triggerUpdate(): caught exception while sending message");
-            }
+            mMessageHandler.send(message);
         }
 
         @Override
         public void onGameMove(String pMatchID, Bundle pParams) {
             Ln.v("LoungeMessageProcessor.onGameMove(): pMatchID = %s, pParams = %s", pMatchID, pParams);
-            Message message = new Message();
+            Message message = Message.obtain();
             message.what = 18;
             Bundle bundle = new Bundle();
             bundle.putString("matchID", pMatchID);
             bundle.putBundle("data", pParams);
             message.setData(bundle);
-            try {
-                mMessenger.send(message);
-            } catch (RemoteException e) {
-                Ln.e(e, "LoungeMessageProcessor.triggerUpdate(): caught exception while sending message");
-            }
+            mMessageHandler.send(message);
 
         }
 
     };
 
-    public LoungeServiceImpl(Intent intent) {
+
+    protected LoungeServiceImpl() {
         super();
-        Ln.v("LoungeServiceImpl():");
-        mMessenger = intent.getParcelableExtra("client-messenger");
-        try {
-            Message message = new Message();
-            message.what = 42;
-            message.setData(Bundle.EMPTY);
-            mMessenger.send(message);
-        } catch (RemoteException e) {
-            Ln.e(e, "LoungeServiceImpl(): caught exception while sending message 42");
-        }
-    }
+    };
+
+    public void setMessageHandler(MessageHandler pMessageHandler) {
+        mMessageHandler = pMessageHandler;
+        Message message = Message.obtain();
+        message.what = 42;
+        message.setData(Bundle.EMPTY);
+        mMessageHandler.send(message);
+    };
 
     @Override
     public void connect() throws RemoteException {
@@ -145,12 +137,10 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     public void reconnect() throws RemoteException {
         Ln.v("reconnect():");
         try {
-            Message message = new Message();
+            Message message = Message.obtain();
             message.what = 1;
             message.setData(Bundle.EMPTY);
-            mMessenger.send(message);
-        } catch (RemoteException e) {
-            Ln.e(e, "reconnect(): caught exception while sending message");
+            mMessageHandler.send(message);
         } catch (NullPointerException npe) {
             Ln.e(npe, "reconnect(): caught exception while sending message");
         }
