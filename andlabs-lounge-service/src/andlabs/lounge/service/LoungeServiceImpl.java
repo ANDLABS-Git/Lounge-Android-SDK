@@ -14,11 +14,7 @@ import org.json.JSONObject;
 
 import andlabs.lounge.model.Game;
 import andlabs.lounge.util.Ln;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Messenger;
@@ -28,29 +24,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
     private Messenger mMessenger;
     private SocketIO mSocketIO;
-    private boolean mRetry = false;
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        
-
-        @Override
-        public void onReceive(Context pContext, Intent pIntent) {
-            final boolean noConnectivity = pIntent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-            final String reason = pIntent.getStringExtra(ConnectivityManager.EXTRA_REASON);
-            final boolean isFailover = pIntent.getBooleanExtra(ConnectivityManager.EXTRA_IS_FAILOVER, false);
-
-            final NetworkInfo currentNetworkInfo = (NetworkInfo) pIntent
-                    .getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-            final NetworkInfo otherNetworkInfo = (NetworkInfo) pIntent
-                    .getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
-
-            if (noConnectivity) {
-                mRetry = true; // if there's no connection, try to reconnect once the connection is established again
-            } else {
-                tryReconnect();
-            }
-        }
-    };
 
     private IOCallback mSocketIOCallback = new IOCallback() {
 
@@ -70,13 +44,12 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         public void onError(SocketIOException arg0) {
             Ln.e(arg0, "IOCallback.onError(): caught exception while connecting");
 
-            // TODO: Implement retry-counter
+            // TODO: Implement error handling
             try {
                 disconnect();
             } catch (RemoteException e) {
                 Ln.e(e, "onError(): caught exception while trying to disconnect");
             }
-            mRetry = true;
         }
 
         @Override
@@ -87,8 +60,6 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         @Override
         public void onConnect() {
             Ln.d("IOCallback.onConnect():");
-            
-            // register broadcast receiver for network connectivity events
             
             try {
                 Message message = new Message();
@@ -107,18 +78,6 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
 
     };
-
-    private void tryReconnect() {
-        if (mRetry) {
-            try {
-                connect();
-            } catch (RemoteException e) {
-                Ln.e(e, "onDisconnect(): caught exception while trying to reconnect");
-            } finally {
-                mRetry = false;
-            }
-        }
-    }
 
     private LoungeMessageProcessor mLoungeMessageProcessor = new LoungeMessageProcessor() {
 
