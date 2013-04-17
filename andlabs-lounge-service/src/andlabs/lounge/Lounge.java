@@ -37,6 +37,7 @@ public class Lounge {
 
             @Override
             public void onGameMessage(Bundle msg) {
+                //Switching to JsonOBject?
                 for (Multiplayable listener : mListeners) {
                     listener.onGameMessage(msg);
                 }
@@ -88,18 +89,20 @@ public class Lounge {
         
     }
 
-    public void checkout(String pMatchId) {
-        mController.checkout(pMatchId);
+    public void checkout() {
+        mController.checkout(mCheckedInMatchId);
         mCheckedInMatchId=null;
     }
 
-    public void closeMatch(String pMatchId) {
-        mController.closeMatch(pMatchId);
+    public void closeMatch() {
+        mController.checkout(mCheckedInMatchId);
+        mController.closeMatch(mCheckedInMatchId);
 
     }
 
-    public void sendGameMove(String pMatchId, Bundle pMoveBundle) {
-        mController.sendGameMove(pMatchId, pMoveBundle);
+    public void sendGameMove(Bundle pMoveBundle) {
+        //Switching to JsonOBject?
+        mController.sendGameMove(mCheckedInMatchId, pMoveBundle);
     }
 
     public String getCheckedInMatchId() {
