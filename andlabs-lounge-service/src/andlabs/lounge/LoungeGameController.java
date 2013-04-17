@@ -122,9 +122,10 @@ public class LoungeGameController {
     }
 
     public void streamGameMessage(String pMatchId, Bundle pMoveBundle) {
+        //Remove this? Game doesnt know if it is stream or move, but the server does
         Ln.v("streamGameMessage(): pMatchId = %s, pMoveBundle = %s", pMatchId, pMoveBundle);
-        mLoungeServiceController.streamGameMessage(mPackageId, pMatchId, pMoveBundle);
-
+//        mLoungeServiceController.streamGameMessage(mPackageId, pMatchId, pMoveBundle);
+    }
     public void closeMatch(String pMatchId) {
         Ln.v("closeMatch(): pMatchId = %s, ",pMatchId);
         mLoungeServiceController.closeMatch(mPackageId,pMatchId);
