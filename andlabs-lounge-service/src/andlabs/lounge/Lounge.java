@@ -2,9 +2,9 @@ package andlabs.lounge;
 
 import java.util.ArrayList;
 
+import andlabs.lounge.util.Ln;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
 public class Lounge {
 
@@ -51,7 +51,7 @@ public class Lounge {
                 }
             }
         };
-        Log.i("Lounge","register callback "+mGameCallback);
+        Ln.i("Lounge","register callback "+mGameCallback);
         mController.registerCallback(mGameCallback);
     }
 
@@ -70,13 +70,12 @@ public class Lounge {
         mController.bindServiceTo(pContext);
     }
 
-    public void unBind(Context pContext) {
+    public void unbind(Context pContext) {
         mController.unbindServiceFrom(pContext);
     }
 
     public void unregisterMultiplayableListener(Multiplayable listener) {
         mListeners.remove(listener);
-        //TEST
     }
 
     public void unregisterAllMultiplayableListener() {
