@@ -245,7 +245,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void closeMatch(String pPackageId, String pMatchId) throws RemoteException {
+    public void closeMatch(String pPackageId, String pMatchId) {
         Ln.v("closeMatch(): pGameId = %s, pMatchId = %s", pPackageId, pMatchId);
         try {
             // PAYLOAD { gameID: ”packageID”, matchID: “matchID” }
@@ -258,7 +258,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 
     @Override
-    public void checkout(String pPackageId,String pMatchId) throws RemoteException {
+    public void checkout(String pPackageId,String pMatchId) {
         Ln.v("checkout(): pGameId = %s, pMatchId = %s", pPackageId, pMatchId);
         try {
             // TODO: There is no checkout in Server Interface spec
