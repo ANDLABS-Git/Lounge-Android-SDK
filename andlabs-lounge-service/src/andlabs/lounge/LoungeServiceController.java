@@ -99,15 +99,7 @@ public class LoungeServiceController {
 
     };
 
-    private static LoungeServiceController mInstance;
-    public static LoungeServiceController getInstance() {
-        if (mInstance == null) {
-            mInstance = new LoungeServiceController();
-        }
-        return mInstance;
-    }
-
-    private LoungeServiceController() {
+    public LoungeServiceController() {
         
     }
 
