@@ -42,6 +42,7 @@ public class LoungeService extends Service {
     public void onCreate() {
         Ln.v("onCreate():");
         super.onCreate();
+        mLoungeService.connect();
     }
 
 
