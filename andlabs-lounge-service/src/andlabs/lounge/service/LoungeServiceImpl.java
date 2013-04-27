@@ -16,7 +16,6 @@ import andlabs.lounge.model.Game;
 import andlabs.lounge.util.Ln;
 import android.os.Bundle;
 import android.os.Message;
-import android.os.RemoteException;
 
 public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     
@@ -50,11 +49,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             Ln.e(arg0, "IOCallback.onError(): caught exception while connecting");
 
             // TODO: Implement error handling
-            try {
-                disconnect();
-            } catch (RemoteException e) {
-                Ln.e(e, "onError(): caught exception while trying to disconnect");
-            }
+            disconnect();
         }
 
         @Override
@@ -123,7 +118,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     };
 
     @Override
-    public void connect() throws RemoteException {
+    public void connect() {
         Ln.v("connect():");
         try {
             mSocketIO = new SocketIO("http://lounge-server.jit.su/");
@@ -134,7 +129,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void reconnect() throws RemoteException {
+    public void reconnect() {
         Ln.v("reconnect():");
         try {
             Message message = Message.obtain();
@@ -148,14 +143,14 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 
     @Override
-    public void disconnect() throws RemoteException {
+    public void disconnect() {
         Ln.v("disconnect():");
         if (mSocketIO != null) {
             mSocketIO.disconnect();
         }
     }
     @Override
-    public void login(String playerId) throws RemoteException {
+    public void login(String playerId) {
         Ln.v("login(): playerId = %s", playerId);
         try {
             mLoungeMessageProcessor.setMyPlayerId(playerId);
@@ -166,13 +161,13 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void chat(String message) throws RemoteException {
+    public void chat(String message) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void openMatch(String pPackageId, String pDisplayName) throws RemoteException {
+    public void openMatch(String pPackageId, String pDisplayName) {
 
         Ln.v("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName);
         try {
@@ -188,7 +183,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void joinMatch(String pGameId, String pMatchId) throws RemoteException {
+    public void joinMatch(String pGameId, String pMatchId) {
         Ln.v("joinMatch(): pGameId = %s, pMatchId = %s", pGameId, pMatchId);
         try {
             // PAYLOAD { gameID: ”packageID”, matchID: “matchID” }
@@ -199,7 +194,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void checkin(String pGameId, String pMatchId) throws RemoteException {
+    public void checkin(String pGameId, String pMatchId) {
         Ln.v("checkin(): pGameId = %s, pMatchId = %s", pGameId, pMatchId);
         try {
             // PAYLOAD { gameID: ”packageID”, matchID: “matchID” }
@@ -210,7 +205,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void update(String pGameId, String pMatchId, String pStatus) throws RemoteException {
+    public void update(String pGameId, String pMatchId, String pStatus) {
         Ln.v("update(): pGameId = %s", pGameId);
         try {
             // PAYLOAD { gameID: “packageID”, matchID: “matchID”, status:
@@ -224,12 +219,12 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void move(String pPackageId, String pMatchId, Bundle pMoveBundle) throws RemoteException {
+    public void move(String pPackageId, String pMatchId, Bundle pMoveBundle) {
         sendMessage("move", pPackageId, pMatchId, pMoveBundle);
     }
 
     @Override
-    public void stream(String pPackageId, String pMatchId, Bundle pMoveBundle) throws RemoteException {
+    public void stream(String pPackageId, String pMatchId, Bundle pMoveBundle) {
         sendMessage("stream", pPackageId, pMatchId, pMoveBundle);
     }
     

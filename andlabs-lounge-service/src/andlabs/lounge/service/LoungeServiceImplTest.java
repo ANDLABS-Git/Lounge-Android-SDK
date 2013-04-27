@@ -4,7 +4,6 @@
 package andlabs.lounge.service;
 
 import android.os.Message;
-import android.os.RemoteException;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -53,12 +52,7 @@ public class LoungeServiceImplTest extends TestCase {
             }
 
         });
-        try {
-            classUnderTest.connect();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            fail("Received " + e.getLocalizedMessage());
-        }
+        classUnderTest.connect();
         fail("Test failes only if a response does not come within a certain time. How to make the test wait?");
     }
 

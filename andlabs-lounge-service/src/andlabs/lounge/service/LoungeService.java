@@ -60,13 +60,9 @@ public class LoungeService extends Service {
 
     @Override
     public void onDestroy() {
-        Ln.v("onDestroy():");
-        try {
-            if (mLoungeService != null) {
-                mLoungeService.disconnect();
-            }
-        } catch (RemoteException e) {
-            Ln.e(e, "unbindServiceFrom(): caught exception while disconnecting");
+        Ln.v("onDestroy():"); 
+        if (mLoungeService != null) {
+            mLoungeService.disconnect();
         }
         super.onDestroy();
     }
@@ -98,13 +94,8 @@ public class LoungeService extends Service {
 
     private void tryReconnect() {
         if (mRetry) {
-            try {
-                mLoungeService.connect();
-            } catch (RemoteException e) {
-                Ln.e(e, "tryReconnect(): caught exception while trying to reconnect");
-            } finally {
-                mRetry = false;
-            }
+            mLoungeService.connect();
+            mRetry = false;
         }
     }
 
