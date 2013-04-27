@@ -109,7 +109,7 @@ public class LoungeGameController {
     }
 
 
-    void checkout(String pMatchId) {
+    public void checkout(String pMatchId) {
         mCheckinMatchId = null;
         Ln.v("checkout(): pMatchId = %s", pMatchId);
         mLoungeServiceController.checkout(mPackageId,pMatchId);

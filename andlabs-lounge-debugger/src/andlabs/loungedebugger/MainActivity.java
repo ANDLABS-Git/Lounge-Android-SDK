@@ -50,6 +50,24 @@ public class MainActivity extends Activity implements LoungeGameCallback {
             }
         });
 
+        ((Button) findViewById(R.id.checkOutBtn)).setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.i("LoungeDebugger", "CheckOut " + getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+                lounge.checkout(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+            }
+        });
+
+        ((Button) findViewById(R.id.closeMatchBtn)).setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.i("LoungeDebugger", "CloseMatch " + getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+                lounge.closeMatch(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+            }
+        });
+
         ((Button) findViewById(R.id.sendBtn)).setOnClickListener(new OnClickListener() {
 
             @Override
