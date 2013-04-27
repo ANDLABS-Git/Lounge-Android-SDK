@@ -37,7 +37,7 @@ public class MainActivity extends Activity implements LoungeGameCallback {
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_IS_HOST));
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_HOST_NAME));
-        addToHistory(i.getStringExtra(LoungeConstants.EXTRA_GUEST_NAME));
+        //addToHistory(i.getStringArrayExtra(LoungeConstants.EXTRA_PLAYER_NAMES));
        lounge= new LoungeGameController();
        
        ((Button)findViewById(R.id.checkInBtn)).setOnClickListener(new OnClickListener() {
