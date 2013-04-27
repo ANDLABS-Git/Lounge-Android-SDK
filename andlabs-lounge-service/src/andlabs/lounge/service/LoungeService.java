@@ -1,5 +1,8 @@
 package andlabs.lounge.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import andlabs.lounge.util.Ln;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -14,14 +17,16 @@ import android.os.RemoteException;
 
 public class LoungeService extends Service {
 
-    private Messenger mMessenger;
+    private Set<Messenger> mMessengerSet = new HashSet<Messenger>();
     private LoungeServiceImpl mLoungeService = new LoungeServiceImpl();
     private LoungeServiceImpl.MessageHandler mMessageHandler = new LoungeServiceImpl.MessageHandler() {
         
         @Override
         public void send(Message message) {
             try {
-                mMessenger.send(message);
+                for (Messenger messenger : mMessengerSet) {
+                    messenger.send(message);
+                }
             } catch (RemoteException e) {
                 Ln.e(e, "MessageHandler.send(): caught exception while sending message %d", message.what);
             }
@@ -31,12 +36,21 @@ public class LoungeService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        Ln.v("onBind(): arg0 = %s", intent);
-        mMessenger = intent.getParcelableExtra("client-messenger");
+        Ln.v("intent = %s", intent);
+        mMessengerSet.add((Messenger) intent.getParcelableExtra("client-messenger"));
         mLoungeService.setMessageHandler(mMessageHandler);
         return mLoungeService;
     }
 
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Ln.v("intent = %s", intent);
+        mMessengerSet.remove((Messenger)intent.getParcelableExtra("client-messenger"));
+        if (mMessengerSet.isEmpty()) {
+            mLoungeService.setMessageHandler(null);
+        }
+        return super.onUnbind(intent);
+    }
 
     @Override
     public void onCreate() {
