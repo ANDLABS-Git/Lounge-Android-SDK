@@ -46,12 +46,30 @@
 
     <Button
         android:id="@+id/checkInBtn"
-          android:onClick="checkIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-       	
+        android:onClick="checkIn"
         android:text="checkIn" />
+
+    <Button
+        android:id="@+id/checkOutBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/checkInBtn"
+        android:layout_toLeftOf="@+id/checkInBtn"
+        android:onClick="checkOut"
+        android:text="Checkout" />
+
+    <Button
+        android:id="@+id/closeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/checkOutBtn"
+        android:layout_alignBottom="@+id/checkOutBtn"
+        android:layout_toLeftOf="@+id/checkOutBtn"
+        android:onClick="close"
+        android:text="Close" />
 
 </RelativeLayout>

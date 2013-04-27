@@ -37,6 +37,8 @@ public class Lounge {
 
             @Override
             public void onGameMessage(Bundle msg) {
+                Ln.d("message = " + msg);
+                
                 //Switching to JsonOBject?
                 for (Multiplayable listener : mListeners) {
                     listener.onGameMessage(msg);

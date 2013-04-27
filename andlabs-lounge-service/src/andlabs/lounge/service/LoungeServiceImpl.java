@@ -25,11 +25,23 @@ import android.os.Messenger;
 import android.os.RemoteException;
 
 public class LoungeServiceImpl extends LoungeServiceDef.Stub {
+<<<<<<< Updated upstream
+=======
+
+    protected interface MessageHandler {
+
+        void send(Message message);
+
+    }
+
+    private MessageHandler mMessageHandler;
+>>>>>>> Stashed changes
 
     private Messenger mMessenger;
     private SocketIO mSocketIO;
     private boolean mRetry = false;
 
+<<<<<<< Updated upstream
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         
 
@@ -52,6 +64,8 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     };
 
+=======
+>>>>>>> Stashed changes
     private IOCallback mSocketIOCallback = new IOCallback() {
 
         @Override
@@ -157,6 +171,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
     };
 
+<<<<<<< Updated upstream
     public LoungeServiceImpl(Intent intent) {
         super();
         Ln.v("LoungeServiceImpl():");
@@ -170,6 +185,21 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             Ln.e(e, "LoungeServiceImpl(): caught exception while sending message 42");
         }
     }
+=======
+    protected LoungeServiceImpl() {
+        super();
+    };
+
+    public void setMessageHandler(MessageHandler pMessageHandler) {
+        mMessageHandler = pMessageHandler;
+        if (mMessageHandler != null) {
+            Message message = Message.obtain();
+            message.what = 42;
+            message.setData(Bundle.EMPTY);
+            mMessageHandler.send(message);
+        }
+    };
+>>>>>>> Stashed changes
 
     @Override
     public void connect() throws RemoteException {
@@ -197,7 +227,6 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     }
 
-
     @Override
     public void disconnect() throws RemoteException {
         Ln.v("disconnect():");
@@ -205,6 +234,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             mSocketIO.disconnect();
         }
     }
+
     @Override
     public void login(String playerId) throws RemoteException {
         Ln.v("login(): playerId = %s", playerId);
@@ -283,8 +313,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     public void stream(String pPackageId, String pMatchId, Bundle pMoveBundle) throws RemoteException {
         sendMessage("stream", pPackageId, pMatchId, pMoveBundle);
     }
-    
-    
+
     private void sendMessage(String pType, String pPackageId, String pMatchId, Bundle pMoveBundle) {
         try {
             // PAYLOAD { gameID: “packageID”, matchID: “matchID”, move: {... } }
@@ -301,20 +330,20 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void closeMatch(String pPackageId, String pMatchId) throws RemoteException {
+    public void closeMatch(String pPackageId, String pMatchId) {
         Ln.v("closeMatch(): pGameId = %s, pMatchId = %s", pPackageId, pMatchId);
         try {
             // PAYLOAD { gameID: ”packageID”, matchID: “matchID” }
-            mSocketIO.emit("update", new JSONObject().put("gameID", pPackageId).put("matchID", pMatchId).put("status", "close"));
+            mSocketIO
+                    .emit("update", new JSONObject().put("gameID", pPackageId).put("matchID", pMatchId).put("status", "close"));
         } catch (JSONException e) {
             Ln.e(e, "closeMatch(): caught exception while sending checkin");
         }
-        
+
     }
 
-
     @Override
-    public void checkout(String pPackageId,String pMatchId) throws RemoteException {
+    public void checkout(String pPackageId, String pMatchId) {
         Ln.v("checkout(): pGameId = %s, pMatchId = %s", pPackageId, pMatchId);
         try {
             // TODO: There is no checkout in Server Interface spec
@@ -324,5 +353,5 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             Ln.e(e, "checkout(): caught exception while sending checkin");
         }
     }
-    
+
 }
