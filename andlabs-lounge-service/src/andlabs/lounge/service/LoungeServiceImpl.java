@@ -14,43 +14,21 @@ import org.json.JSONObject;
 
 import andlabs.lounge.model.Game;
 import andlabs.lounge.util.Ln;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 
 public class LoungeServiceImpl extends LoungeServiceDef.Stub {
+    
+    protected interface MessageHandler {
 
-    private Messenger mMessenger;
+        void send(Message message);
+
+    }
+
+    private MessageHandler mMessageHandler;
+
     private SocketIO mSocketIO;
-    private boolean mRetry = false;
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        
-
-        @Override
-        public void onReceive(Context pContext, Intent pIntent) {
-            final boolean noConnectivity = pIntent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-            final String reason = pIntent.getStringExtra(ConnectivityManager.EXTRA_REASON);
-            final boolean isFailover = pIntent.getBooleanExtra(ConnectivityManager.EXTRA_IS_FAILOVER, false);
-
-            final NetworkInfo currentNetworkInfo = (NetworkInfo) pIntent
-                    .getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-            final NetworkInfo otherNetworkInfo = (NetworkInfo) pIntent
-                    .getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
-
-            if (noConnectivity) {
-                mRetry = true; // if there's no connection, try to reconnect once the connection is established again
-            } else {
-                tryReconnect();
-            }
-        }
-    };
 
     private IOCallback mSocketIOCallback = new IOCallback() {
 
@@ -70,13 +48,8 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         public void onError(SocketIOException arg0) {
             Ln.e(arg0, "IOCallback.onError(): caught exception while connecting");
 
-            // TODO: Implement retry-counter
-            try {
-                disconnect();
-            } catch (RemoteException e) {
-                Ln.e(e, "onError(): caught exception while trying to disconnect");
-            }
-            mRetry = true;
+            // TODO: Implement error handling
+            disconnect();
         }
 
         @Override
@@ -87,17 +60,11 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         @Override
         public void onConnect() {
             Ln.d("IOCallback.onConnect():");
-            
-            // register broadcast receiver for network connectivity events
-            
-            try {
-                Message message = new Message();
-                message.what = 1;
-                message.setData(Bundle.EMPTY);
-                mMessenger.send(message);
-            } catch (RemoteException e) {
-                Ln.e(e, "IOCallback.onConnect(): caught exception while sending message");
-            }
+
+            Message message = Message.obtain();
+            message.what = 1;
+            message.setData(Bundle.EMPTY);
+            mMessageHandler.send(message);
         }
 
         @Override
@@ -108,71 +75,50 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
     };
 
-    private void tryReconnect() {
-        if (mRetry) {
-            try {
-                connect();
-            } catch (RemoteException e) {
-                Ln.e(e, "onDisconnect(): caught exception while trying to reconnect");
-            } finally {
-                mRetry = false;
-            }
-        }
-    }
-
     private LoungeMessageProcessor mLoungeMessageProcessor = new LoungeMessageProcessor() {
 
         @Override
         public void triggerUpdate(ConcurrentHashMap<String, Game> pInvolvedGames, ConcurrentHashMap<String, Game> pOpenGames) {
             Ln.v("LoungeMessageProcessor.triggerUpdate(): pInvolvedGames = %s, pOpenGames = %s", pInvolvedGames, pOpenGames);
-            Message message = new Message();
+            Message message = Message.obtain();
             message.what = 7;
             Bundle bundle = new Bundle();
             bundle.putSerializable("involvedGameList", pInvolvedGames);
             bundle.putSerializable("openGameList", pOpenGames);
             message.setData(bundle);
-            try {
-                mMessenger.send(message);
-            } catch (RemoteException e) {
-                Ln.e(e, "LoungeMessageProcessor.triggerUpdate(): caught exception while sending message");
-            }
+            mMessageHandler.send(message);
         }
 
         @Override
         public void onGameMove(String pMatchID, Bundle pParams) {
             Ln.v("LoungeMessageProcessor.onGameMove(): pMatchID = %s, pParams = %s", pMatchID, pParams);
-            Message message = new Message();
+            Message message = Message.obtain();
             message.what = 18;
             Bundle bundle = new Bundle();
             bundle.putString("matchID", pMatchID);
             bundle.putBundle("data", pParams);
             message.setData(bundle);
-            try {
-                mMessenger.send(message);
-            } catch (RemoteException e) {
-                Ln.e(e, "LoungeMessageProcessor.triggerUpdate(): caught exception while sending message");
-            }
+            mMessageHandler.send(message);
 
         }
 
     };
 
-    public LoungeServiceImpl(Intent intent) {
+
+    protected LoungeServiceImpl() {
         super();
-        Ln.v("LoungeServiceImpl():");
-        mMessenger = intent.getParcelableExtra("client-messenger");
-        try {
-            Message message = new Message();
-            message.what = 42;
-            message.setData(Bundle.EMPTY);
-            mMessenger.send(message);
-        } catch (RemoteException e) {
-            Ln.e(e, "LoungeServiceImpl(): caught exception while sending message 42");
-        }
-    }
+    };
+
+    public void setMessageHandler(MessageHandler pMessageHandler) {
+        mMessageHandler = pMessageHandler;
+        Message message = Message.obtain();
+        message.what = 42;
+        message.setData(Bundle.EMPTY);
+        mMessageHandler.send(message);
+    };
 
     @Override
-    public void connect() throws RemoteException {
+    public void connect() {
         Ln.v("connect():");
         try {
             mSocketIO = new SocketIO("http://lounge-server.jit.su/");
@@ -183,15 +129,13 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void reconnect() throws RemoteException {
+    public void reconnect() {
         Ln.v("reconnect():");
         try {
-            Message message = new Message();
+            Message message = Message.obtain();
             message.what = 1;
             message.setData(Bundle.EMPTY);
-            mMessenger.send(message);
-        } catch (RemoteException e) {
-            Ln.e(e, "reconnect(): caught exception while sending message");
+            mMessageHandler.send(message);
         } catch (NullPointerException npe) {
             Ln.e(npe, "reconnect(): caught exception while sending message");
         }
@@ -199,14 +143,14 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
 
     @Override
-    public void disconnect() throws RemoteException {
+    public void disconnect() {
         Ln.v("disconnect():");
         if (mSocketIO != null) {
             mSocketIO.disconnect();
         }
     }
     @Override
-    public void login(String playerId) throws RemoteException {
+    public void login(String playerId) {
         Ln.v("login(): playerId = %s", playerId);
         try {
             mLoungeMessageProcessor.setMyPlayerId(playerId);
@@ -217,13 +161,13 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void chat(String message) throws RemoteException {
+    public void chat(String message) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void openMatch(String pPackageId, String pDisplayName) throws RemoteException {
+    public void openMatch(String pPackageId, String pDisplayName) {
 
         Ln.v("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName);
         try {
@@ -239,7 +183,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void joinMatch(String pGameId, String pMatchId) throws RemoteException {
+    public void joinMatch(String pGameId, String pMatchId) {
         Ln.v("joinMatch(): pGameId = %s, pMatchId = %s", pGameId, pMatchId);
         try {
             // PAYLOAD { gameID: ”packageID”, matchID: “matchID” }
@@ -250,7 +194,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void checkin(String pGameId, String pMatchId) throws RemoteException {
+    public void checkin(String pGameId, String pMatchId) {
         Ln.v("checkin(): pGameId = %s, pMatchId = %s", pGameId, pMatchId);
         try {
             // PAYLOAD { gameID: ”packageID”, matchID: “matchID” }
@@ -261,7 +205,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void update(String pGameId, String pMatchId, String pStatus) throws RemoteException {
+    public void update(String pGameId, String pMatchId, String pStatus) {
         Ln.v("update(): pGameId = %s", pGameId);
         try {
             // PAYLOAD { gameID: “packageID”, matchID: “matchID”, status:
@@ -275,12 +219,12 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void move(String pPackageId, String pMatchId, Bundle pMoveBundle) throws RemoteException {
+    public void move(String pPackageId, String pMatchId, Bundle pMoveBundle) {
         sendMessage("move", pPackageId, pMatchId, pMoveBundle);
     }
 
     @Override
-    public void stream(String pPackageId, String pMatchId, Bundle pMoveBundle) throws RemoteException {
+    public void stream(String pPackageId, String pMatchId, Bundle pMoveBundle) {
         sendMessage("stream", pPackageId, pMatchId, pMoveBundle);
     }
     
