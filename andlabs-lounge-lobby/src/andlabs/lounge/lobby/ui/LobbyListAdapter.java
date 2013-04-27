@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2012,2013 ANDLABS. All rights reserved. 
  *  Lounge@andlabs.com
+ *  lounge.andlabs.com
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package andlabs.lounge.lobby.ui;
 
 import java.util.ArrayList;

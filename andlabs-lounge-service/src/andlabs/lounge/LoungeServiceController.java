@@ -1,3 +1,21 @@
+/*
+ *  Copyright (C) 2012,2013 ANDLABS. All rights reserved. 
+ *  Lounge@andlabs.com
+ *  lounge.andlabs.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package andlabs.lounge;
 
 import java.io.Serializable;
@@ -191,15 +209,26 @@ public class LoungeServiceController {
         } catch (RemoteException e) {
             Ln.e(e, "sendGameMove(): caught exception while opening a game move");
         }
+
     }
-    
-    public void streamGameMessage(String pPackageId, String pMatchId, Bundle pMoveBundle) {
-        Ln.v("streamGameMessage(): pPackageId = %s, pMatchId = %s, pMoveBundle = %s", pPackageId, pMatchId, pMoveBundle);
+
+    public void closeMatch(String pPackageId, String pMatchId2) {
+        Ln.v("closeMatch():  pMatchId = %s",  pPackageId);
         try {
-            mLoungeService.stream(pPackageId, pMatchId, pMoveBundle);
+            mLoungeService.closeMatch(pPackageId, pMatchId2);
         } catch (RemoteException e) {
-            Ln.e(e, "streamGameMessage(): caught exception while opening a game move");
+            Ln.e(e, "Error in closeMatch()");
         }
+
+    }
+
+    public void checkout(String pPackageId, String pMatchId) {
+        try {
+            mLoungeService.checkout(pPackageId,pMatchId);
+        } catch (RemoteException e) {
+            Ln.e(e, "Error in CheckOut() "+pMatchId);
+        }
+        
     }
 
 }

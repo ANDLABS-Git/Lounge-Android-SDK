@@ -1,6 +1,10 @@
 /*
  *  Copyright (C) 2012,2013 ANDLABS. All rights reserved. 
  *  Lounge@andlabs.com
+<<<<<<< HEAD
+=======
+ *  lounge.andlabs.com
+>>>>>>> ed4370bcc5ae08df14892a476848a4e4cd2ce31a
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
