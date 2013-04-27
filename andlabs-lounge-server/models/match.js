@@ -30,6 +30,9 @@ var MatchSchema = new Schema
 	// In this version the server is only interested in the last move.
 	move: { type: String, trim: true, default: "" },
 	
+	// Player of last move
+	lastMovingPlayer: { type: Schema.Types.ObjectId, ref: 'User' },
+	
 	// Type of the game.
 	gameType: { type: String, trim: true, default: "" }
 	
@@ -89,7 +92,7 @@ MatchSchema.statics.create = function(data, userID, callback)
 			{
 				if (err) { return callback(err, null); }
 				mongoose.models['Match'].findOne({ _id: match._id})
-				.populate('participants', 'playerID socketID')
+				.populate('participants', '_id playerID socketID')
 				.exec(function(err, match)
 				{
 					if (err) { return callback(err, null); }
@@ -173,7 +176,7 @@ MatchSchema.statics.join = function(data, userID, callback)
 					{
 						if (err) { return callback(err, null); }
 						mongoose.models['Match'].findOne({ _id: match._id})
-						.populate('participants', 'playerID socketID')
+						.populate('participants', '_id playerID socketID')
 						.exec(function(err, match)
 						{
 							if (err) { return callback(err, null); }
@@ -243,7 +246,7 @@ MatchSchema.statics.update = function(data, userID, callback)
 					{
 						if (err) { return callback(err, null); }
 						mongoose.models['Match'].findOne({ _id: match._id})
-						.populate('participants', 'playerID socketID')
+						.populate('participants', '_id playerID socketID')
 						.exec(function(err, match)
 						{
 							if (err) { return callback(err, null); }
@@ -301,17 +304,18 @@ MatchSchema.statics.move = function(data, userID, callback)
 				if (true === containsUserID)
 				{
 					match.move = data.move;
+					match.lastMovingPlayer = userID
 					match.save(function(err)
 					{
 						if (err) { return callback(err, null); }
 						mongoose.models['Match'].findOne({ _id: match._id})
-						.populate('participants', 'socketID')
+						.populate('participants', '_id playerID socketID')
+						.populate('lastMovingPlayer', 'playerID')
 						.exec(function(err, match)
 						{
 							if (err) { return callback(err, null); }
 							return callback(null, match);
 						});
-
 					});
 				}
 				else
@@ -362,7 +366,13 @@ MatchSchema.statics.lastMove = function(data, userID, callback)
 		
 				if (true === containsUserID)
 				{
-					return callback(null, match);
+					mongoose.models['Match'].findOne({ _id: match._id})
+					.populate('lastMovingPlayer', '_id playerID')
+					.exec(function(err, match)
+					{
+						if (err) { return callback(err, null); }
+						return callback(null, match);
+					});					
 				}
 				else
 				{
@@ -389,7 +399,7 @@ MatchSchema.statics.allMatches = function(callback)
 {
 	mongoose.models['Match'].find()
 	.where('status').in(['join', 'running'])
-	.populate('participants', 'playerID')
+	.populate('participants', '_id playerID socketID')
 	.exec(function(err, allMatches)
 	{
 		if (err) { return callback(err, null); }

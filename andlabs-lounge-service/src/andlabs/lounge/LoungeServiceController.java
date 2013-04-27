@@ -113,24 +113,11 @@ public class LoungeServiceController {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Ln.v("ServiceConnection.onServiceConnected():");
             mLoungeService = LoungeServiceDef.Stub.asInterface(service);
-            try {
-                mLoungeService.connect();
-            } catch (RemoteException e) {
-                Ln.e(e, "ServiceConnection.onServiceConnected(): caught exception while connecting");
-            }
         }
 
     };
 
-    private static LoungeServiceController mInstance;
-    public static LoungeServiceController getInstance() {
-        if (mInstance == null) {
-            mInstance = new LoungeServiceController();
-        }
-        return mInstance;
-    }
-
-    private LoungeServiceController() {
+    public LoungeServiceController() {
         
     }
 

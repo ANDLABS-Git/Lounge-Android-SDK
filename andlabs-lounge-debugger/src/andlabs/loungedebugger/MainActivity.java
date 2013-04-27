@@ -38,33 +38,7 @@ public class MainActivity extends Activity implements Multiplayable {
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_IS_HOST));
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_HOST_NAME));
-<<<<<<< Updated upstream
-        addToHistory(i.getStringExtra(LoungeConstants.EXTRA_GUEST_NAME));
-       lounge= new LoungeGameController();
-       
-       ((Button)findViewById(R.id.checkInBtn)).setOnClickListener(new OnClickListener() {
-        
-        @Override
-        public void onClick(View v) {
-            // TODO Auto-generated method stub
-            Log.i("LoungeDebugger" , "Checkin "+getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
-            lounge.checkin(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
-        }
-    });
-       
-       ((Button)findViewById(R.id.sendBtn)).setOnClickListener(new OnClickListener() {
-           
-           @Override
-           public void onClick(View v) {
-               // TODO Auto-generated method stub
-               Bundle b = new Bundle();
-               Log.i("LoungeDebugger" , "move :"+key.getText().toString()+ " "+ value.getText().toString());
-               b.putString(key.getText().toString(), value.getText().toString());
-               lounge.sendGameMove(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID), b);
-           }
-       });
-        
-=======
+        //addToHistory(i.getStringArrayExtra(LoungeConstants.EXTRA_PLAYER_NAMES));
         // addToHistory(i.getStringArrayExtra(LoungeConstants.EXTRA_PLAYER_NAMES));
         lounge = Lounge.getInstance();
 
@@ -90,7 +64,6 @@ public class MainActivity extends Activity implements Multiplayable {
             }
         });
 
->>>>>>> Stashed changes
     }
 
     @Override
