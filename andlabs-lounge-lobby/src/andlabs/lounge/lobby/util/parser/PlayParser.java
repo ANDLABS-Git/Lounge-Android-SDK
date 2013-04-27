@@ -39,16 +39,14 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
+import andlabs.lounge.util.Ln;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class PlayParser {
-
-    private static final String TAG = "PlayParser";
 
     private static final int CONNECT_TIMEOUT = 15000 /* milliseconds */;
 
@@ -220,7 +218,7 @@ public class PlayParser {
             out = mContext.openFileOutput(packageName, Context.MODE_PRIVATE);
             out.write(returnByteArray);
 
-            Log.d(TAG, "Saved promo graphic for " + packageName);
+            Ln.d("Saved promo graphic for " + packageName);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -337,24 +335,12 @@ public class PlayParser {
             return mHeight;
         }
 
-        public void setHeight(int pHeight) {
-            mHeight = pHeight;
-        }
-
         public String getPackageName() {
             return mPackageName;
         }
 
-        public void setPackageName(String pPackageName) {
-            mPackageName = pPackageName;
-        }
-
         public int getWidth() {
             return mWidth;
-        }
-
-        public void setWidth(int pWidth) {
-            mWidth = pWidth;
         }
 
         @Override
@@ -379,9 +365,9 @@ public class PlayParser {
         protected Drawable doInBackground(String... pParams) {
             String html = null;
             try {
-                Log.d(TAG, "Downloading HTML for " + pParams[0]);
+                Ln.d("Downloading HTML for " + pParams[0]);
                 html = downloadUrl(pParams[0]);
-                Log.d(TAG, "Received HTML for " + pParams[0] + "\n" + html);
+                Ln.d("Received HTML for " + pParams[0] + "\n" + html);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -391,18 +377,18 @@ public class PlayParser {
                 url += mImageWidth;
             }
 
-            Log.d(TAG, "Image URL for " + pParams[0] + " is " + url);
+            Ln.d("Image URL for " + pParams[0] + " is " + url);
 
             if (url != null) {
-                Log.d(TAG, "**************************************************************");
-                Log.d(TAG, "Downloading banner for " + pParams[0]);
+                Ln.d("**************************************************************");
+                Ln.d("Downloading banner for " + pParams[0]);
 
                 InputStream is = null;
                 try {
                     is = downloadStream(url);
                     if (is != null) {
                         writeFileToInternalStorage(is, mPackageName);
-                        Log.d(TAG, "Saved stream for " + pParams[0]);
+                        Ln.d("Saved stream for " + pParams[0]);
 
                         return readFileFromInternalStorage(mPackageName, mImageHeight);
                     } else {

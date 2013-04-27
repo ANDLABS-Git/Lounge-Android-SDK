@@ -22,7 +22,6 @@ import java.util.Random;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class Id {
