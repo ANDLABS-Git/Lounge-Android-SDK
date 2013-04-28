@@ -57,6 +57,11 @@ public abstract class LoungeMessageProcessor {
     }
 
 
+    public void requestUpdate() {
+        triggerUpdate(mInvolvedGames, mOpenGames);
+    }
+
+
     public abstract void triggerUpdate(ConcurrentHashMap<String, Game> pInvolvedGames, ConcurrentHashMap<String, Game> pOpenGames);
 
 

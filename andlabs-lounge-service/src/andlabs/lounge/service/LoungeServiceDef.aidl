@@ -5,9 +5,12 @@ interface LoungeServiceDef {
 	void connect();
 
 	void reconnect();
+
 	void disconnect();
 
 	void login(in String playerId);
+
+	void requestUpdate();
 
 	void chat(in String message);
 
