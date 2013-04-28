@@ -13,9 +13,9 @@ public class TestData {
     public static List<Game> getJoinedGames() {
 
         List<Game> list = new ArrayList<Game>();
- 
+
         Player playerA = new Player();
-        playerA.playerID="Tommo";
+        playerA.playerID = "Tommo";
 
         Player playerB = new Player();
         playerB.playerID = "Ninja";
@@ -38,6 +38,7 @@ public class TestData {
         return list;
     }
 
+
     public static List<Game> getOpenGames() {
 
         List<Game> list = new ArrayList<Game>();
@@ -46,38 +47,38 @@ public class TestData {
         playerB.playerID = "Ninja";
 
         Game openGame = createOpenGame("de.andlabs.gravitywins", "Mol3Cool", playerB);
-		list.add(openGame);
+        list.add(openGame);
 
         return list;
 
     }
 
 
-	private static Match createMatch(int pMaxPlayers, Player ... pPlayer) {
+    private static Match createMatch(int pMaxPlayers, Player... pPlayer) {
 
-		Match match = new Match();
-		match.totalSpots=pMaxPlayers;
-		for (Player player : pPlayer) {
-			match.players.add(player);
-		}
-		return match;
-	}
+        Match match = new Match();
+        match.totalSpots = pMaxPlayers;
+        for (Player player : pPlayer) {
+            match.players.add(player);
+        }
+        return match;
+    }
 
 
-	private static Game createGame(String pPackageId, String pTitle) {
+    private static Game createGame(String pPackageId, String pTitle) {
 
-		Game game = new Game();
+        Game game = new Game();
 
-		game.gameID = pPackageId;
+        game.gameID = pPackageId;
         game.gameName = pTitle;
 
         return game;
-	}
+    }
 
 
-	private static Game createOpenGame(String pPackageId, String pTitle, Player pPlayer) {
+    private static Game createOpenGame(String pPackageId, String pTitle, Player pPlayer) {
 
-		Game openGame = createGame(pPackageId, pTitle);
+        Game openGame = createGame(pPackageId, pTitle);
 
         Match match = new Match();
         match.matchID = getRandomNumberString();
@@ -89,14 +90,15 @@ public class TestData {
 
         return openGame;
 
-	}
-	
-	private static String getRandomNumberString() {
-	    final StringBuilder stringBuilder = new StringBuilder();
-	    for(int i = 0; i< 10; i++) {
-	       stringBuilder.append(i);
-	    }
-	    return stringBuilder.toString();
-	}
+    }
+
+
+    private static String getRandomNumberString() {
+        final StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < 10; i++) {
+            stringBuilder.append(i);
+        }
+        return stringBuilder.toString();
+    }
 
 }

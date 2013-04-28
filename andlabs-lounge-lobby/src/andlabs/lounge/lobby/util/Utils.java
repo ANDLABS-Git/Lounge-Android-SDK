@@ -36,11 +36,13 @@ public class Utils implements LoungeConstants {
 
     public static final String CATEGORY = "eu.andlabs.lounge";
 
+
     public static List<ResolveInfo> getInstalledLoungeGames(Context ctx) {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(CATEGORY);
         return ctx.getPackageManager().queryIntentActivities(intent, 0);
     }
+
 
     public static Intent launchGameApp(Activity context, String packageName, Match match) {
         final ResolveInfo info = getInstalledGameInfo(context, packageName);
@@ -58,13 +60,14 @@ public class Utils implements LoungeConstants {
             intent.putExtra(EXTRA_PLAYER_NAMES, players);
 
             return intent;
-            
+
         } else {
-         
+
             Ln.w("launchGameApp(): unable to start the game %s", packageName);
             return null;
         }
     }
+
 
     private static ResolveInfo getInstalledGameInfo(Context context, String packageName) {
         for (ResolveInfo info : getInstalledLoungeGames(context)) {
@@ -76,6 +79,7 @@ public class Utils implements LoungeConstants {
         return null;
     }
 
+
     public static Drawable getGameIcon(Context context, String packageName) {
         ResolveInfo info = getInstalledGameInfo(context, packageName);
         if (info == null) {
@@ -85,12 +89,14 @@ public class Utils implements LoungeConstants {
         }
     }
 
+
     public static void openPlay(Context context, String packageName) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=" + packageName));
 
         context.startActivity(intent);
     }
+
 
     public static boolean isGameInstalled(Context pContext, String pGameID) {
         List<ResolveInfo> installedGames = Utils.getInstalledLoungeGames(pContext);
@@ -103,6 +109,7 @@ public class Utils implements LoungeConstants {
         return false;
     }
 
+
     public static int ipc(Context context, int colorA, int colorB, float proportion) {
         float[] hsva = new float[3];
         float[] hsvb = new float[3];
@@ -113,6 +120,7 @@ public class Utils implements LoungeConstants {
         }
         return Color.HSVToColor(hsvb);
     }
+
 
     public static float interpolate(float a, float b, float proportion) {
         return (a + ((b - a) * proportion));

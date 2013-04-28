@@ -47,6 +47,7 @@ public class LoungeActivity extends FragmentActivity implements OnPageChangeList
     private ImageView mAboutIcon;
     private ImageView mChatIcon;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -72,24 +73,26 @@ public class LoungeActivity extends FragmentActivity implements OnPageChangeList
                 return 4;
             }
 
+
             @Override
             public Fragment getItem(int position) {
                 Ln.d("ITEM " + position);
                 switch (position) {
-                case LOBBY:
-                    return new LobbyFragment();
-                case CHAT:
-                    return new ChatFragment();
-                case STATS:
-                    return new StatsFragment();
-                case ABOUT:
-                    return new AboutFragment();
+                    case LOBBY:
+                        return new LobbyFragment();
+                    case CHAT:
+                        return new ChatFragment();
+                    case STATS:
+                        return new StatsFragment();
+                    case ABOUT:
+                        return new AboutFragment();
                 }
                 return null;
             }
         });
         onPageSelected(LOBBY);
     }
+
 
     public void onNavigationClicked(View v) {
         if (v.getId() == R.id.ic_tab_lobby) {
@@ -103,49 +106,52 @@ public class LoungeActivity extends FragmentActivity implements OnPageChangeList
         }
     }
 
+
     @Override
     public void onPageSelected(int position) {
         Ln.d("page selected");
         switch (position) {
-        case LOBBY:
-            mSectionLabel.setText("Lobby");
-            mLobbyIcon.setAlpha(255);
-            mChatIcon.setAlpha(ALPHA_OFF);
-            mStatsIcon.setAlpha(ALPHA_OFF);
-            mAboutIcon.setAlpha(ALPHA_OFF);
-            break;
+            case LOBBY:
+                mSectionLabel.setText("Lobby");
+                mLobbyIcon.setAlpha(255);
+                mChatIcon.setAlpha(ALPHA_OFF);
+                mStatsIcon.setAlpha(ALPHA_OFF);
+                mAboutIcon.setAlpha(ALPHA_OFF);
+                break;
 
-        case CHAT:
-            mSectionLabel.setText("Chat");
-            mLobbyIcon.setAlpha(ALPHA_OFF);
-            mChatIcon.setAlpha(255);
-            mStatsIcon.setAlpha(ALPHA_OFF);
-            mAboutIcon.setAlpha(ALPHA_OFF);
-            break;
+            case CHAT:
+                mSectionLabel.setText("Chat");
+                mLobbyIcon.setAlpha(ALPHA_OFF);
+                mChatIcon.setAlpha(255);
+                mStatsIcon.setAlpha(ALPHA_OFF);
+                mAboutIcon.setAlpha(ALPHA_OFF);
+                break;
 
-        case STATS:
-            mSectionLabel.setText("Statistics");
-            mLobbyIcon.setAlpha(ALPHA_OFF);
-            mChatIcon.setAlpha(ALPHA_OFF);
-            mStatsIcon.setAlpha(255);
-            mAboutIcon.setAlpha(ALPHA_OFF);
-            break;
+            case STATS:
+                mSectionLabel.setText("Statistics");
+                mLobbyIcon.setAlpha(ALPHA_OFF);
+                mChatIcon.setAlpha(ALPHA_OFF);
+                mStatsIcon.setAlpha(255);
+                mAboutIcon.setAlpha(ALPHA_OFF);
+                break;
 
-        case ABOUT:
-            mSectionLabel.setText("About");
-            mLobbyIcon.setAlpha(ALPHA_OFF);
-            mChatIcon.setAlpha(ALPHA_OFF);
-            mStatsIcon.setAlpha(ALPHA_OFF);
-            mAboutIcon.setAlpha(255);
-            break;
-        default:
-            break;
+            case ABOUT:
+                mSectionLabel.setText("About");
+                mLobbyIcon.setAlpha(ALPHA_OFF);
+                mChatIcon.setAlpha(ALPHA_OFF);
+                mStatsIcon.setAlpha(ALPHA_OFF);
+                mAboutIcon.setAlpha(255);
+                break;
+            default:
+                break;
         }
     }
+
 
     @Override
     public void onPageScrollStateChanged(int state) {
     }
+
 
     @Override
     public void onPageScrolled(int position, float foo, int arg2) {
@@ -165,10 +171,12 @@ public class LoungeActivity extends FragmentActivity implements OnPageChangeList
         // }
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
     }
+
 
     @Override
     protected void onStop() {
