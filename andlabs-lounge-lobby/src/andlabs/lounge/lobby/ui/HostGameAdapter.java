@@ -101,6 +101,6 @@ public class HostGameAdapter extends BaseAdapter implements OnItemClickListener 
         }
 
         final ResolveInfo info = this.mContent.get(this.mSelectedItem);
-        return info.activityInfo.packageName ;
+        return info.activityInfo.packageName;
     }
 }

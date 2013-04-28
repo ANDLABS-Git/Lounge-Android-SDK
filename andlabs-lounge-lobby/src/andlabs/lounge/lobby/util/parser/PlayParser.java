@@ -60,9 +60,11 @@ public class PlayParser {
 
     private static PlayParser sInstance;
 
+
     private PlayParser(Context context) {
         mContext = context;
     }
+
 
     public static PlayParser getInstance(Context context) {
         if (sInstance == null) {
@@ -71,17 +73,21 @@ public class PlayParser {
         return sInstance;
     }
 
+
     public void addListener(PlayListener listener) {
         mListener.add(listener);
     }
+
 
     public void removeListener(PlayListener listener) {
         mListener.remove(listener);
     }
 
+
     public Drawable getResult(String packageName) {
         return mResults.get(packageName);
     }
+
 
     private void notifyListener() {
         for (PlayListener listener : mListener) {
@@ -95,10 +101,12 @@ public class PlayParser {
         }
     }
 
+
     public void queryPlay(final String packageName) {
         queryPlay(packageName, Math.min(MAX_WIDTH, mContext.getResources().getDisplayMetrics().widthPixels),
                 (int) (DEFAULT_HEIGHT_DP * mContext.getResources().getDisplayMetrics().density));
     }
+
 
     public void queryPlay(final String packageName, final int imageWidth, final int imageHeight) {
 
@@ -123,6 +131,7 @@ public class PlayParser {
         }
     }
 
+
     private void queryNext() {
         if (mQueries.size() > 0) {
             mIsQuerying = true;
@@ -144,6 +153,7 @@ public class PlayParser {
         }
     }
 
+
     private String parseImageUrl(String html) {
         if (html != null && html.contains(PLAY_PATTERN_START)) {
             int start = html.indexOf(PLAY_PATTERN_START);
@@ -164,6 +174,7 @@ public class PlayParser {
 
         return null;
     }
+
 
     private String downloadUrl(String url) throws IOException {
 
@@ -187,6 +198,7 @@ public class PlayParser {
             }
         }
     }
+
 
     private void writeFileToInternalStorage(InputStream is, String packageName) {
         FileOutputStream out = null;
@@ -225,6 +237,7 @@ public class PlayParser {
         }
     }
 
+
     private Drawable readFileFromInternalStorage(String packageName, int height) {
         InputStream is = null;
         try {
@@ -248,6 +261,7 @@ public class PlayParser {
         return null;
     }
 
+
     private String convertStreamToString(final InputStream inputStream) {
         final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();
@@ -267,6 +281,7 @@ public class PlayParser {
         }
         return stringBuilder.toString();
     }
+
 
     private InputStream downloadStream(String url) {
         InputStream inputStream = null;
@@ -302,13 +317,16 @@ public class PlayParser {
     }
 
     public interface PlayListener {
+
         public void onPlayResult(Map<String, Drawable> pResults);
     }
 
     private class QueryData implements Comparable<QueryData> {
+
         String mPackageName;
         int mWidth;
         int mHeight;
+
 
         public QueryData(String pPackageName, int pImageWidth, int pImageHeight) {
             super();
@@ -317,29 +335,36 @@ public class PlayParser {
             mHeight = pImageHeight;
         }
 
+
         public int getHeight() {
             return mHeight;
         }
+
 
         public void setHeight(int pHeight) {
             mHeight = pHeight;
         }
 
+
         public String getPackageName() {
             return mPackageName;
         }
+
 
         public void setPackageName(String pPackageName) {
             mPackageName = pPackageName;
         }
 
+
         public int getWidth() {
             return mWidth;
         }
 
+
         public void setWidth(int pWidth) {
             mWidth = pWidth;
         }
+
 
         @Override
         public int compareTo(QueryData pAnother) {
@@ -353,11 +378,13 @@ public class PlayParser {
         private int mImageHeight;
         private String mPackageName;
 
+
         public UrlDownloadTask(String packageName, int imageWidth, int imageHeight) {
             mPackageName = packageName;
             mImageWidth = imageWidth;
             mImageHeight = imageHeight;
         }
+
 
         @Override
         protected Drawable doInBackground(String... pParams) {
@@ -407,6 +434,7 @@ public class PlayParser {
             }
             return null;
         }
+
 
         protected void onPostExecute(Drawable result) {
             if (result != null) {

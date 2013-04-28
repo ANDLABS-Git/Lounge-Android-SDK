@@ -64,17 +64,20 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
         }
 
+
         @Override
         public void onNewChatLog(List<ChatMessage> chatLog) {
             // TODO Auto-generated method stub
 
         }
 
+
         @Override
         public void onChatDataUpdated(List<ChatMessage> data) {
             // TODO Auto-generated method stub
 
         }
+
 
         @Override
         public void onRunningGamesUpdate(final ArrayList<Game> pGames) {
@@ -91,6 +94,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
             });
         }
+
 
         @Override
         public void onOpenGamesUpdate(final ArrayList<Game> pGames) {
@@ -109,7 +113,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         }
 
     };
-   
+
 
     @Override
     public View onCreateView(final LayoutInflater pLayoutInflater, ViewGroup pViewGroup, Bundle pBundle) {
@@ -123,13 +127,13 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
         mLobbyAdapter.setJoinedGames(TestData.getJoinedGames());
         mLobbyAdapter.setOpenGames(TestData.getOpenGames());
-        mLobbyList.setOnChildClickListener(this); //TODO make consistent with host drawer
+        mLobbyList.setOnChildClickListener(this); // TODO make consistent with host drawer
 
-//        final SlidingDrawer drawer = (SlidingDrawer) view.findViewById(R.id.slidingDrawer);
-//
-//        mStaticBeacon = view.findViewById(R.id.ic_lobby_host_static_pulse);
-//        mPulseBeacon = view.findViewById(R.id.ic_lobby_host_pulse);
-//        startAnimatingHostMode();
+        // final SlidingDrawer drawer = (SlidingDrawer) view.findViewById(R.id.slidingDrawer);
+        //
+        // mStaticBeacon = view.findViewById(R.id.ic_lobby_host_static_pulse);
+        // mPulseBeacon = view.findViewById(R.id.ic_lobby_host_pulse);
+        // startAnimatingHostMode();
 
         // drawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
         //
@@ -143,7 +147,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         mHostList = (ListView) view.findViewById(R.id.installed_games);
         mHostAdapter = new HostGameAdapter(getActivity());
         mHostList.setAdapter(mHostAdapter);
-        mHostList.setOnItemClickListener(mHostAdapter); //TODO make consistent with lobby list
+        mHostList.setOnItemClickListener(mHostAdapter); // TODO make consistent with lobby list
 
         view.findViewById(R.id.btn_host).setOnClickListener(new OnClickListener() {
 
@@ -157,6 +161,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
         return view;
     }
+
 
     private void queryPlay(List<Game> games) {
         Ln.v("games = %s", games);
@@ -176,6 +181,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         });
     }
 
+
     private void startAnimatingHostMode() {
         mPulseBeacon.setVisibility(View.VISIBLE);
         mStaticBeacon.setVisibility(View.INVISIBLE);
@@ -184,10 +190,12 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         mPulseBeacon.startAnimation(animation);
     }
 
+
     private void stopAnimatingHostMode() {
         mPulseBeacon.setVisibility(View.INVISIBLE);
         mStaticBeacon.setVisibility(View.VISIBLE);
     }
+
 
     private String getPackageNameFromGameId(String gameID) {
 
@@ -198,11 +206,13 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         return gameID;
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
         mLoungeLobbyController.bindServiceTo(getActivity());
     }
+
 
     @Override
     public void onResume() {
@@ -210,11 +220,13 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         super.onResume();
     }
 
+
     @Override
     public void onPause() {
         mLoungeLobbyController.unregisterCallback(mLoungeLobbyCallback);
         super.onPause();
     }
+
 
     @Override
     public void onStop() {
@@ -222,11 +234,13 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         super.onStop();
     }
 
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
     }
+
 
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -234,11 +248,11 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         Game game = (Game) mLobbyAdapter.getGroup(groupPosition);
         Match match = (Match) mLobbyAdapter.getChild(groupPosition, childPosition);
         Ln.d(" game = %s, match = %s", game, match);
-        
-        // If  the game is open... 
-        if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) { 
+
+        // If the game is open...
+        if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) {
             final String gameID = game.gameID;
-            if(Utils.isGameInstalled(getActivity(), gameID)) { // ...and installed, join it... 
+            if (Utils.isGameInstalled(getActivity(), gameID)) { // ...and installed, join it...
                 mLoungeLobbyController.joinMatch(gameID, match.matchID);
             } else { // ...otherwise, open the play store
                 Utils.openPlay(getActivity(), gameID);
@@ -246,11 +260,11 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         } else {
             if ("running".equalsIgnoreCase(match.status)) {
                 // If the game is already running, and you are involved
-               Intent intent= Utils.launchGameApp(getActivity(), game.gameID, match);
-               if(intent!=null){
-                   getActivity().startActivity(intent);
-                   getActivity().finish();
-               }
+                Intent intent = Utils.launchGameApp(getActivity(), game.gameID, match);
+                if (intent != null) {
+                    getActivity().startActivity(intent);
+                    getActivity().finish();
+                }
             } else {
                 Toast.makeText(getActivity(), "Game not started yet", Toast.LENGTH_LONG).show();
             }

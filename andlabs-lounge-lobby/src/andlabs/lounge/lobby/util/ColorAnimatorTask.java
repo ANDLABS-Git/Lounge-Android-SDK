@@ -10,22 +10,15 @@ import android.os.AsyncTask;
 import android.view.View;
 
 /**
- * {@link AsyncTask} that changes the background color of views in a pulsing
- * manor. Uses a {@link HashSet} to iterate over views.
- * 
- * Here's how to use it: 1. Initiallize using one of the constructors. 2. Start
- * it using {@link #execute(ViewColorAnimationHolder...)}. You may want to check
- * whether the task is running using @{link {@link #isRunning()}. 3. Add
- * additional {@link ViewColorAnimationHolder}s using the
- * {@link #add(ViewColorAnimationHolder)} or {@link #add(View, int, int))}. 4.
- * Stop the Task using {@link #cancelTask()}, not (!) using
- * {@link #cancel(boolean)}.
+ * {@link AsyncTask} that changes the background color of views in a pulsing manor. Uses a {@link HashSet} to iterate over
+ * views. Here's how to use it: 1. Initiallize using one of the constructors. 2. Start it using
+ * {@link #execute(ViewColorAnimationHolder...)}. You may want to check whether the task is running using @{link
+ * {@link #isRunning()}. 3. Add additional {@link ViewColorAnimationHolder}s using the {@link #add(ViewColorAnimationHolder)} or
+ * {@link #add(View, int, int))}. 4. Stop the Task using {@link #cancelTask()}, not (!) using {@link #cancel(boolean)}.
  * 
  * @author johannesborchardt
- * 
  */
-public class ColorAnimatorTask extends
-        AsyncTask<ViewColorAnimationHolder, Float, Void> {
+public class ColorAnimatorTask extends AsyncTask<ViewColorAnimationHolder, Float, Void> {
 
     private Context context;
 
@@ -46,29 +39,27 @@ public class ColorAnimatorTask extends
 
     private Set<ViewColorAnimationHolder> views = new HashSet<ColorAnimatorTask.ViewColorAnimationHolder>();
 
+
     /**
      * Constructor that initializes this task with default values.
      * 
      * @param context
      */
     public ColorAnimatorTask(final Context context) {
-        this(context, START_PROPORTION_DEFAULT, END_PROPORTION_DEFAULT,
-                INTERVALL_DURATION_DEFAULT);
+        this(context, START_PROPORTION_DEFAULT, END_PROPORTION_DEFAULT, INTERVALL_DURATION_DEFAULT);
     }
 
+
     /**
-     * 
      * @param context
      * @param startProportion
      *            the color proportion to start with
      * @param endProportion
      *            the color proportion to end with
      * @param intervallDuration
-     *            the length of the interval between startProportion and
-     *            endProportion
+     *            the length of the interval between startProportion and endProportion
      */
-    public ColorAnimatorTask(final Context context,
-            final float startProportion, final float endProportion,
+    public ColorAnimatorTask(final Context context, final float startProportion, final float endProportion,
             final long intervallDuration) {
 
         this.context = context;
@@ -77,11 +68,11 @@ public class ColorAnimatorTask extends
         this.intervallDuration = intervallDuration;
     }
 
+
     @Override
     protected Void doInBackground(ViewColorAnimationHolder... views) {
 
-        this.views = new HashSet<ColorAnimatorTask.ViewColorAnimationHolder>(
-                Arrays.asList(views));
+        this.views = new HashSet<ColorAnimatorTask.ViewColorAnimationHolder>(Arrays.asList(views));
 
         this.running = true;
 
@@ -91,11 +82,9 @@ public class ColorAnimatorTask extends
                 this.startTime = System.currentTimeMillis();
             }
 
-            final float proportionDelta = this.endProportion
-                    - this.startProportion;
+            final float proportionDelta = this.endProportion - this.startProportion;
             if (proportionDelta < 0) {
-                throw new IllegalArgumentException(
-                        "endProportion needs to be smaller than startProportion");
+                throw new IllegalArgumentException("endProportion needs to be smaller than startProportion");
             }
 
             float deltaTime = System.currentTimeMillis() - this.lastTimestamp;
@@ -120,18 +109,18 @@ public class ColorAnimatorTask extends
         return null;
     }
 
+
     @Override
     protected void onProgressUpdate(Float... progress) {
         super.onProgressUpdate(progress);
 
         synchronized (this.views) {
             for (ViewColorAnimationHolder view : this.views) {
-                view.getView().setBackgroundColor(
-                        Utils.ipc(this.context, view.getColorA(),
-                                view.getColorB(), progress[0]));
+                view.getView().setBackgroundColor(Utils.ipc(this.context, view.getColorA(), view.getColorB(), progress[0]));
             }
         }
     }
+
 
     /**
      * Add a new {@link ViewColorAnimationHolder} to this animation task.
@@ -144,10 +133,10 @@ public class ColorAnimatorTask extends
         }
     }
 
+
     /**
-     * Add a new {@link View} to this animation task. You might want to keep a
-     * reference to the {@link ViewColorAnimationHolder} returned by this
-     * method.
+     * Add a new {@link View} to this animation task. You might want to keep a reference to the {@link ViewColorAnimationHolder}
+     * returned by this method.
      * 
      * @param view
      * @param colorA
@@ -155,14 +144,14 @@ public class ColorAnimatorTask extends
      * @return the created {@link ViewColorAnimationHolder}
      */
     public ViewColorAnimationHolder add(View view, int colorA, int colorB) {
-        ViewColorAnimationHolder holder = new ViewColorAnimationHolder(view,
-                colorA, colorB);
+        ViewColorAnimationHolder holder = new ViewColorAnimationHolder(view, colorA, colorB);
         synchronized (this.views) {
             this.views.add(holder);
         }
 
         return holder;
     }
+
 
     /**
      * Remove a {@link ViewColorAnimationHolder} from the animation set
@@ -173,15 +162,17 @@ public class ColorAnimatorTask extends
         this.views.remove(holder);
     }
 
+
     /**
-     * Returns whether this Task is running or not. Works only when
-     * {@link #cancelTask()} is used instead of {@link #cancel(boolean)}
+     * Returns whether this Task is running or not. Works only when {@link #cancelTask()} is used instead of
+     * {@link #cancel(boolean)}
      * 
      * @return
      */
     public boolean isRunning() {
         return this.running;
     }
+
 
     /**
      * Cancels this task forcefully
@@ -195,12 +186,13 @@ public class ColorAnimatorTask extends
      * A holder class for a view and its start and end color
      * 
      * @author johannesborchardt
-     * 
      */
     public static class ViewColorAnimationHolder {
+
         private View view;
         private int colorA;
         private int colorB;
+
 
         public ViewColorAnimationHolder(View view, int colorA, int colorB) {
             this.view = view;
@@ -208,17 +200,21 @@ public class ColorAnimatorTask extends
             this.colorB = colorB;
         }
 
+
         public View getView() {
             return this.view;
         }
+
 
         public int getColorA() {
             return this.colorA;
         }
 
+
         public int getColorB() {
             return this.colorB;
         }
+
 
         @Override
         public int hashCode() {
@@ -229,6 +225,7 @@ public class ColorAnimatorTask extends
             result = prime * result + ((view == null) ? 0 : view.hashCode());
             return result;
         }
+
 
         @Override
         public boolean equals(Object obj) {
