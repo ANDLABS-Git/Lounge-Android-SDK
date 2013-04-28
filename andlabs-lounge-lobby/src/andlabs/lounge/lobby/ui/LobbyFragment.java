@@ -33,6 +33,7 @@ import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.util.Ln;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -247,7 +248,11 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         } else {
             if ("running".equalsIgnoreCase(match.status)) {
                 // If the game is already running, and you are involved
-                Utils.launchGameApp(getActivity(), game.gameID, match);
+               Intent intent= Utils.launchGameApp(getActivity(), game.gameID, match);
+               if(intent!=null){
+                   getActivity().startActivity(intent);
+                   getActivity().finish();
+               }
             } else {
                 Toast.makeText(getActivity(), "Game not started yet", Toast.LENGTH_LONG).show();
             }
