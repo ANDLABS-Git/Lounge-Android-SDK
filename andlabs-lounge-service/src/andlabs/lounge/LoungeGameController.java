@@ -35,6 +35,12 @@ public class LoungeGameController {
     private LoungeServiceCallback mLoungeServiceCallback = new LoungeServiceCallback() {
 
         @Override
+        public String toString() {
+            return "LoungeServiceCallback (Game)";
+        };
+
+
+        @Override
         public void theAnswerIs42() {
             Ln.v("LoungeServiceCallback.theAnswerIs42(): Universal Answer ;-)");
         }
@@ -82,7 +88,6 @@ public class LoungeGameController {
         }
 
 
-
         @Override
         public void onGameMessage(String pMatchID, Bundle pMsg) {
             if(pMatchID.equals(mCheckinMatchId) && mLoungeGameCallback != null) {  // TODO: move this condition to messageprocessor
@@ -90,6 +95,7 @@ public class LoungeGameController {
                 mLoungeGameCallback.onGameMessage(pMsg);
             }
         }
+
     };
     private String mCheckinMatchId;
 
@@ -128,10 +134,10 @@ public class LoungeGameController {
     }
 
 
-    private void checkout(String pMatchId) {
+    public void checkout(String pMatchId) {
         mCheckinMatchId = null;
         Ln.v("checkout(): pMatchId = %s", pMatchId);
-        // TODO wire it to the corresponding LoungeServiceController method
+        mLoungeServiceController.checkout(mPackageId,pMatchId);
     }
 
 
@@ -141,7 +147,13 @@ public class LoungeGameController {
     }
 
     public void streamGameMessage(String pMatchId, Bundle pMoveBundle) {
+        //Remove this? Game doesnt know if it is stream or move, but the server does
         Ln.v("streamGameMessage(): pMatchId = %s, pMoveBundle = %s", pMatchId, pMoveBundle);
-        mLoungeServiceController.streamGameMessage(mPackageId, pMatchId, pMoveBundle);
+//        mLoungeServiceController.streamGameMessage(mPackageId, pMatchId, pMoveBundle);
     }
+    public void closeMatch(String pMatchId) {
+        Ln.v("closeMatch(): pMatchId = %s, ",pMatchId);
+        mLoungeServiceController.closeMatch(mPackageId,pMatchId);
+    }
+
 }

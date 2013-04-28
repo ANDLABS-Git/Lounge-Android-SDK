@@ -36,15 +36,17 @@ import android.os.RemoteException;
 
 public class LoungeService extends Service {
 
-    private Set<Messenger> mMessengerSet = new HashSet<Messenger>();
+    private Messenger mMessenger;
     private LoungeServiceImpl mLoungeService = new LoungeServiceImpl();
     private LoungeServiceImpl.MessageHandler mMessageHandler = new LoungeServiceImpl.MessageHandler() {
         
         @Override
         public void send(Message message) {
             try {
-                for (Messenger messenger : mMessengerSet) {
-                    messenger.send(message);
+                if (mMessenger != null) {
+                    mMessenger.send(message);
+                } else {
+                    Ln.w("mMessanger is not set, throwing %s", message);
                 }
             } catch (RemoteException e) {
                 Ln.e(e, "MessageHandler.send(): caught exception while sending message %d", message.what);
@@ -56,18 +58,14 @@ public class LoungeService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Ln.v("intent = %s", intent);
-        mMessengerSet.add((Messenger) intent.getParcelableExtra("client-messenger"));
-        mLoungeService.setMessageHandler(mMessageHandler);
+        mMessenger = (Messenger) intent.getParcelableExtra("client-messenger");
         return mLoungeService;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
         Ln.v("intent = %s", intent);
-        mMessengerSet.remove((Messenger)intent.getParcelableExtra("client-messenger"));
-        if (mMessengerSet.isEmpty()) {
-            mLoungeService.setMessageHandler(null);
-        }
+        mMessenger = null;
         return super.onUnbind(intent);
     }
 
@@ -75,6 +73,7 @@ public class LoungeService extends Service {
     public void onCreate() {
         Ln.v("onCreate():");
         super.onCreate();
+        mLoungeService.setMessageHandler(mMessageHandler);
         mLoungeService.connect();
     }
 

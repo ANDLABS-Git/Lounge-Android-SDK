@@ -118,7 +118,6 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             bundle.putBundle("data", pParams);
             message.setData(bundle);
             mMessageHandler.send(message);
-
         }
 
     };
@@ -160,7 +159,6 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     }
 
-
     @Override
     public void disconnect() {
         Ln.v("disconnect():");
@@ -168,6 +166,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             mSocketIO.disconnect();
         }
     }
+ 
     @Override
     public void login(String playerId) {
         Ln.v("login(): playerId = %s", playerId);
@@ -187,7 +186,6 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
     @Override
     public void openMatch(String pPackageId, String pDisplayName) {
-
         Ln.v("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName);
         try {
             // PAYLOAD {gameID: "packageID", gameName: ”AppName”,
@@ -263,4 +261,29 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     }
 
+    @Override
+    public void closeMatch(String pPackageId, String pMatchId) {
+        Ln.v("closeMatch(): pGameId = %s, pMatchId = %s", pPackageId, pMatchId);
+        try {
+            // PAYLOAD { gameID: ”packageID”, matchID: “matchID” }
+            mSocketIO.emit("update", new JSONObject().put("gameID", pPackageId).put("matchID", pMatchId).put("status", "close"));
+        } catch (JSONException e) {
+            Ln.e(e, "closeMatch(): caught exception while sending checkin");
+        }
+        
+    }
+
+
+    @Override
+    public void checkout(String pPackageId,String pMatchId) {
+        Ln.v("checkout(): pGameId = %s, pMatchId = %s", pPackageId, pMatchId);
+        try {
+            // TODO: There is no checkout in Server Interface spec
+            // Checkin into Empty/null/"" ?
+            mSocketIO.emit("checkout", new JSONObject().put("gameID", "").put("matchID", ""));
+        } catch (JSONException e) {
+            Ln.e(e, "checkout(): caught exception while sending checkin");
+        }
+    }
+    
 }
