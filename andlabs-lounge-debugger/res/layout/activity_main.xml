@@ -52,26 +52,37 @@
 
         <Button
             android:id="@+id/checkInBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_weight="1"
             android:onClick="checkIn"
             android:text="checkIn" />
 
         <Button
             android:id="@+id/checkOutBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:onClick="checkIn"
             android:text="checkOut" />
 
         <Button
             android:id="@+id/closeMatchBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_weight="1"
             android:onClick="checkIn"
             android:text="closeMatch" />
+
+        <Button
+            android:id="@+id/openLounge"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Lounge" />
     </LinearLayout>
 
 </RelativeLayout>
