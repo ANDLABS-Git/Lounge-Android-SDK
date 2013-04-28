@@ -25,10 +25,11 @@ import java.util.List;
 import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.model.Game;
 
-public interface LoungeLobbyCallback {
+public class LoungeLobbyCallback {
 
-
-    public void onChatDataUpdated(List<ChatMessage> data);
+    public void onChatDataUpdated(List<ChatMessage> data) {
+        
+    }
 
 
     /**
@@ -37,7 +38,9 @@ public interface LoungeLobbyCallback {
      * 
      * @param chatLog
      */
-    public void onNewChatLog(List<ChatMessage> chatLog);
+    public void onNewChatLog(List<ChatMessage> chatLog) {
+        
+    }
 
 
     /**
@@ -46,7 +49,9 @@ public interface LoungeLobbyCallback {
      * 
      * @param chatMsg
      */
-    public void onNewChatMessage(ChatMessage chatMsg);
+    public void onNewChatMessage(ChatMessage chatMsg) {
+        
+    }
 
 
     /**
@@ -55,7 +60,9 @@ public interface LoungeLobbyCallback {
      * 
      * @param pGames
      */
-    public void onRunningGamesUpdate(ArrayList<Game> pGames);
+    public void onRunningGamesUpdate(ArrayList<Game> pGames) {
+        
+    }
 
 
     /**
@@ -64,6 +71,8 @@ public interface LoungeLobbyCallback {
      * 
      * @param pGames
      */
-    public void onOpenGamesUpdate(ArrayList<Game> pGames);
+    public void onOpenGamesUpdate(ArrayList<Game> pGames) {
+        
+    }
 
 }

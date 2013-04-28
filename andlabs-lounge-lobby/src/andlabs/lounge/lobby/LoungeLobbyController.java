@@ -36,6 +36,7 @@ public class LoungeLobbyController {
 
     private String mUserName;
     private LoungeLobbyCallback mLoungeLobbyCallback;
+    private LoungeLobbyCallback mIdleLoungeLobbyCallback = new LoungeLobbyCallback();
     private LoungeServiceController mLoungeServiceController = new LoungeServiceController();
     private LoungeServiceCallback mLoungeServiceCallback = new LoungeServiceCallback() {
 
@@ -62,7 +63,6 @@ public class LoungeLobbyController {
         public void onConnect() {
             Ln.v("LoungeServiceCallback.onConnect():");
             // TODO Auto-generated method stub
-
         }
 
 
@@ -70,7 +70,6 @@ public class LoungeLobbyController {
         public void onDisconnect() {
             Ln.v("LoungeServiceCallback.onDisconnect():");
             // TODO Auto-generated method stub
-
         }
 
 
@@ -127,7 +126,7 @@ public class LoungeLobbyController {
 
     public void unregisterCallback(LoungeLobbyCallback pLoungeLobbyCallback) {
         Ln.v("unregisterCallback(): pLoungeLobbyCallback = %s", pLoungeLobbyCallback);
-        mLoungeLobbyCallback = null;
+        mLoungeLobbyCallback = mIdleLoungeLobbyCallback;;
     }
 
 

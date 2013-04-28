@@ -31,6 +31,7 @@ public class LoungeGameController {
 
     private String mPackageId;
     private LoungeGameCallback mLoungeGameCallback;
+    private LoungeGameCallback mIdleLoungeGameController = new LoungeGameCallback();
     private LoungeServiceController mLoungeServiceController = new LoungeServiceController();
     private LoungeServiceCallback mLoungeServiceCallback = new LoungeServiceCallback() {
 
@@ -116,7 +117,7 @@ public class LoungeGameController {
 
     public void unregisterCallback(LoungeGameCallback pLoungeGameCallback) {
         Ln.v("unregisterCallback(): pLoungeGameCallback = %s", pLoungeGameCallback);
-        mLoungeGameCallback = null;
+        mLoungeGameCallback = mIdleLoungeGameController;
     }
 
 
