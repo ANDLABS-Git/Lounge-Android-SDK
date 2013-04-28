@@ -40,7 +40,7 @@ public class Utils implements LoungeConstants {
         return ctx.getPackageManager().queryIntentActivities(intent, 0);
     }
 
-    public static void launchGameApp(Activity context, String packageName, Match match) {
+    public static Intent launchGameApp(Activity context, String packageName, Match match) {
         final ResolveInfo info = getInstalledGameInfo(context, packageName);
         if (info != null) {
             final Intent intent = new Intent();
@@ -55,10 +55,12 @@ public class Utils implements LoungeConstants {
             }
             intent.putExtra(EXTRA_PLAYER_NAMES, players);
 
-            context.startActivity(intent);
-            context.finish();
+            return intent;
+            
         } else {
+         
             Ln.w("launchGameApp(): unable to start the game %s", packageName);
+            return null;
         }
     }
 
