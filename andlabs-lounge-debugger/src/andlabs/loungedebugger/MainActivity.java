@@ -5,6 +5,7 @@ import andlabs.lounge.LoungeGameCallback;
 import andlabs.lounge.LoungeGameController;
 import andlabs.lounge.Multiplayable;
 import andlabs.lounge.lobby.LoungeConstants;
+import andlabs.lounge.lobby.ui.LoungeActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,13 +17,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements  Multiplayable {
+public class MainActivity extends Activity implements Multiplayable {
 
     private TextView history;
     private EditText key;
     private EditText value;
-    private LoungeGameController lounge;
     private Lounge loungeNew;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +42,20 @@ public class MainActivity extends Activity implements  Multiplayable {
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_IS_HOST));
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_HOST_NAME));
         // addToHistory(i.getStringArrayExtra(LoungeConstants.EXTRA_PLAYER_NAMES));
-        loungeNew=Lounge.getInstance();
-        
-        lounge = new LoungeGameController();
+        loungeNew = Lounge.getInstance();
+
+
+        ((Button) findViewById(R.id.openLounge)).setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Log.i("LoungeDebugger", "Return to Lounge " + getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+                MainActivity.this.startActivity(new Intent(MainActivity.this, LoungeActivity.class));
+                MainActivity.this.finish();
+            }
+        });
+
 
         ((Button) findViewById(R.id.checkInBtn)).setOnClickListener(new OnClickListener() {
 
@@ -87,12 +99,14 @@ public class MainActivity extends Activity implements  Multiplayable {
 
     }
 
+
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
         loungeNew.registerMultiplayableListener(this);
     }
+
 
     @Override
     protected void onStart() {
@@ -103,6 +117,7 @@ public class MainActivity extends Activity implements  Multiplayable {
 
     }
 
+
     @Override
     protected void onStop() {
         // TODO Auto-generated method stub
@@ -111,9 +126,11 @@ public class MainActivity extends Activity implements  Multiplayable {
         loungeNew.unregisterAllMultiplayableListener();
     }
 
+
     public void addToHistory(String t) {
         history.setText(history.getText() + "\n" + t);
     }
+
 
     public void send(View v) {
         // Bundle b = new Bundle();
@@ -121,10 +138,12 @@ public class MainActivity extends Activity implements  Multiplayable {
         // lounge.sendGameMove(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID), b);
     }
 
+
     public void checkIn(View v) {
 
         // lounge.checkin(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -133,17 +152,20 @@ public class MainActivity extends Activity implements  Multiplayable {
         return true;
     }
 
+
     @Override
     public void onCheckIn(String player) {
         addToHistory("Player checkIN: " + player);
 
     }
 
+
     @Override
     public void onAllPlayerCheckedIn() {
         addToHistory("all Players Checked in");
 
     }
+
 
     @Override
     public void onGameMessage(Bundle msg) {
@@ -152,6 +174,7 @@ public class MainActivity extends Activity implements  Multiplayable {
         }
 
     }
+
 
     @Override
     public void onCheckOut(String player) {
