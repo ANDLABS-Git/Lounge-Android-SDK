@@ -68,25 +68,30 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
 
+
     public LobbyListAdapter(Context pContext) {
         mInflater = (LayoutInflater) pContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mContext = pContext;
         mParser = PlayParser.getInstance(pContext);
     }
 
+
     public void setJoinedGames(List<Game> pRunningGames) {
         mJoinedGames = pRunningGames;
         setSeparatorFlag();
     }
 
+
     public void setOpenGames(List<Game> pOpenGames) {
         mOpenGames = pOpenGames;
     }
+
 
     private void setSeparatorFlag() {
         mSeparatorFlag = mJoinedGames.size() > 0;
 
     }
+
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
@@ -95,12 +100,14 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         return game.matches.values().toArray()[childPosition];
     }
 
+
     @Override
     public long getChildId(int groupPosition, int childPosition) {
         Ln.v("getChildId(): groupPosition = %d, childPosition = %d", groupPosition, childPosition);
         // TODO Auto-generated method stub
         return 0;
     }
+
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
@@ -118,32 +125,32 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
                 // view type
 
                 switch (type) {
-                case TYPE_JOINEDGAME:
-                    convertView = mInflater.inflate(R.layout.lobby_match_list_entry_2players, parent, false);
-                    break;
+                    case TYPE_JOINEDGAME:
+                        convertView = mInflater.inflate(R.layout.lobby_match_list_entry_2players, parent, false);
+                        break;
 
-                case TYPE_SEPARATOR:
-                    convertView = mInflater.inflate(R.layout.lobby_seperator, null);
-                    break;
+                    case TYPE_SEPARATOR:
+                        convertView = mInflater.inflate(R.layout.lobby_seperator, null);
+                        break;
 
-                case TYPE_OPENGAME:
-                    convertView = mInflater.inflate(R.layout.lobby_match_list_open_entry, null);
-                    break;
+                    case TYPE_OPENGAME:
+                        convertView = mInflater.inflate(R.layout.lobby_match_list_open_entry, null);
+                        break;
                 }
 
             }
 
             switch (type) {
-            case TYPE_JOINEDGAME:
-                fillJoinedGameView(groupPosition, childPosition, convertView);
-                break;
+                case TYPE_JOINEDGAME:
+                    fillJoinedGameView(groupPosition, childPosition, convertView);
+                    break;
 
-            case TYPE_SEPARATOR:
-                break;
+                case TYPE_SEPARATOR:
+                    break;
 
-            case TYPE_OPENGAME:
-                fillOpenMatchView(groupPosition, childPosition, convertView);
-                break;
+                case TYPE_OPENGAME:
+                    fillOpenMatchView(groupPosition, childPosition, convertView);
+                    break;
             }
 
         }
@@ -152,6 +159,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
         return convertView;
     }
+
 
     private void fillOpenMatchView(final int groupPosition, final int childPosition, final View convertView) {
         TextView hostname = (TextView) convertView.findViewById(R.id.hostname);
@@ -179,6 +187,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
             }
         });
     }
+
 
     private void fillJoinedGameView(int groupPosition, int childPosition, final View convertView) {
         final TextView player1Label = (TextView) convertView.findViewById(R.id.playerLbl1);
@@ -224,6 +233,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         }
     }
 
+
     @Override
     public int getChildrenCount(int groupPosition) {
         Ln.v("getChildrenCount(): groupPosition = %d", groupPosition);
@@ -237,6 +247,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         }
         return (game != null) ? game.matches.size() : 0;
     }
+
 
     @Override
     public Object getGroup(int groupPosition) {
@@ -252,6 +263,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         return (game != null) ? game : mSeparator;
     }
 
+
     @Override
     public int getGroupCount() {
         int groupCount = mJoinedGames.size() + mOpenGames.size();
@@ -261,10 +273,12 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         return groupCount;
     }
 
+
     @Override
     public long getGroupId(int groupPosition) {
         return groupPosition;
     }
+
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
@@ -278,36 +292,37 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
             // a new view or not recycleable because its a different view type
 
             switch (type) {
-            case TYPE_JOINEDGAME:
-                convertView = mInflater.inflate(R.layout.lobby_gamelist_entry, parent, false);
+                case TYPE_JOINEDGAME:
+                    convertView = mInflater.inflate(R.layout.lobby_gamelist_entry, parent, false);
 
-                break;
-            case TYPE_SEPARATOR:
-                convertView = mInflater.inflate(R.layout.lobby_seperator, null);
-                break;
+                    break;
+                case TYPE_SEPARATOR:
+                    convertView = mInflater.inflate(R.layout.lobby_seperator, null);
+                    break;
 
-            case TYPE_OPENGAME:
-                convertView = mInflater.inflate(R.layout.lobby_gamelist_entry, null);
-                break;
+                case TYPE_OPENGAME:
+                    convertView = mInflater.inflate(R.layout.lobby_gamelist_entry, null);
+                    break;
             }
 
         }
         switch (type) {
-        case TYPE_JOINEDGAME:
-            createGameView((Game) group, convertView, true);
-            break;
+            case TYPE_JOINEDGAME:
+                createGameView((Game) group, convertView, true);
+                break;
 
-        case TYPE_SEPARATOR:
-            break;
+            case TYPE_SEPARATOR:
+                break;
 
-        case TYPE_OPENGAME:
-            createGameView((Game) group, convertView, false);
-            break;
+            case TYPE_OPENGAME:
+                createGameView((Game) group, convertView, false);
+                break;
         }
         convertView.setTag(type);
         return convertView;
 
     }
+
 
     private void createGameView(Game game, View convertView, boolean isInvolved) {
         // Set the game's name
@@ -344,20 +359,24 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         icon.setImageDrawable(iconDrawable);
     }
 
+
     @Override
     public boolean hasStableIds() {
         return false;
     }
+
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
 
+
     @Override
     public int getChildType(int groupPosition, int childPosition) {
         return getGroupType(groupPosition);
     }
+
 
     @Override
     public int getGroupType(int groupPosition) {
@@ -372,10 +391,12 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         return type;
     }
 
+
     @Override
     public int getChildTypeCount() {
         return 3;
     }
+
 
     @Override
     public int getGroupTypeCount() {

@@ -1,8 +1,11 @@
 package andlabs.loungedebugger;
 
+import andlabs.lounge.Lounge;
 import andlabs.lounge.LoungeGameCallback;
 import andlabs.lounge.LoungeGameController;
+import andlabs.lounge.Multiplayable;
 import andlabs.lounge.lobby.LoungeConstants;
+import andlabs.lounge.lobby.ui.LoungeActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,12 +17,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements LoungeGameCallback {
+public class MainActivity extends Activity implements Multiplayable {
 
     private TextView history;
     private EditText key;
     private EditText value;
-    private LoungeGameController lounge;
+    private Lounge loungeNew;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +42,20 @@ public class MainActivity extends Activity implements LoungeGameCallback {
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_IS_HOST));
         addToHistory(i.getStringExtra(LoungeConstants.EXTRA_HOST_NAME));
         // addToHistory(i.getStringArrayExtra(LoungeConstants.EXTRA_PLAYER_NAMES));
-        lounge = new LoungeGameController();
+        loungeNew = Lounge.getInstance();
+
+
+        ((Button) findViewById(R.id.openLounge)).setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Log.i("LoungeDebugger", "Return to Lounge " + getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+                MainActivity.this.startActivity(new Intent(MainActivity.this, LoungeActivity.class));
+                MainActivity.this.finish();
+            }
+        });
+
 
         ((Button) findViewById(R.id.checkInBtn)).setOnClickListener(new OnClickListener() {
 
@@ -46,7 +63,7 @@ public class MainActivity extends Activity implements LoungeGameCallback {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Log.i("LoungeDebugger", "Checkin " + getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
-                lounge.checkin(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+                loungeNew.checkin(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
             }
         });
 
@@ -55,7 +72,7 @@ public class MainActivity extends Activity implements LoungeGameCallback {
             @Override
             public void onClick(View v) {
                 Log.i("LoungeDebugger", "CheckOut " + getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
-                lounge.checkout(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+                loungeNew.checkout();
             }
         });
 
@@ -64,7 +81,7 @@ public class MainActivity extends Activity implements LoungeGameCallback {
             @Override
             public void onClick(View v) {
                 Log.i("LoungeDebugger", "CloseMatch " + getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
-                lounge.closeMatch(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
+                loungeNew.closeMatch();
             }
         });
 
@@ -76,39 +93,44 @@ public class MainActivity extends Activity implements LoungeGameCallback {
                 Bundle b = new Bundle();
                 Log.i("LoungeDebugger", "move :" + key.getText().toString() + " " + value.getText().toString());
                 b.putString(key.getText().toString(), value.getText().toString());
-                lounge.sendGameMove(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID), b);
+                loungeNew.sendGameMove(b);
             }
         });
 
     }
 
+
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-        lounge.registerCallback(this);
+        loungeNew.registerMultiplayableListener(this);
     }
+
 
     @Override
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
 
-        lounge.bindServiceTo(this);
+        loungeNew.bind(getApplicationContext());
 
     }
+
 
     @Override
     protected void onStop() {
         // TODO Auto-generated method stub
         super.onStop();
-        lounge.unbindServiceFrom(this);
-        lounge.unregisterCallback(this);
+        loungeNew.unbind(getApplicationContext());
+        loungeNew.unregisterAllMultiplayableListener();
     }
+
 
     public void addToHistory(String t) {
         history.setText(history.getText() + "\n" + t);
     }
+
 
     public void send(View v) {
         // Bundle b = new Bundle();
@@ -116,10 +138,12 @@ public class MainActivity extends Activity implements LoungeGameCallback {
         // lounge.sendGameMove(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID), b);
     }
 
+
     public void checkIn(View v) {
 
         // lounge.checkin(getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID));
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -128,17 +152,20 @@ public class MainActivity extends Activity implements LoungeGameCallback {
         return true;
     }
 
+
     @Override
     public void onCheckIn(String player) {
         addToHistory("Player checkIN: " + player);
 
     }
 
+
     @Override
     public void onAllPlayerCheckedIn() {
         addToHistory("all Players Checked in");
 
     }
+
 
     @Override
     public void onGameMessage(Bundle msg) {
@@ -147,6 +174,7 @@ public class MainActivity extends Activity implements LoungeGameCallback {
         }
 
     }
+
 
     @Override
     public void onCheckOut(String player) {

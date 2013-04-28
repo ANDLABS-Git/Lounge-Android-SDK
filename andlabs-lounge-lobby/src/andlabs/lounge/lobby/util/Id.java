@@ -28,15 +28,14 @@ import android.preference.PreferenceManager;
 
 public class Id {
 
-    
+
     public static String getName(Context ctx) {
-        return PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getString("name", getAccount(ctx, "com.google"));
+        return PreferenceManager.getDefaultSharedPreferences(ctx).getString("name", getAccount(ctx, "com.google"));
     }
 
 
     public static String getAccount(Context ctx, String type) {
-        
+
         final Account[] accounts = AccountManager.get(ctx).getAccounts();
 
         for (int i = 0; i < accounts.length; i++) {
@@ -46,7 +45,6 @@ public class Id {
         } // else fall back
         return "User " + randomString();
     }
-
 
 
     private static String randomString() {
