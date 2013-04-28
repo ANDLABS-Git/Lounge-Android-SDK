@@ -23,6 +23,7 @@ import java.util.List;
 import andlabs.lounge.lobby.LoungeConstants;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.util.Ln;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -41,7 +42,7 @@ public class Utils implements LoungeConstants {
         return ctx.getPackageManager().queryIntentActivities(intent, 0);
     }
 
-    public static void launchGameApp(Context context, String packageName, Match match) {
+    public static void launchGameApp(Activity context, String packageName, Match match) {
         final ResolveInfo info = getInstalledGameInfo(context, packageName);
         if (info != null) {
             final Intent intent = new Intent();
@@ -57,6 +58,7 @@ public class Utils implements LoungeConstants {
             intent.putExtra(EXTRA_PLAYER_NAMES, players);
 
             context.startActivity(intent);
+            context.finish();
         } else {
             Ln.w("launchGameApp(): unable to start the game %s", packageName);
         }
