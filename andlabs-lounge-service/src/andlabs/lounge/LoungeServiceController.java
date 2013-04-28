@@ -24,11 +24,11 @@ import android.os.RemoteException;
 
 public class LoungeServiceController {
 
-    private Set<LoungeServiceCallback> mLoungeServiceCallbackSet = new HashSet<LoungeServiceCallback>();
+    private static Set<LoungeServiceCallback> mLoungeServiceCallbackSet = new HashSet<LoungeServiceCallback>();
 
     //TODO: Use weak reference to get rid of leak
     @SuppressLint("HandlerLeak")
-    Messenger mMessenger = new Messenger(new Handler() {
+    private static Messenger mMessenger = new Messenger(new Handler() {
 
         @Override
         public void handleMessage(Message message) {
@@ -73,6 +73,7 @@ public class LoungeServiceController {
                 for (LoungeServiceCallback loungeServiceCallback : mLoungeServiceCallbackSet) {
                     loungeServiceCallback.onGameMessage(matchId, data);
                 }
+                break;
 
             default:
                 Ln.v("Handler.handleMessage(): message = %s", message);
@@ -108,31 +109,29 @@ public class LoungeServiceController {
         if (mLoungeService == null) {
             Intent serviceIntent = new Intent(pContext, LoungeService.class);
             serviceIntent.putExtra("client-messenger", mMessenger);
-            pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+            pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE | Context.BIND_DEBUG_UNBIND);
         } else {
-            try {
-                mLoungeService.reconnect();
-            } catch (RemoteException e) {
-                Ln.e(e, "bindServiceTo(): caught exception while reconnecting");
-            }
+            Ln.w("bindServiceTo(): mLoungeService not null");
         }
     }
 
     public void registerCallback(LoungeServiceCallback pLoungeServiceCallback) {
         Ln.v("registerCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
         mLoungeServiceCallbackSet.add(pLoungeServiceCallback);
+        Ln.d("registerCallback(): [%s] mLoungeServiceCallbackSet = %s", this, mLoungeServiceCallbackSet);
     }
 
     public void unregisterCallback(LoungeServiceCallback pLoungeServiceCallback) {
         Ln.v("unregisterCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
         mLoungeServiceCallbackSet.remove(pLoungeServiceCallback);
+        Ln.d("unregisterCallback(): [%s] mLoungeServiceCallbackSet = %s", this, mLoungeServiceCallbackSet);
     }
 
     public void unbindServiceFrom(Context pContext) {
         Ln.v("unbindServiceFrom()");
-        if (mLoungeServiceCallbackSet.isEmpty()) {
-            pContext.unbindService(mServiceConnection);
-        }
+        pContext.unbindService(mServiceConnection);
+        // reseting the value as unbind is NOT causing ServiceConnection.onServiceDisconnected() callback
+        mLoungeService = null;
     }
 
     public void login(String pPlayerName) {
