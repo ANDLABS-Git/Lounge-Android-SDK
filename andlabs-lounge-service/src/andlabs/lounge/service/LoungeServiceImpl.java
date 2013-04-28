@@ -179,6 +179,11 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
+    public void requestUpdate() {
+        mLoungeMessageProcessor.requestUpdate();
+    }
+
+    @Override
     public void chat(String message) {
         // TODO Auto-generated method stub
 
