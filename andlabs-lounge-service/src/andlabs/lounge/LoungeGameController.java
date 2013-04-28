@@ -16,6 +16,12 @@ public class LoungeGameController {
     private LoungeServiceCallback mLoungeServiceCallback = new LoungeServiceCallback() {
 
         @Override
+        public String toString() {
+            return "LoungeServiceCallback (Game)";
+        };
+
+
+        @Override
         public void theAnswerIs42() {
             Ln.v("LoungeServiceCallback.theAnswerIs42(): Universal Answer ;-)");
         }
