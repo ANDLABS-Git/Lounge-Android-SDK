@@ -69,7 +69,6 @@ public class LoungeGameController {
         }
 
 
-
         @Override
         public void onGameMessage(String pMatchID, Bundle pMsg) {
             if(pMatchID.equals(mCheckinMatchId) && mLoungeGameCallback != null) {  // TODO: move this condition to messageprocessor
@@ -77,6 +76,7 @@ public class LoungeGameController {
                 mLoungeGameCallback.onGameMessage(pMsg);
             }
         }
+
     };
     private String mCheckinMatchId;
 

@@ -99,7 +99,6 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             bundle.putBundle("data", pParams);
             message.setData(bundle);
             mMessageHandler.send(message);
-
         }
 
     };
@@ -141,7 +140,6 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         }
     }
 
-
     @Override
     public void disconnect() {
         Ln.v("disconnect():");
@@ -149,6 +147,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
             mSocketIO.disconnect();
         }
     }
+ 
     @Override
     public void login(String playerId) {
         Ln.v("login(): playerId = %s", playerId);
@@ -168,7 +167,6 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
     @Override
     public void openMatch(String pPackageId, String pDisplayName) {
-
         Ln.v("openMatch(): pPackageId = %s, pDisplayName = %s", pPackageId, pDisplayName);
         try {
             // PAYLOAD {gameID: "packageID", gameName: ”AppName”,
