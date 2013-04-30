@@ -1,6 +1,8 @@
 /*
- *  Copyright (C) 2012,2013 ANDLABS. All rights reserved. 
- *  Lounge@andlabs.com
+ * Copyright (C) 2012, 2013 ANDLABS GmbH. All rights reserved.
+ *
+ * www.lounge.andlabs.com
+ * lounge@andlabs.com
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package andlabs.lounge.lobby;
 
 import java.util.ArrayList;
@@ -22,10 +25,11 @@ import java.util.List;
 import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.model.Game;
 
-public interface LoungeLobbyCallback {
+public class LoungeLobbyCallback {
 
-
-    public void onChatDataUpdated(List<ChatMessage> data);
+    public void onChatDataUpdated(List<ChatMessage> data) {
+        
+    }
 
 
     /**
@@ -34,7 +38,9 @@ public interface LoungeLobbyCallback {
      * 
      * @param chatLog
      */
-    public void onNewChatLog(List<ChatMessage> chatLog);
+    public void onNewChatLog(List<ChatMessage> chatLog) {
+        
+    }
 
 
     /**

@@ -1,13 +1,8 @@
 /*
-<<<<<<< HEAD
- *  Copyright (C) 2012,2013 ANDLABS. All rights reserved. 
- *  Lounge@andlabs.com
-=======
  * Copyright (C) 2012, 2013 ANDLABS GmbH. All rights reserved.
  *
  * www.lounge.andlabs.com
  * lounge@andlabs.com
->>>>>>> 2fda34e2ea7115925e4c4b0fc4e4ab04222dffa0
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 2fda34e2ea7115925e4c4b0fc4e4ab04222dffa0
 package andlabs.lounge.lobby;
 
 import java.util.ArrayList;
