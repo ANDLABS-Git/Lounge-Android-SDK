@@ -43,7 +43,9 @@ public interface LoungeLobbyCallback {
      * 
      * @param chatMsg
      */
-    public void onNewChatMessage(ChatMessage chatMsg);
+    public void onNewChatMessage(ChatMessage chatMsg) {
+        
+    }
 
 
     /**
@@ -52,7 +54,9 @@ public interface LoungeLobbyCallback {
      * 
      * @param pGames
      */
-    public void onRunningGamesUpdate(ArrayList<Game> pGames);
+    public void onRunningGamesUpdate(ArrayList<Game> pGames) {
+        
+    }
 
 
     /**
@@ -61,6 +65,8 @@ public interface LoungeLobbyCallback {
      * 
      * @param pGames
      */
-    public void onOpenGamesUpdate(ArrayList<Game> pGames);
+    public void onOpenGamesUpdate(ArrayList<Game> pGames) {
+        
+    }
 
 }

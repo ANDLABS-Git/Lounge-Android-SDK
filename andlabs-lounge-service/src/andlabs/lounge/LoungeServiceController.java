@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2012, 2013 ANDLABS GmbH. All rights reserved.
+ *
+ * www.lounge.andlabs.com
+ * lounge@andlabs.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package andlabs.lounge;
 
 import java.io.Serializable;
@@ -24,11 +43,11 @@ import android.os.RemoteException;
 
 public class LoungeServiceController {
 
-    private Set<LoungeServiceCallback> mLoungeServiceCallbackSet = new HashSet<LoungeServiceCallback>();
+    private static Set<LoungeServiceCallback> mLoungeServiceCallbackSet = new HashSet<LoungeServiceCallback>();
 
     //TODO: Use weak reference to get rid of leak
     @SuppressLint("HandlerLeak")
-    Messenger mMessenger = new Messenger(new Handler() {
+    private static Messenger mMessenger = new Messenger(new Handler() {
 
         @Override
         public void handleMessage(Message message) {
@@ -73,6 +92,7 @@ public class LoungeServiceController {
                 for (LoungeServiceCallback loungeServiceCallback : mLoungeServiceCallbackSet) {
                     loungeServiceCallback.onGameMessage(matchId, data);
                 }
+                break;
 
             default:
                 Ln.v("Handler.handleMessage(): message = %s", message);
@@ -96,23 +116,15 @@ public class LoungeServiceController {
             Ln.v("ServiceConnection.onServiceConnected():");
             mLoungeService = LoungeServiceDef.Stub.asInterface(service);
             try {
-                mLoungeService.connect();
+                mLoungeService.requestUpdate();
             } catch (RemoteException e) {
-                Ln.e(e, "ServiceConnection.onServiceConnected(): caught exception while connecting");
+                Ln.e(e, "onServiceConnected(): caught exception while processing triggerUpdate");
             }
         }
 
     };
 
-    private static LoungeServiceController mInstance;
-    public static LoungeServiceController getInstance() {
-        if (mInstance == null) {
-            mInstance = new LoungeServiceController();
-        }
-        return mInstance;
-    }
-
-    private LoungeServiceController() {
+    public LoungeServiceController() {
         
     }
 
@@ -121,31 +133,29 @@ public class LoungeServiceController {
         if (mLoungeService == null) {
             Intent serviceIntent = new Intent(pContext, LoungeService.class);
             serviceIntent.putExtra("client-messenger", mMessenger);
-            pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+            pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE | Context.BIND_DEBUG_UNBIND);
         } else {
-            try {
-                mLoungeService.reconnect();
-            } catch (RemoteException e) {
-                Ln.e(e, "bindServiceTo(): caught exception while reconnecting");
-            }
+            Ln.w("bindServiceTo(): mLoungeService not null");
         }
     }
 
     public void registerCallback(LoungeServiceCallback pLoungeServiceCallback) {
         Ln.v("registerCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
         mLoungeServiceCallbackSet.add(pLoungeServiceCallback);
+        Ln.d("registerCallback(): [%s] mLoungeServiceCallbackSet = %s", this, mLoungeServiceCallbackSet);
     }
 
     public void unregisterCallback(LoungeServiceCallback pLoungeServiceCallback) {
         Ln.v("unregisterCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
         mLoungeServiceCallbackSet.remove(pLoungeServiceCallback);
+        Ln.d("unregisterCallback(): [%s] mLoungeServiceCallbackSet = %s", this, mLoungeServiceCallbackSet);
     }
 
     public void unbindServiceFrom(Context pContext) {
         Ln.v("unbindServiceFrom()");
-        if (mLoungeServiceCallbackSet.isEmpty()) {
-            pContext.unbindService(mServiceConnection);
-        }
+        pContext.unbindService(mServiceConnection);
+        // reseting the value as unbind is NOT causing ServiceConnection.onServiceDisconnected() callback
+        mLoungeService = null;
     }
 
     public void login(String pPlayerName) {
@@ -191,15 +201,26 @@ public class LoungeServiceController {
         } catch (RemoteException e) {
             Ln.e(e, "sendGameMove(): caught exception while opening a game move");
         }
+
     }
-    
-    public void streamGameMessage(String pPackageId, String pMatchId, Bundle pMoveBundle) {
-        Ln.v("streamGameMessage(): pPackageId = %s, pMatchId = %s, pMoveBundle = %s", pPackageId, pMatchId, pMoveBundle);
+
+    public void closeMatch(String pPackageId, String pMatchId2) {
+        Ln.v("closeMatch():  pMatchId = %s",  pPackageId);
         try {
-            mLoungeService.stream(pPackageId, pMatchId, pMoveBundle);
+            mLoungeService.closeMatch(pPackageId, pMatchId2);
         } catch (RemoteException e) {
-            Ln.e(e, "streamGameMessage(): caught exception while opening a game move");
+            Ln.e(e, "Error in closeMatch()");
         }
+
+    }
+
+    public void checkout(String pPackageId, String pMatchId) {
+        try {
+            mLoungeService.checkout(pPackageId,pMatchId);
+        } catch (RemoteException e) {
+            Ln.e(e, "Error in CheckOut() "+pMatchId);
+        }
+        
     }
 
 }

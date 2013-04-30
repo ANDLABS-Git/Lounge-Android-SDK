@@ -19,27 +19,27 @@ package andlabs.lounge.lobby.model;
 
 public class ChatMessage {
 
-	private String playerName;
-	private String message;
+    private String playerName;
+    private String message;
 
 
-	public String getPlayerName() {
-		return playerName;
-	}
+    public String getPlayerName() {
+        return playerName;
+    }
 
 
-	public void setPlayerName(String playerName) {
-		this.playerName = playerName;
-	}
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
 
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
 }

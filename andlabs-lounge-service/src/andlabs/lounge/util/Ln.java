@@ -86,14 +86,10 @@ public class Ln {
             stringBuilder.append("(): ");
 
             if (s1 != null) {
-                stringBuilder.append(s1.toString());
+                String message = (args == null) ? s1.toString() : String.format((String) s1, args);
+                stringBuilder.append(message);
             }
 
-            if (args != null) {
-                for (int index = 0; index < args.length; index++) {
-                    stringBuilder.append(args[index]);
-                }
-            }
 
             switch (pType) {
             case Log.VERBOSE:

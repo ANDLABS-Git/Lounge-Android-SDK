@@ -23,7 +23,7 @@ var UserSchema = new Schema
 	gameID: 	{ type: String, trim: true, default: "" },
 	
 	// Current matchID
-	matchID: 	{ type: Schema.Types.ObjectId, ref: 'Match' }
+	matchID: 	{ type: String, trim: true, default: "" }
 });
 
 /**
@@ -213,7 +213,7 @@ UserSchema.statics.checkIn = function(data, socket, callback)
 				{
 					// Store the new location.
 					user.gameID = data.gameID;
-					user.matchID = undefined;
+					user.matchID = '';
 	
 					user.save(function(err)
 					{

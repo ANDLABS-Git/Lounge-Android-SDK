@@ -10,6 +10,8 @@ interface LoungeServiceDef {
 
 	void login(in String playerId);
 
+	void requestUpdate();
+
 	void chat(in String message);
 
 	void openMatch(in String pPackageId, in String pDisplayName);
@@ -24,4 +26,7 @@ interface LoungeServiceDef {
 
 	void stream(in String pPackageId, in String pMatchId, in Bundle pMoveBundle);
 
+		void closeMatch(in String pPackageId,in String pMatchId);
+
+	void checkout(in String pPackageId, in String pMatchId);
 }

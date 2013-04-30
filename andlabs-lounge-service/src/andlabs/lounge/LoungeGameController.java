@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2012, 2013 ANDLABS GmbH. All rights reserved.
+ *
+ * www.lounge.andlabs.com
+ * lounge@andlabs.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package andlabs.lounge;
 
 import java.util.Map;
@@ -12,8 +31,15 @@ public class LoungeGameController {
 
     private String mPackageId;
     private LoungeGameCallback mLoungeGameCallback;
-    private LoungeServiceController mLoungeServiceController = LoungeServiceController.getInstance();
+    private LoungeGameCallback mIdleLoungeGameController = new LoungeGameCallback();
+    private LoungeServiceController mLoungeServiceController = new LoungeServiceController();
     private LoungeServiceCallback mLoungeServiceCallback = new LoungeServiceCallback() {
+
+        @Override
+        public String toString() {
+            return "LoungeServiceCallback (Game)";
+        };
+
 
         @Override
         public void theAnswerIs42() {
@@ -63,7 +89,6 @@ public class LoungeGameController {
         }
 
 
-
         @Override
         public void onGameMessage(String pMatchID, Bundle pMsg) {
             if(pMatchID.equals(mCheckinMatchId) && mLoungeGameCallback != null) {  // TODO: move this condition to messageprocessor
@@ -71,6 +96,7 @@ public class LoungeGameController {
                 mLoungeGameCallback.onGameMessage(pMsg);
             }
         }
+
     };
     private String mCheckinMatchId;
 
@@ -91,7 +117,7 @@ public class LoungeGameController {
 
     public void unregisterCallback(LoungeGameCallback pLoungeGameCallback) {
         Ln.v("unregisterCallback(): pLoungeGameCallback = %s", pLoungeGameCallback);
-        mLoungeGameCallback = null;
+        mLoungeGameCallback = mIdleLoungeGameController;
     }
 
 
@@ -109,10 +135,10 @@ public class LoungeGameController {
     }
 
 
-    private void checkout(String pMatchId) {
+    public void checkout(String pMatchId) {
         mCheckinMatchId = null;
         Ln.v("checkout(): pMatchId = %s", pMatchId);
-        // TODO wire it to the corresponding LoungeServiceController method
+        mLoungeServiceController.checkout(mPackageId,pMatchId);
     }
 
 
@@ -122,7 +148,13 @@ public class LoungeGameController {
     }
 
     public void streamGameMessage(String pMatchId, Bundle pMoveBundle) {
+        //Remove this? Game doesnt know if it is stream or move, but the server does
         Ln.v("streamGameMessage(): pMatchId = %s, pMoveBundle = %s", pMatchId, pMoveBundle);
-        mLoungeServiceController.streamGameMessage(mPackageId, pMatchId, pMoveBundle);
+//        mLoungeServiceController.streamGameMessage(mPackageId, pMatchId, pMoveBundle);
     }
+    public void closeMatch(String pMatchId) {
+        Ln.v("closeMatch(): pMatchId = %s, ",pMatchId);
+        mLoungeServiceController.closeMatch(mPackageId,pMatchId);
+    }
+
 }
