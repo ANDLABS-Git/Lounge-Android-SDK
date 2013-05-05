@@ -148,6 +148,7 @@ public class ColorAnimatorTask extends AsyncTask<ViewColorAnimationHolder, Float
      */
     public void add(ViewColorAnimationHolder holder) {
         synchronized (this.views) {
+            holder.setId(this.views.size());
             this.views.add(holder);
         }
     }
@@ -165,6 +166,7 @@ public class ColorAnimatorTask extends AsyncTask<ViewColorAnimationHolder, Float
     public ViewColorAnimationHolder add(View view, int colorA, int colorB) {
         ViewColorAnimationHolder holder = new ViewColorAnimationHolder(view, colorA, colorB);
         synchronized (this.views) {
+            holder.setId(this.views.size());
             this.views.add(holder);
         }
 
@@ -208,30 +210,36 @@ public class ColorAnimatorTask extends AsyncTask<ViewColorAnimationHolder, Float
      */
     public static class ViewColorAnimationHolder {
 
-        private View view;
-        private int colorA;
-        private int colorB;
+        private View mView;
+        private int mColorA;
+        private int mColorB;
+        private int mId;
 
 
         public ViewColorAnimationHolder(View view, int colorA, int colorB) {
-            this.view = view;
-            this.colorA = colorA;
-            this.colorB = colorB;
+            this.mView = view;
+            this.mColorA = colorA;
+            this.mColorB = colorB;
+        }
+
+
+        public void setId(int pId) {
+            mId = pId;
         }
 
 
         public View getView() {
-            return this.view;
+            return this.mView;
         }
 
 
         public int getColorA() {
-            return this.colorA;
+            return this.mColorA;
         }
 
 
         public int getColorB() {
-            return this.colorB;
+            return this.mColorB;
         }
 
 
@@ -239,12 +247,9 @@ public class ColorAnimatorTask extends AsyncTask<ViewColorAnimationHolder, Float
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + colorB;
-            result = prime * result + colorA;
-            result = prime * result + ((view == null) ? 0 : view.hashCode());
+            result = prime * result + mId;
             return result;
         }
-
 
         @Override
         public boolean equals(Object obj) {
@@ -255,14 +260,7 @@ public class ColorAnimatorTask extends AsyncTask<ViewColorAnimationHolder, Float
             if (getClass() != obj.getClass())
                 return false;
             ViewColorAnimationHolder other = (ViewColorAnimationHolder) obj;
-            if (colorB != other.colorB)
-                return false;
-            if (colorA != other.colorA)
-                return false;
-            if (view == null) {
-                if (other.view != null)
-                    return false;
-            } else if (!view.equals(other.view))
+            if (mId != other.mId)
                 return false;
             return true;
         }

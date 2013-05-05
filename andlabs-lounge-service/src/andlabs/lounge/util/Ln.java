@@ -86,8 +86,8 @@ public class Ln {
             stringBuilder.append("(): ");
 
             if (s1 != null) {
-                String message = (args == null) ? s1.toString() : String.format((String) s1, args);
-                stringBuilder.append(message);
+//                String message = (args == null) ? s1.toString() : String.format((String) s1, args);
+//                stringBuilder.append(message);
             }
 
 

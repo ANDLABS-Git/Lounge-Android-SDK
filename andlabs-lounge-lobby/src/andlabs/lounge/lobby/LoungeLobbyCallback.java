@@ -28,7 +28,7 @@ import andlabs.lounge.model.Game;
 public class LoungeLobbyCallback {
 
     public void onChatDataUpdated(List<ChatMessage> data) {
-        
+
     }
 
 
@@ -39,7 +39,7 @@ public class LoungeLobbyCallback {
      * @param chatLog
      */
     public void onNewChatLog(List<ChatMessage> chatLog) {
-        
+
     }
 
 
@@ -50,7 +50,7 @@ public class LoungeLobbyCallback {
      * @param chatMsg
      */
     public void onNewChatMessage(ChatMessage chatMsg) {
-        
+
     }
 
 
@@ -61,7 +61,7 @@ public class LoungeLobbyCallback {
      * @param pGames
      */
     public void onRunningGamesUpdate(ArrayList<Game> pGames) {
-        
+
     }
 
 
@@ -72,7 +72,7 @@ public class LoungeLobbyCallback {
      * @param pGames
      */
     public void onOpenGamesUpdate(ArrayList<Game> pGames) {
-        
+
     }
 
 }
