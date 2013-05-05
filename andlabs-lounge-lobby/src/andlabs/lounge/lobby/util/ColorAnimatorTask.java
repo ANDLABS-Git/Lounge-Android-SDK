@@ -85,13 +85,13 @@ public class ColorAnimatorTask extends AsyncTask<ViewColorAnimationHolder, Float
         this.startProportion = startProportion;
         this.endProportion = endProportion;
         this.intervallDuration = intervallDuration;
+        
+        this.views = new HashSet<ColorAnimatorTask.ViewColorAnimationHolder>();
     }
 
 
     @Override
     protected Void doInBackground(ViewColorAnimationHolder... views) {
-
-        this.views = new HashSet<ColorAnimatorTask.ViewColorAnimationHolder>(Arrays.asList(views));
 
         this.running = true;
 
@@ -183,6 +183,17 @@ public class ColorAnimatorTask extends AsyncTask<ViewColorAnimationHolder, Float
         this.views.remove(holder);
     }
 
+    /**
+     * Remove a {@link ViewColorAnimationHolder} from the animation set using its ID
+     * 
+     * @param holder
+     */
+    public void remove(int pId) {
+        if(pId >= -1) {
+            this.views.remove(pId);
+        }
+    }
+
 
     /**
      * Returns whether this Task is running or not. Works only when {@link #cancelTask()} is used instead of
@@ -225,6 +236,10 @@ public class ColorAnimatorTask extends AsyncTask<ViewColorAnimationHolder, Float
 
         public void setId(int pId) {
             mId = pId;
+        }
+       
+        public int getId() {
+            return mId;
         }
 
 

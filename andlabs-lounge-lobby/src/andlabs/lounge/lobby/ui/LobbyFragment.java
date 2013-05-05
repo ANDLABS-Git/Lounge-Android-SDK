@@ -25,6 +25,7 @@ import andlabs.lounge.lobby.LoungeLobbyController;
 import andlabs.lounge.lobby.R;
 import andlabs.lounge.lobby.mock.TestData;
 import andlabs.lounge.lobby.model.ChatMessage;
+import andlabs.lounge.lobby.ui.LobbyListAdapter.RowDataHolder;
 import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;
@@ -302,7 +303,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         Ln.v(" game = %s, match = %s", game, match);
 
         // If the game is open...
-        if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) {
+        if (((RowDataHolder) v.getTag()).mType == LobbyListAdapter.TYPE_OPENGAME) {
             final String gameID = game.gameID;
             if (Utils.isGameInstalled(getActivity(), gameID)) { // ...and
                                                                 // installed,

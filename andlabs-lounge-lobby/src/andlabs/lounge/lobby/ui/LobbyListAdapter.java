@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import andlabs.lounge.lobby.R;
+import andlabs.lounge.lobby.util.ColorAnimatorTask;
+import andlabs.lounge.lobby.util.Id;
 import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.model.Game;
@@ -53,16 +55,21 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     private List<Game> mJoinedGames = new ArrayList<Game>();
     private List<Game> mOpenGames = new ArrayList<Game>();
     private PlayParser mParser;
-    
+
     private LayoutInflater mInflater;
     private boolean mSeparatorFlag;
     private Context mContext;
+
+    private ColorAnimatorTask mAnimatorTask;
 
 
     public LobbyListAdapter(Context pContext) {
         mInflater = (LayoutInflater) pContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mContext = pContext;
         mParser = PlayParser.getInstance(pContext);
+
+        mAnimatorTask = new ColorAnimatorTask(pContext);
+        mAnimatorTask.execute(null);
     }
 
 
@@ -105,53 +112,48 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
                 isLastChild);
 
         int type = getChildType(groupPosition, childPosition);
-        if (convertView == null || convertView.getId() != type) {
-            // When it is a new view or not recycleable because its a different
+        if (convertView == null || ((RowDataHolder) convertView.getTag()).mType != type) {
+            // When it is a new view or not recycleable because its a
+            // different
             // view type
-
-            if (convertView == null || (Integer) convertView.getTag() != type) {
-                // When it is a new view or not recycleable because its a
-                // different
-                // view type
-
-                switch (type) {
-                    case TYPE_JOINEDGAME:
-                        convertView = mInflater.inflate(R.layout.lobby_match_list_entry_2players, parent, false);
-                        break;
-
-                    case TYPE_SEPARATOR:
-                        convertView = mInflater.inflate(R.layout.lobby_seperator, null);
-                        break;
-
-                    case TYPE_OPENGAME:
-                        convertView = mInflater.inflate(R.layout.lobby_match_list_open_entry, null);
-                        break;
-                }
-
-            }
 
             switch (type) {
                 case TYPE_JOINEDGAME:
-                    fillJoinedGameView(groupPosition, childPosition, convertView);
+                    convertView = mInflater.inflate(R.layout.lobby_match_list_entry_2players, parent, false);
                     break;
 
                 case TYPE_SEPARATOR:
+                    convertView = mInflater.inflate(R.layout.lobby_seperator, null);
                     break;
 
                 case TYPE_OPENGAME:
-                    fillOpenMatchView(groupPosition, childPosition, convertView);
+                    convertView = mInflater.inflate(R.layout.lobby_match_list_open_entry, null);
                     break;
             }
 
         }
 
-        convertView.setTag(type);
+        int rowAnimatorId = -1;
+        switch (type) {
+            case TYPE_JOINEDGAME:
+                rowAnimatorId = fillJoinedGameView(groupPosition, childPosition, convertView);
+                break;
+
+            case TYPE_SEPARATOR:
+                break;
+
+            case TYPE_OPENGAME:
+                rowAnimatorId = fillOpenMatchView(groupPosition, childPosition, convertView);
+                break;
+        }
+
+        convertView.setTag(new RowDataHolder(type, rowAnimatorId));
 
         return convertView;
     }
 
 
-    private void fillOpenMatchView(final int groupPosition, final int childPosition, final View convertView) {
+    private int fillOpenMatchView(final int groupPosition, final int childPosition, final View convertView) {
         TextView hostname = (TextView) convertView.findViewById(R.id.hostname);
         TextView playercount = (TextView) convertView.findViewById(R.id.playercount);
         final Match match = (Match) getChild(groupPosition, childPosition);
@@ -176,15 +178,19 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
             }
         });
+
+        return -1;
     }
 
 
-    private void fillJoinedGameView(int groupPosition, int childPosition, final View convertView) {
+    private int fillJoinedGameView(int groupPosition, int childPosition, final View convertView) {
         final TextView player1Label = (TextView) convertView.findViewById(R.id.playerLbl1);
-        TextView player2Label = (TextView) convertView.findViewById(R.id.playerLbl2);
+        final TextView player2Label = (TextView) convertView.findViewById(R.id.playerLbl2);
 
         final View player1Beacon = convertView.findViewById(R.id.playerBeacon1);
-        View player2Beacon = convertView.findViewById(R.id.playerBeacon2);
+        final View player2Beacon = convertView.findViewById(R.id.playerBeacon2);
+
+        final View matchView = convertView.findViewById(R.id.match);
 
         final Match match = (Match) getChild(groupPosition, childPosition);
 
@@ -213,14 +219,26 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         } else {
             TableRow.LayoutParams params2 = (LayoutParams) player2Beacon.getLayoutParams();
             TableRow.LayoutParams params1 = (LayoutParams) player1Beacon.getLayoutParams();
+           
+            //TODO: Use dp on this magic number, this is really bad style.
             params2.leftMargin = 15;
-            // params2.rightMargin=20;
             player2Beacon.setLayoutParams(params2);
-
-            // params1.leftMargin=20;
+            
+            //TODO: Use dp on this magic number, this is really bad style.
             params1.rightMargin = 15;
             player1Beacon.setLayoutParams(params1);
         }
+
+        // Make the background pulse (or not)
+        int rowAnimatorId = convertView.getTag() != null ? ((RowDataHolder) convertView.getTag()).mViewAnimatorHolderId : -1;
+
+        Ln.v("rowAnimatorId = " + rowAnimatorId + ", playerOnTurn is " + match.playerOnTurn);
+        mAnimatorTask.remove(rowAnimatorId);
+        if (Id.getName(mContext).equals(match.playerOnTurn)) {
+            rowAnimatorId = mAnimatorTask.add(matchView, Color.BLUE, Color.RED).getId();
+        }
+
+        return rowAnimatorId;
     }
 
 
@@ -276,9 +294,9 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
         Object group = getGroup(groupPosition);
         int type = getGroupType(groupPosition);
-        if (convertView == null || (Integer) convertView.getTag() != type) { // When
-                                                                             // it
-                                                                             // is
+        if (convertView == null || ((RowDataHolder) convertView.getTag()).mType != type) { // When
+            // it
+            // is
             // a new view or not recycleable because its a different view type
 
             switch (type) {
@@ -308,7 +326,8 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
                 createGameView((Game) group, convertView, false);
                 break;
         }
-        convertView.setTag(type);
+
+        convertView.setTag(new RowDataHolder(type, -1));
         return convertView;
 
     }
@@ -391,5 +410,17 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     @Override
     public int getGroupTypeCount() {
         return 3;
+    }
+
+    public static class RowDataHolder {
+
+        int mViewAnimatorHolderId;
+        int mType;
+
+
+        RowDataHolder(int pType, int pViewAnimatorHolderId) {
+            this.mType = pType;
+            this.mViewAnimatorHolderId = pViewAnimatorHolderId;
+        }
     }
 }

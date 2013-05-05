@@ -92,6 +92,7 @@ public class TestData {
 
     }
 
+    private static boolean sFirst = true;
     /**
      * Create a new match
      * 
@@ -105,6 +106,12 @@ public class TestData {
 
         final Match match = new Match();
         match.totalSpots = pMaxPlayers;
+
+        if(sFirst) {
+            match.playerOnTurn = "test";
+            sFirst = false;
+        }
+
         for (Player player : pPlayer) {
             match.players.add(player);
         }
@@ -148,6 +155,7 @@ public class TestData {
         // Add only one player, meaning three spots are still open
         match.players.add(pPlayer);
         // Add the match to the open game
+        
         openGame.matches.put(match.matchID, match);
 
         return openGame;

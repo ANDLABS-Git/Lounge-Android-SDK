@@ -101,8 +101,8 @@ public class Utils implements LoungeConstants {
     public static int ipc(Context context, int colorA, int colorB, float proportion) {
         float[] hsva = new float[3];
         float[] hsvb = new float[3];
-        Color.colorToHSV(context.getResources().getColor(colorA), hsva);
-        Color.colorToHSV(context.getResources().getColor(colorB), hsvb);
+        Color.colorToHSV(colorA, hsva);
+        Color.colorToHSV(colorB, hsvb);
         for (int i = 0; i < 3; i++) {
             hsvb[i] = Utils.interpolate(hsva[i], hsvb[i], proportion);
         }
