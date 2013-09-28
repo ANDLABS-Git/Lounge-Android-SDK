@@ -26,7 +26,7 @@ interface LoungeServiceDef {
 
 	void stream(in String pPackageId, in String pMatchId, in Bundle pMoveBundle);
 
-		void closeMatch(in String pPackageId,in String pMatchId);
+	void closeMatch(in String pPackageId,in String pMatchId);
 
 	void checkout(in String pPackageId, in String pMatchId);
 }
