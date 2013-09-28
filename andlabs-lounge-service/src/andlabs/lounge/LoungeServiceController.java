@@ -21,9 +21,9 @@ package andlabs.lounge;
 
 import java.io.Serializable;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import andlabs.lounge.model.Game;
 import andlabs.lounge.service.LoungeService;
@@ -75,8 +75,8 @@ public class LoungeServiceController {
                 Serializable involvedGames = message.getData().getSerializable("involvedGameList");
                 Serializable openGames = message.getData().getSerializable("openGameList");
                 for (LoungeServiceCallback loungeServiceCallback : mLoungeServiceCallbackSet) {
-                    loungeServiceCallback.onOpenGamesUpdate((ConcurrentHashMap<String, Game>) openGames);
-                    loungeServiceCallback.onRunningGamesUpdate((ConcurrentHashMap<String, Game>) involvedGames);
+                    loungeServiceCallback.onOpenGamesUpdate((HashMap<String, Game>) openGames);
+                    loungeServiceCallback.onRunningGamesUpdate((HashMap<String, Game>) involvedGames);
                 }
                 break;
 
