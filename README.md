@@ -1,4 +1,4 @@
-Lounge-Server
-=============
+Lounge-Android-SDK
+==================
 
-Lounge Multiplayer Framework Server Backend Component
+Lounge Android SDK
