@@ -136,7 +136,7 @@ public abstract class LoungeMessageProcessor {
                 match.totalSpots = payload.getInt("totalSpots");
                 match.status = payload.getString("status");
 
-                if ("close".equals(match.status)) {
+                if ("closed".equals(match.status)) {
 
                     if (openGame != null) {
                         openGame.matches.remove(matchID);
