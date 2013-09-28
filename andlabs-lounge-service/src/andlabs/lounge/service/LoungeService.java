@@ -19,9 +19,6 @@
 
 package andlabs.lounge.service;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import andlabs.lounge.util.Ln;
 import android.app.Service;
 import android.content.BroadcastReceiver;
