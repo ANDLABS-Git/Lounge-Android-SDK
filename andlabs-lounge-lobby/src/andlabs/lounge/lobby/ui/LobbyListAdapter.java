@@ -220,6 +220,9 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
             // params1.leftMargin=20;
             params1.rightMargin = 0;
             player1Beacon.setLayoutParams(params1);
+        } else if("close".equalsIgnoreCase(match.status)) {
+            player1Beacon.setBackgroundColor(Color.GRAY);
+            player2Beacon.setBackgroundColor(Color.GRAY);
         } else {
             TableRow.LayoutParams params2 = (LayoutParams) player2Beacon.getLayoutParams();
             TableRow.LayoutParams params1 = (LayoutParams) player1Beacon.getLayoutParams();

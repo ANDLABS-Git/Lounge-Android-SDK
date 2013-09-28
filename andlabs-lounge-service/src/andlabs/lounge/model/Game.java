@@ -27,6 +27,7 @@ public class Game implements Serializable {
 
     public String gameID;
     public String gameName;
+    boolean isActive;
 
     // Not in game but in match public int totalSpots;
     // Not in game but in match public String status;
