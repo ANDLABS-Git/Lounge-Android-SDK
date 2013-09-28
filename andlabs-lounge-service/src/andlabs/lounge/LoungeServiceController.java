@@ -147,13 +147,13 @@ public class LoungeServiceController {
     public void registerCallback(LoungeServiceCallback pLoungeServiceCallback) {
         Ln.v("registerCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
         mLoungeServiceCallbackSet.add(pLoungeServiceCallback);
-        Ln.d("registerCallback(): [%s] mLoungeServiceCallbackSet = %s", this, mLoungeServiceCallbackSet);
+        Ln.d("registerCallback(): mLoungeServiceCallbackSet = %s", mLoungeServiceCallbackSet);
     }
 
     public void unregisterCallback(LoungeServiceCallback pLoungeServiceCallback) {
         Ln.v("unregisterCallback(): pLoungeServiceCallback = %s", pLoungeServiceCallback);
         mLoungeServiceCallbackSet.remove(pLoungeServiceCallback);
-        Ln.d("unregisterCallback(): [%s] mLoungeServiceCallbackSet = %s", this, mLoungeServiceCallbackSet);
+        Ln.d("unregisterCallback(): mLoungeServiceCallbackSet = %s", mLoungeServiceCallbackSet);
     }
 
     public void unbindServiceFrom(Context pContext) {
