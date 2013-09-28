@@ -66,6 +66,11 @@ public class LoungeServiceController {
                 }
                 break;
 
+            case 2:
+                Ln.v("Handler.handleMessage(): Server disconnected ... do something");
+                
+                break;
+
             case 7:
                 try {
                     Ln.v("Handler.handleMessage(): Getting update for games/matches/players: %s", message.getData());

@@ -74,6 +74,11 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         @Override
         public void onDisconnect() {
             Ln.d("IOCallback.onDisconnect():");
+
+            Message message = Message.obtain();
+            message.what = 2;
+            message.setData(Bundle.EMPTY);
+            mMessageHandler.send(message);
         }
 
         @Override
