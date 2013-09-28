@@ -34,8 +34,6 @@
                 <category android:name="eu.andlabs.lounge" />
             </intent-filter>
         </activity>
-
-        <service android:name="andlabs.lounge.service.LoungeService" />
     </application>
 
 </manifest>
