@@ -21,6 +21,7 @@ package andlabs.lounge.lobby.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import andlabs.lounge.lobby.LoungeLobbyController;
 import andlabs.lounge.lobby.R;
 import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
@@ -68,6 +69,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
 
+    LoungeLobbyController mLoungeLobbyController;
 
     public LobbyListAdapter(Context pContext) {
         mInflater = (LayoutInflater) pContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -169,8 +171,10 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         hostname.setText(match.players.get(0).playerID);
         playercount.setText(match.players.size() + "/" + match.totalSpots);
         final LinearLayout joinBtn = (LinearLayout) convertView.findViewById(R.id.joinBtn);
+        convertView.findViewById(R.id.joinInProgress).setVisibility(View.INVISIBLE);
         if (Utils.isGameInstalled(mContext, game.gameID)) {
             convertView.findViewById(R.id.playstoreIcon).setVisibility(View.GONE);
+            joinBtn.setVisibility(View.VISIBLE);
         } else {
             joinBtn.setVisibility(View.GONE);
             convertView.findViewById(R.id.playstoreIcon).setVisibility(View.VISIBLE);
@@ -183,7 +187,12 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
                 Ln.v("OnClickListener.onClick(groupPosition = %d, childPosition = %d", groupPosition, childPosition);
                 joinBtn.setVisibility(View.GONE);
                 convertView.findViewById(R.id.joinInProgress).setVisibility(View.VISIBLE);
-
+                final String gameID = game.gameID;
+                if (Utils.isGameInstalled(mContext, gameID)) { // ...and installed, join it...
+                    mLoungeLobbyController.joinMatch(gameID, match.matchID);
+                } else { // ...otherwise, open the play store
+                    Utils.openPlay(mContext, gameID);
+                }
             }
         });
     }
@@ -404,5 +413,11 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
     @Override
     public int getGroupTypeCount() {
         return 3;
+    }
+
+
+    public void setLoungeController(LoungeLobbyController loungeLobbyController) {
+       mLoungeLobbyController=loungeLobbyController;
+        
     }
 }

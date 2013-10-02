@@ -126,6 +126,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
         mLobbyAdapter = new LobbyListAdapter(getActivity());
         mLobbyList.setAdapter(mLobbyAdapter);
+        mLobbyAdapter.setLoungeController(mLoungeLobbyController);
 
         mLobbyAdapter.setJoinedGames(TestData.getJoinedGames());
         mLobbyAdapter.setOpenGames(TestData.getOpenGames());
