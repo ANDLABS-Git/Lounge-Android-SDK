@@ -189,13 +189,23 @@ public class LoungeServiceController {
         }
     }
 
-    public void checkin(String pPackageId, String pMatchId) {
+    public void checkin(final String pPackageId, final String pMatchId) {
         Ln.v("checkin(): pPackageId = %s, pMatchId = %s", pPackageId, pMatchId);
-        try {
-            mLoungeService.checkin(pPackageId, pMatchId);
-        } catch (RemoteException e) {
-            Ln.e(e, "checkin(): caught exception while checkin a match");
-        }
+        new Thread() {
+            public void run() {
+                try {
+                    while (mLoungeService == null) {
+                        Ln.w("checkin(): service binding not yet done ... sleeping 1 sec");
+                        Thread.sleep(1000);                    
+                    }
+                    mLoungeService.checkin(pPackageId, pMatchId);
+                } catch (RemoteException e) {
+                    Ln.e(e, "checkin(): caught exception while checkin a match");
+                } catch (InterruptedException e) {
+                    Ln.e(e, "checkin(): caught exception while checkin a match");
+                }
+            };
+        }.start();
     }
 
     public void sendGameMove(String pPackageId, String pMatchId, Bundle pMoveBundle) {
