@@ -34,7 +34,7 @@ import android.net.Uri;
 
 public class Utils implements LoungeConstants {
 
-    public static final String CATEGORY = "eu.andlabs.lounge";
+    public static final String CATEGORY = "andlabs.lounge.category.GAME";
 
 
     public static List<ResolveInfo> getInstalledLoungeGames(Context ctx) {

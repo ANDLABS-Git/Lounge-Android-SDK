@@ -22,16 +22,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="eu.andlabs.lounge" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="andlabs.lounge.lobby.ui.LoungeActivity"
-            android:label="ANDLABS LOUNGE"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
+                <category android:name="andlabs.lounge.category.GAME" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
