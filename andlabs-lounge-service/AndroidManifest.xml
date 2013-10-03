@@ -14,7 +14,11 @@
 
         <service
             android:name="andlabs.lounge.service.LoungeService"
-            android:process="andlabs.lounge" />
+            android:process="andlabs.lounge.service">
+            <intent-filter>
+                <action android:name="andlabs.lounge.service.START" />
+            </intent-filter>
+        </service>
         
     </application>
 
