@@ -19,6 +19,10 @@
 package andlabs.lounge.lobby.ui;
 
 import andlabs.lounge.lobby.R;
+import andlabs.lounge.lobby.ui.fragments.AboutFragment;
+import andlabs.lounge.lobby.ui.fragments.ChatFragment;
+import andlabs.lounge.lobby.ui.fragments.LobbyFragment;
+import andlabs.lounge.lobby.ui.fragments.StatsFragment;
 import andlabs.lounge.util.Ln;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;

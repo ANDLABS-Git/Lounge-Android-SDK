@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package andlabs.lounge.lobby.ui;
+package andlabs.lounge.lobby.ui.fragments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,8 @@ import andlabs.lounge.lobby.LoungeLobbyController;
 import andlabs.lounge.lobby.R;
 import andlabs.lounge.lobby.mock.TestData;
 import andlabs.lounge.lobby.model.ChatMessage;
+import andlabs.lounge.lobby.ui.HostGameAdapter;
+import andlabs.lounge.lobby.ui.LobbyListAdapter;
 import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;

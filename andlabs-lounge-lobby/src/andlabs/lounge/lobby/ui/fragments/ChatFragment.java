@@ -16,11 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package andlabs.lounge.lobby.ui;
+package andlabs.lounge.lobby.ui.fragments;
 
 import java.util.ArrayList;
 
 import andlabs.lounge.lobby.R;
+import andlabs.lounge.lobby.ui.ChatListener;
+import andlabs.lounge.lobby.ui.ChatMessage;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
