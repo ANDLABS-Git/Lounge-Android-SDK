@@ -35,6 +35,7 @@ import android.os.Bundle;
 public class LoungeLobbyController {
 
     private String mUserName;
+    private String mUuid;
     private LoungeLobbyCallback mLoungeLobbyCallback;
     private LoungeLobbyCallback mIdleLoungeLobbyCallback = new LoungeLobbyCallback();
     private LoungeServiceController mLoungeServiceController = new LoungeServiceController();
@@ -55,7 +56,7 @@ public class LoungeLobbyController {
         @Override
         public void onStart() {
             Ln.v("LoungeServiceCallback.onStart():");
-            mLoungeServiceController.login(mUserName);
+            mLoungeServiceController.login(mUuid,mUserName);
         }
 
 
@@ -110,9 +111,9 @@ public class LoungeLobbyController {
     };
 
 
+
     public void bindServiceTo(Context pContext) {
         Ln.v("bindServiceTo()");
-        mUserName = Id.getName(pContext);
         mLoungeServiceController.registerCallback(mLoungeServiceCallback);
         mLoungeServiceController.bindServiceTo(pContext);
     }
@@ -146,6 +147,13 @@ public class LoungeLobbyController {
     public void joinMatch(String pPackageId, String pMatchId) {
         Ln.v("joinGame(): pPackageId = %s, pMatchId = %s", pPackageId, pMatchId);
         mLoungeServiceController.joinMatch(pPackageId, pMatchId);
+    }
+
+
+    public void setUserId(String uuid,String playerName){
+        mUuid=uuid;
+        mUserName=playerName;
+        
     }
 
 }

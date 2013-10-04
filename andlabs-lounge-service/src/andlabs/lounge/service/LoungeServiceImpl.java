@@ -173,11 +173,11 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
  
     @Override
-    public void login(String playerId) {
+    public void login(String uuid,String playerId) {
         Ln.v("login(): playerId = %s", playerId);
         try {
-            mLoungeMessageProcessor.setMyPlayerId(playerId);
-            mSocketIO.emit("login", new JSONObject().put("playerID", playerId));
+            mLoungeMessageProcessor.setMyPlayerId(uuid,playerId);
+            mSocketIO.emit("login", new JSONObject().put("playerID", playerId).put("uuid", uuid));
         } catch (JSONException e) {
             Ln.e(e, "login(): caught exception while sending login");
         }

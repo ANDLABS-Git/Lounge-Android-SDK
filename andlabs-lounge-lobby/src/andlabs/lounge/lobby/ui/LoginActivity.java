@@ -15,8 +15,8 @@ import android.widget.TextView;
 public class LoginActivity extends Activity {
 
 
-    private static final String PLAYER_NAME = "PLAYER_NAME";
-    private static final String USER_ID = "USER_ID";
+    public static final String PLAYER_NAME = "PLAYER_NAME";
+    public static final String USER_ID = "USER_ID";
     private TextView description;
     private View usernameLayout;
     private EditText userNameField;

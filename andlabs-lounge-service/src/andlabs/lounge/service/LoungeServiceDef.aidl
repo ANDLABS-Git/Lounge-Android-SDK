@@ -8,7 +8,7 @@ interface LoungeServiceDef {
 
 	void disconnect();
 
-	void login(in String playerId);
+	void login(in String uuid, in String playerId);
 
 	void requestUpdate();
 

@@ -162,10 +162,10 @@ public class LoungeServiceController {
         mLoungeService = null;
     }
 
-    public void login(String pPlayerName) {
+    public void login(String uuid, String pPlayerName) {
         Ln.v("login(): pPlayerName = %s", pPlayerName);
         try {
-            mLoungeService.login(pPlayerName);
+            mLoungeService.login(uuid,pPlayerName);
         } catch (RemoteException e) {
             Ln.e(e, "login(): caught exception while processing login");
         }

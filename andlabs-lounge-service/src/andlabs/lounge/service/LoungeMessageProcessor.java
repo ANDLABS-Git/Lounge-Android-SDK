@@ -51,9 +51,12 @@ public abstract class LoungeMessageProcessor {
 
     private String mPlayerID;
 
+    private String mUuid;
 
-    public void setMyPlayerId(String pPlayerId) {
+
+    public void setMyPlayerId(String pPlayerId, String playerId) {
         mPlayerID = pPlayerId;
+        mUuid=mUuid;
     }
 
 

@@ -29,6 +29,7 @@ import andlabs.lounge.lobby.mock.TestData;
 import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.lobby.ui.HostGameAdapter;
 import andlabs.lounge.lobby.ui.LobbyListAdapter;
+import andlabs.lounge.lobby.ui.LoginActivity;
 import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;
@@ -129,6 +130,9 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         mLobbyAdapter = new LobbyListAdapter(getActivity());
         mLobbyList.setAdapter(mLobbyAdapter);
         mLobbyAdapter.setLoungeController(mLoungeLobbyController);
+        String playerName=getActivity().getIntent().getExtras().getString(LoginActivity.PLAYER_NAME);
+        String uuid=getActivity().getIntent().getExtras().getString(LoginActivity.PLAYER_NAME);
+        mLoungeLobbyController.setUserId(uuid,playerName);
 
         mLobbyAdapter.setJoinedGames(TestData.getJoinedGames());
         mLobbyAdapter.setOpenGames(TestData.getOpenGames());
