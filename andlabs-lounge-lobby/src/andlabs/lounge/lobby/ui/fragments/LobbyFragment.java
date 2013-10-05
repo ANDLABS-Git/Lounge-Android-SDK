@@ -30,6 +30,7 @@ import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.lobby.ui.HostGameAdapter;
 import andlabs.lounge.lobby.ui.LobbyListAdapter;
 import andlabs.lounge.lobby.ui.LoginActivity;
+import andlabs.lounge.lobby.util.Id;
 import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
 import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;
@@ -130,8 +131,16 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         mLobbyAdapter = new LobbyListAdapter(getActivity());
         mLobbyList.setAdapter(mLobbyAdapter);
         mLobbyAdapter.setLoungeController(mLoungeLobbyController);
-        String playerName=getActivity().getIntent().getExtras().getString(LoginActivity.PLAYER_NAME);
-        String uuid=getActivity().getIntent().getExtras().getString(LoginActivity.PLAYER_NAME);
+        String playerName;
+        String uuid;
+        if(getActivity()!=null&&getActivity().getIntent()!=null && getActivity().getIntent().getExtras()!=null){
+        playerName=getActivity().getIntent().getExtras().getString(LoginActivity.PLAYER_NAME);
+        uuid=getActivity().getIntent().getExtras().getString(LoginActivity.PLAYER_NAME);
+        }else{
+            playerName=Id.getName(getActivity()); 
+            uuid=Id.getName(getActivity()); 
+        }
+       
         mLoungeLobbyController.setUserId(uuid,playerName);
 
         mLobbyAdapter.setJoinedGames(TestData.getJoinedGames());
