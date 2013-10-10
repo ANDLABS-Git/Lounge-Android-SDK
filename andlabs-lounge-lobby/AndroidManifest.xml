@@ -18,6 +18,10 @@
             android:name="andlabs.lounge.lobby.ui.LoungeActivity"
             android:label="LOUNGE" >
         </activity>
+           <activity
+            android:name="andlabs.lounge.lobby.ui.LoginActivity"
+            android:label="LOUNGE" >
+        </activity>
     </application>
 
     

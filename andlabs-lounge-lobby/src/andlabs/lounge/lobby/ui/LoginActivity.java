@@ -47,7 +47,7 @@ public class LoginActivity extends Activity {
             Intent i=new Intent(this,LoungeActivity.class);
             i.putExtra(PLAYER_NAME, userNameField.getText().toString());
             i.putExtra(USER_ID, "TEMP_"+new Random().nextLong());
-            
+            startActivity(i);
             
         }
 

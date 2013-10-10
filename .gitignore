@@ -18,3 +18,8 @@ local.properties
 # Eclipse project files
 .classpath
 .project
+andlabs-lounge-debugger/.settings/org.eclipse.jdt.core.prefs
+andlabs-lounge-game/.settings/org.eclipse.jdt.core.prefs
+andlabs-lounge-lobby/.settings/org.eclipse.jdt.core.prefs
+andlabs-lounge-service/.settings/org.eclipse.jdt.core.prefs
+andlabs-lounge-starter/.settings/org.eclipse.jdt.core.prefs
