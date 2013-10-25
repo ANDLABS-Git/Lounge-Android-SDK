@@ -18,9 +18,12 @@
  */
 package andlabs.lounge.lobby.ui.fragments;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import andlabs.lounge.lobby.LoungeLobbyCallback;
 import andlabs.lounge.lobby.LoungeLobbyController;
@@ -30,6 +33,7 @@ import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.lobby.ui.HostGameAdapter;
 import andlabs.lounge.lobby.ui.LobbyListAdapter;
 import andlabs.lounge.lobby.ui.LoginActivity;
+import andlabs.lounge.lobby.ui.LoungeActivity;
 import andlabs.lounge.lobby.util.Id;
 import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
@@ -40,6 +44,7 @@ import andlabs.lounge.util.Ln;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -119,6 +124,15 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         }
 
     };
+    
+ 
+
+    private String randomAlphaString()
+    {
+    	 SecureRandom random = new SecureRandom();
+      return new BigInteger(130, random).toString(32);
+    }
+
 
 
     @Override
@@ -131,17 +145,20 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         mLobbyAdapter = new LobbyListAdapter(getActivity());
         mLobbyList.setAdapter(mLobbyAdapter);
         mLobbyAdapter.setLoungeController(mLoungeLobbyController);
-        String playerName;
-        String uuid;
-        if(getActivity()!=null&&getActivity().getIntent()!=null && getActivity().getIntent().getExtras()!=null){
-        playerName=getActivity().getIntent().getExtras().getString(LoginActivity.PLAYER_NAME);
-        uuid=getActivity().getIntent().getExtras().getString(LoginActivity.PLAYER_NAME);
+        String playerName = "Player";
+        
+        Intent i = getActivity().getIntent();
+        
+        if(i!=null && i.getExtras()!=null && i.getExtras().getBoolean(LoungeActivity.IS_APK)){
+        	playerName=i.getExtras().getString(LoungeActivity.USER_NAME);
         }else{
-            playerName=Id.getName(getActivity()); 
-            uuid=Id.getName(getActivity()); 
+        	 playerName="Player_"+randomAlphaString();
         }
+        
+        
+       Toast.makeText(this.getActivity(), "Login with "+playerName, Toast.LENGTH_LONG).show();
        
-        mLoungeLobbyController.setUserId(uuid,playerName);
+        mLoungeLobbyController.setUserId(Settings.Secure.ANDROID_ID,playerName);
 
         mLobbyAdapter.setJoinedGames(TestData.getJoinedGames());
         mLobbyAdapter.setOpenGames(TestData.getOpenGames());

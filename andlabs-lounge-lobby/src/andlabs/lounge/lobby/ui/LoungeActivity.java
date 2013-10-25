@@ -37,7 +37,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class LoungeActivity extends FragmentActivity implements OnPageChangeListener {
-
+	  public static final String IS_APK = "IS_APK";
+	  public static final String USER_NAME = "USER_NAME";
     private static final int ALPHA_OFF = (int) (255 * 0.3f);
     private static final int LOBBY = 0;
     private static final int CHAT = 1;
