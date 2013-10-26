@@ -18,9 +18,13 @@
  */
 package andlabs.lounge.lobby.ui.fragments;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 import andlabs.lounge.lobby.LoungeLobbyCallback;
 import andlabs.lounge.lobby.LoungeLobbyController;
@@ -30,6 +34,7 @@ import andlabs.lounge.lobby.model.ChatMessage;
 import andlabs.lounge.lobby.ui.HostGameAdapter;
 import andlabs.lounge.lobby.ui.LobbyListAdapter;
 import andlabs.lounge.lobby.ui.LoginActivity;
+import andlabs.lounge.lobby.ui.LoungeActivity;
 import andlabs.lounge.lobby.util.Id;
 import andlabs.lounge.lobby.util.Utils;
 import andlabs.lounge.lobby.util.parser.PlayParser;
@@ -37,9 +42,13 @@ import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.util.Ln;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -119,6 +128,15 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         }
 
     };
+    
+ 
+
+    private String randomAlphaString()
+    {
+    	 SecureRandom random = new SecureRandom();
+      return new BigInteger(130, random).toString(32);
+    }
+
 
 
     @Override
@@ -131,17 +149,27 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         mLobbyAdapter = new LobbyListAdapter(getActivity());
         mLobbyList.setAdapter(mLobbyAdapter);
         mLobbyAdapter.setLoungeController(mLoungeLobbyController);
-        String playerName;
-        String uuid;
-        if(getActivity()!=null&&getActivity().getIntent()!=null && getActivity().getIntent().getExtras()!=null){
-        playerName=getActivity().getIntent().getExtras().getString(LoginActivity.PLAYER_NAME);
-        uuid=getActivity().getIntent().getExtras().getString(LoginActivity.PLAYER_NAME);
-        }else{
-            playerName=Id.getName(getActivity()); 
-            uuid=Id.getName(getActivity()); 
+        
+        String packageName = this.getActivity().getPackageName();
+        if ("andlabs.lounge.app".equalsIgnoreCase(packageName)) {
+            AccountManager accountManager = (AccountManager) getActivity().getSystemService(Activity.ACCOUNT_SERVICE);
+            Account[] accounts = accountManager.getAccountsByType("andlabs.lounge");
+            if (accounts.length > 0) {
+                String uuid = accounts[0].name;
+                String playerName = accounts[0].name;  // accountManager.getUserData(accounts[0], "NICKNAME");
+                Toast.makeText(this.getActivity(), "Login with " + playerName, Toast.LENGTH_LONG).show();
+                Ln.d("Login with %s", playerName);
+                mLoungeLobbyController.setUserId(uuid, playerName);
+            } else {
+                getActivity().startActivity(new Intent("andlabs.lounge.account.AUTHENTICATE"));
+            }
+        } else {
+            String uuid = Settings.Secure.ANDROID_ID;
+            String playerName = uuid.substring(0, 5).toUpperCase(Locale.UK);
+            Toast.makeText(this.getActivity(), "Login with " + playerName, Toast.LENGTH_LONG).show();
+            Ln.d("Login with %s", playerName);
+            mLoungeLobbyController.setUserId(uuid, playerName);
         }
-       
-        mLoungeLobbyController.setUserId(uuid,playerName);
 
         mLobbyAdapter.setJoinedGames(TestData.getJoinedGames());
         mLobbyAdapter.setOpenGames(TestData.getOpenGames());

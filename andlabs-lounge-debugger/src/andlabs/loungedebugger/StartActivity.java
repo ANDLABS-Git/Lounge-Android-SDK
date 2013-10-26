@@ -21,6 +21,6 @@ public class StartActivity extends Activity {
    
     
     public void openLobby(View v){
-     startActivity(new Intent(this,LoginActivity.class));   
+     startActivity(new Intent(this,LoungeActivity.class));   
     }
 }
