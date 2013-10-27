@@ -19,7 +19,12 @@
 
 package andlabs.lounge.service;
 
+import java.util.Locale;
+
 import andlabs.lounge.util.Ln;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,11 +35,62 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.provider.Settings.Secure;
 
 public class LoungeService extends Service {
 
     private Messenger mMessenger;
-    private LoungeServiceImpl mLoungeService = new LoungeServiceImpl();
+
+    private LoungeServiceImpl mLoungeService = new LoungeServiceImpl() {
+
+        public String getPlayerId() {
+            String playerId = null;
+            String packageName = LoungeService.this.getPackageName();
+            if ("andlabs.lounge.app".equalsIgnoreCase(packageName)) {
+                AccountManager accountManager = (AccountManager) LoungeService.this.getSystemService(Activity.ACCOUNT_SERVICE);
+                Account[] accounts = accountManager.getAccountsByType("andlabs.lounge");
+                if (accounts.length > 0) {
+                    playerId = accounts[0].name;
+                    Ln.d("playerId = %s", playerId);
+                } else {
+                    Ln.d("here could a notification ask user to login/register");
+//                    this.startActivity(new Intent("andlabs.lounge.account.AUTHENTICATE"));
+                }
+            } else {
+                playerId = Secure.getString(LoungeService.this.getContentResolver(), Secure.ANDROID_ID);
+                Ln.d("playerId = %s", playerId);
+            }
+            return playerId;
+        };
+
+        public String getPlayerName() {
+            String playerName = null;
+            String packageName = LoungeService.this.getPackageName();
+            if ("andlabs.lounge.app".equalsIgnoreCase(packageName)) {
+                AccountManager accountManager = (AccountManager) LoungeService.this.getSystemService(Activity.ACCOUNT_SERVICE);
+                Account[] accounts = accountManager.getAccountsByType("andlabs.lounge");
+                if (accounts.length > 0) {
+                    playerName = accounts[0].name;  // accountManager.getUserData(accounts[0], "NICKNAME");
+                    Ln.d("playerName = %s", playerName);
+                } else {
+                    Ln.d("here could a notification ask user to login/register");
+//                    this.startActivity(new Intent("andlabs.lounge.account.AUTHENTICATE"));
+                }
+            } else {
+                playerName = getPlayerId().substring(0, 5).toUpperCase(Locale.UK);
+                Ln.d("playerName = %s", playerName);
+            }
+            return playerName;
+        };
+
+        @Override
+        public void login(String uuid, String playerId) {
+            Ln.v("overriding %s (%s) with %s (%s)", uuid, playerId, getPlayerId(), getPlayerName());
+            super.login(getPlayerId(), getPlayerName());
+        };
+
+    };
+
     private LoungeServiceImpl.MessageHandler mMessageHandler = new LoungeServiceImpl.MessageHandler() {
         
         @Override

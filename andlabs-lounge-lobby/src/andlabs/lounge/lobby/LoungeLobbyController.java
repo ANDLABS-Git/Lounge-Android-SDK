@@ -150,6 +150,7 @@ public class LoungeLobbyController {
     }
 
 
+    @Deprecated
     public void setUserId(String uuid,String playerName){
         mUuid=uuid;
         mUserName=playerName;

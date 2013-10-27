@@ -134,27 +134,6 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
         mLobbyAdapter = new LobbyListAdapter(getActivity());
         mLobbyList.setAdapter(mLobbyAdapter);
         mLobbyAdapter.setLoungeController(mLoungeLobbyController);
-        
-        String packageName = this.getActivity().getPackageName();
-        if ("andlabs.lounge.app".equalsIgnoreCase(packageName)) {
-            AccountManager accountManager = (AccountManager) getActivity().getSystemService(Activity.ACCOUNT_SERVICE);
-            Account[] accounts = accountManager.getAccountsByType("andlabs.lounge");
-            if (accounts.length > 0) {
-                String uuid = accounts[0].name;
-                String playerName = accounts[0].name;  // accountManager.getUserData(accounts[0], "NICKNAME");
-                Toast.makeText(this.getActivity(), "Login with " + playerName, Toast.LENGTH_LONG).show();
-                Ln.d("uuid = %s, playerName = %s", uuid, playerName);
-                mLoungeLobbyController.setUserId(uuid, playerName);
-            } else {
-                getActivity().startActivity(new Intent("andlabs.lounge.account.AUTHENTICATE"));
-            }
-        } else {
-            String uuid = Secure.getString(getActivity().getContentResolver(), Secure.ANDROID_ID);
-            String playerName = uuid.substring(0, 5).toUpperCase(Locale.UK);
-            Toast.makeText(this.getActivity(), "Login with " + playerName, Toast.LENGTH_LONG).show();
-            Ln.d("uuid = %s, playerName = %s", uuid, playerName);
-            mLoungeLobbyController.setUserId(uuid, playerName);
-        }
 
         mLobbyAdapter.setJoinedGames(TestData.getJoinedGames());
         mLobbyAdapter.setOpenGames(TestData.getOpenGames());
