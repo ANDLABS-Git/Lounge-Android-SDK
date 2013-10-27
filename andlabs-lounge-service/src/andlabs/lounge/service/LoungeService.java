@@ -70,7 +70,7 @@ public class LoungeService extends Service {
                 AccountManager accountManager = (AccountManager) LoungeService.this.getSystemService(Activity.ACCOUNT_SERVICE);
                 Account[] accounts = accountManager.getAccountsByType("andlabs.lounge");
                 if (accounts.length > 0) {
-                    playerName = accounts[0].name;  // accountManager.getUserData(accounts[0], "NICKNAME");
+                    playerName = accountManager.getUserData(accounts[0], "PLAYER_NAME");
                     Ln.d("playerName = %s", playerName);
                 } else {
                     Ln.d("here could a notification ask user to login/register");
