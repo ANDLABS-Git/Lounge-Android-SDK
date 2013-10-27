@@ -1,6 +1,5 @@
 package andlabs.loungedebugger;
 
-import andlabs.lounge.lobby.ui.LoginActivity;
 import andlabs.lounge.lobby.ui.LoungeActivity;
 import android.app.Activity;
 import android.content.Intent;
@@ -21,6 +20,6 @@ public class StartActivity extends Activity {
    
     
     public void openLobby(View v){
-     startActivity(new Intent(this,LoungeActivity.class));   
+     startActivity(new Intent(this, LoungeActivity.class));   
     }
 }

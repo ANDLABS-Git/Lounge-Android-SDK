@@ -113,7 +113,7 @@ public class LoungeActivity extends FragmentActivity implements OnPageChangeList
 
     @Override
     public void onPageSelected(int position) {
-        Ln.d("page selected");
+        Ln.v("position = %d", position);
         switch (position) {
             case LOBBY:
                 mSectionLabel.setText("Lobby");
@@ -154,11 +154,13 @@ public class LoungeActivity extends FragmentActivity implements OnPageChangeList
 
     @Override
     public void onPageScrollStateChanged(int state) {
+        Ln.v("state = %d", state);
     }
 
 
     @Override
     public void onPageScrolled(int position, float foo, int arg2) {
+        Ln.v("position = %d, foo = %f, arg2 = %d", position, foo, arg2);
         // switch (position) {
         // case LOBBY:
         // mHeader.setBackgroundColor(Utils.ipc(this, R.color.orange,

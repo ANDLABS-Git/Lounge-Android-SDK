@@ -124,7 +124,7 @@ public class LoungeService extends Service {
 
     @Override
     public void onCreate() {
-        Ln.v("onCreate():");
+        Ln.v("creating service ...");
         super.onCreate();
         mLoungeService.setMessageHandler(mMessageHandler);
         mLoungeService.connect();
@@ -133,14 +133,14 @@ public class LoungeService extends Service {
 
     @Override
     public void onStart(Intent intent, int startId) {
-        Ln.v("onStart():");
+        Ln.v("intent = %s, startId = %d", intent, startId);
         super.onStart(intent, startId);
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Ln.v("onStartCommand():");
+        Ln.v("intent = %s, flags = %d, startId = %d", intent, flags, startId);
         return super.onStartCommand(intent, flags, startId);
     }
 
