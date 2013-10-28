@@ -24,6 +24,7 @@ import java.util.Locale;
 import andlabs.lounge.util.Ln;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.OnAccountsUpdateListener;
 import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -107,6 +108,25 @@ public class LoungeService extends Service {
         }
     };
 
+    private OnAccountsUpdateListener mOnAccountsUpdateListener = new OnAccountsUpdateListener() {
+        
+        @Override
+        public void onAccountsUpdated(Account[] accounts) {
+            String packageName = LoungeService.this.getPackageName();
+            if ("andlabs.lounge.app".equalsIgnoreCase(packageName)) {
+                AccountManager accountManager = (AccountManager) LoungeService.this.getSystemService(Activity.ACCOUNT_SERVICE);
+                accounts = accountManager.getAccountsByType("andlabs.lounge");
+                if (accounts.length > 0) {
+                    mLoungeService.login(null, null);
+                } else {
+                    Ln.d("here could a notification ask user to login/register");
+//                    this.startActivity(new Intent("andlabs.lounge.account.AUTHENTICATE"));
+                }
+            }
+        }
+
+    };
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -128,6 +148,8 @@ public class LoungeService extends Service {
         super.onCreate();
         mLoungeService.setMessageHandler(mMessageHandler);
         mLoungeService.connect();
+        AccountManager accountManager = (AccountManager) LoungeService.this.getSystemService(Activity.ACCOUNT_SERVICE);
+        accountManager.addOnAccountsUpdatedListener(mOnAccountsUpdateListener, null, true);
     }
 
 
@@ -150,6 +172,8 @@ public class LoungeService extends Service {
         if (mLoungeService != null) {
             mLoungeService.disconnect();
         }
+        AccountManager accountManager = (AccountManager) LoungeService.this.getSystemService(Activity.ACCOUNT_SERVICE);
+        accountManager.removeOnAccountsUpdatedListener(mOnAccountsUpdateListener);
         super.onDestroy();
     }
 
