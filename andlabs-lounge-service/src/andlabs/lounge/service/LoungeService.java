@@ -102,6 +102,7 @@ public class LoungeService extends Service {
 
         @Override
         public void login(String uuid, String playerId) {
+            updateNotification("Login",uuid,playerId);
             Ln.v("overriding %s (%s) with %s (%s)", uuid, playerId, getPlayerId(), getPlayerName());
             super.login(getPlayerId(), getPlayerName());
         };
@@ -120,6 +121,7 @@ public class LoungeService extends Service {
                     }
                 } else {
                     Ln.w("mMessanger is not set, throwing %s", message);
+                    updateNotification("Message","Error",message.toString());
                 }
             } catch (RemoteException e) {
                 Ln.e(e, "MessageHandler.send(): caught exception while sending message %d", message.what);
@@ -135,6 +137,7 @@ public class LoungeService extends Service {
             if ("andlabs.lounge.app".equalsIgnoreCase(packageName)) {
                 AccountManager accountManager = (AccountManager) LoungeService.this.getSystemService(Activity.ACCOUNT_SERVICE);
                 accounts = accountManager.getAccountsByType("andlabs.lounge");
+                updateNotification("Login","accounts",accounts.length+" accs");
                 if (accounts.length > 0) {
                     mLoungeService.login(null, null);
                 } else {
@@ -243,6 +246,8 @@ public class LoungeService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d("debug", "buttttonn");
+            LoungeService.this.stopSelf();
+            LoungeService.this.stopForeground(true);
         }
 
     }
@@ -270,6 +275,7 @@ public class LoungeService extends Service {
         }
         AccountManager accountManager = (AccountManager) LoungeService.this.getSystemService(Activity.ACCOUNT_SERVICE);
         accountManager.removeOnAccountsUpdatedListener(mOnAccountsUpdateListener);
+        unregisterReceiver(switchButtonListener);
         super.onDestroy();
     }
 
