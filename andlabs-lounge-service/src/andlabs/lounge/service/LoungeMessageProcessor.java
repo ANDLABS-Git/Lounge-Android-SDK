@@ -50,13 +50,13 @@ public abstract class LoungeMessageProcessor {
     private HashMap<String, Match> mMatches = new HashMap<String, Match>();
 
     private String mPlayerID;
+    private String mPlayerName;
 
-    private String mUuid;
 
-
-    public void setMyPlayerId(String pPlayerId, String playerId) {
-        mPlayerID = pPlayerId;
-        mUuid=mUuid;
+    // TODO refactor global: uuid -> playerId and playerId -> playerName
+    public void setMyPlayer(String playerId, String playerName) {
+        mPlayerID = playerId;
+        mPlayerName = playerName;
     }
 
 

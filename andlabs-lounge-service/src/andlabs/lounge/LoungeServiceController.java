@@ -54,12 +54,13 @@ public class LoungeServiceController {
             switch (message.what) {
 
             case 42:
+                Ln.v("Handler.handleMessage(): 42 ... call all callbacks");
                 for (LoungeServiceCallback loungeServiceCallback : mLoungeServiceCallbackSet)
                     loungeServiceCallback.theAnswerIs42();
                 break;
 
             case 1:
-                Ln.v("Handler.handleMessage(): Server connected ... process login");
+                Ln.v("Handler.handleMessage(): Server connected ... call all callbacks");
                 for (LoungeServiceCallback loungeServiceCallback : mLoungeServiceCallbackSet) {
                     loungeServiceCallback.onStart();
                 }
@@ -99,7 +100,7 @@ public class LoungeServiceController {
                 break;
 
             default:
-                Ln.v("Handler.handleMessage(): message = %s", message);
+                Ln.v("Handler.handleMessage(): unhandled message: %s", message);
 
             }
         }

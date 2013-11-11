@@ -25,6 +25,7 @@ import io.socket.SocketIO;
 import io.socket.SocketIOException;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,6 +47,8 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
     private MessageHandler mMessageHandler;
 
+    private URL mSocketURL;
+
     private SocketIO mSocketIO;
 
 
@@ -65,7 +68,7 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
         @Override
         public void onError(SocketIOException arg0) {
-            Ln.e(arg0, "IOCallback.onError(): caught exception while connecting");
+            Ln.e(arg0, "IOCallback.onError(): something went wrong with socket.io connection");
 
             // TODO: Implement error handling
             disconnect();
@@ -84,6 +87,9 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
         @Override
         public void onConnect() {
             Ln.d("IOCallback.onConnect():");
+
+            // do auto login
+            login(null, null);
 
             Message message = Message.obtain();
             message.what = 1;
@@ -130,6 +136,11 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
 
     protected LoungeServiceImpl() {
         super();
+        try {
+            mSocketURL = new URL("http://lounge-server.jit.su/");
+        } catch (MalformedURLException e) {
+            Ln.e(e, "constructor(): caught exception while creating SocketIO");
+        }
     };
 
     public void setMessageHandler(MessageHandler pMessageHandler) {
@@ -143,11 +154,11 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     @Override
     public void connect() {
         Ln.v("connect():");
-        try {
-            mSocketIO = new SocketIO("http://lounge-server.jit.su/");
+        if (mSocketIO == null || !mSocketIO.isConnected()) {
+            mSocketIO = new SocketIO(mSocketURL);
             mSocketIO.connect(mSocketIOCallback);
-        } catch (MalformedURLException e) {
-            Ln.e(e, "connect(): caught exception while creating/connecting SocketIO");
+        } else {
+            mSocketIO.reconnect();
         }
     }
 
@@ -173,11 +184,11 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
  
     @Override
-    public void login(String uuid,String playerId) {
-        Ln.v("login(): playerId = %s", playerId);
+    public void login(String playerId, String playerName) {
+        Ln.v("login(): playerId = %s, playerName = %s", playerId, playerName);
         try {
-            mLoungeMessageProcessor.setMyPlayerId(uuid,playerId);
-            mSocketIO.emit("login", new JSONObject().put("playerID", playerId).put("uuid", uuid));
+            mLoungeMessageProcessor.setMyPlayer(playerId, playerName);
+            mSocketIO.emit("login", new JSONObject().put("playerID", playerId).put("playerName", playerName));
         } catch (JSONException e) {
             Ln.e(e, "login(): caught exception while sending login");
         }

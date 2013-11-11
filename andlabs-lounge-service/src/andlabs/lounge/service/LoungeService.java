@@ -42,6 +42,9 @@ public class LoungeService extends Service {
 
     private Messenger mMessenger;
 
+    private String playerId = null;
+    private String playerName = null;
+
     private LoungeServiceImpl mLoungeService = new LoungeServiceImpl() {
 
         public String getPlayerId() {
@@ -86,8 +89,14 @@ public class LoungeService extends Service {
 
         @Override
         public void login(String uuid, String playerId) {
-            Ln.v("overriding %s (%s) with %s (%s)", uuid, playerId, getPlayerId(), getPlayerName());
-            super.login(getPlayerId(), getPlayerName());
+            if (LoungeService.this.playerId == null) {
+                LoungeService.this.playerId = getPlayerId();
+            }
+            if (LoungeService.this.playerName == null) {
+                LoungeService.this.playerName = getPlayerName();
+            }
+            Ln.v("overriding %s (%s) with %s (%s)", uuid, playerId, LoungeService.this.playerId, LoungeService.this.playerName);
+            super.login(LoungeService.this.playerId, LoungeService.this.playerName);
         };
 
     };
@@ -117,7 +126,8 @@ public class LoungeService extends Service {
                 AccountManager accountManager = (AccountManager) LoungeService.this.getSystemService(Activity.ACCOUNT_SERVICE);
                 accounts = accountManager.getAccountsByType("andlabs.lounge");
                 if (accounts.length > 0) {
-                    mLoungeService.login(null, null);
+                    playerId = accounts[0].name;
+                    playerName = accountManager.getUserData(accounts[0], "PLAYER_NAME");
                 } else {
                     Ln.d("here could a notification ask user to login/register");
 //                    this.startActivity(new Intent("andlabs.lounge.account.AUTHENTICATE"));
@@ -132,6 +142,7 @@ public class LoungeService extends Service {
     public IBinder onBind(Intent intent) {
         Ln.v("intent = %s", intent);
         mMessenger = (Messenger) intent.getParcelableExtra("client-messenger");
+        mLoungeService.connect();
         return mLoungeService;
     }
 
@@ -147,7 +158,6 @@ public class LoungeService extends Service {
         Ln.v("creating service ...");
         super.onCreate();
         mLoungeService.setMessageHandler(mMessageHandler);
-        mLoungeService.connect();
         AccountManager accountManager = (AccountManager) LoungeService.this.getSystemService(Activity.ACCOUNT_SERVICE);
         accountManager.addOnAccountsUpdatedListener(mOnAccountsUpdateListener, null, true);
     }
