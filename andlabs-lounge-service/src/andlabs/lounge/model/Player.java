@@ -34,7 +34,7 @@ public class Player implements Serializable {
 
     @Override
     public String toString() {
-        return "Player [_id=" + _id + ", playerID=" + playerID + ", gameID=" + gameID + ", matchID=" + matchID + "]";
+        return String.format("_id: '%s', playerID: '%s', gameID: '%s', matchID: '%s'", _id, playerID, gameID, matchID);
     }
 
 }

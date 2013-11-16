@@ -35,7 +35,7 @@ public class Match implements Serializable {
 
     @Override
     public String toString() {
-        return "Match [matchID=" + matchID + ", players=" + players + ", playerOnTurn=" + playerOnTurn + ", totalSpots="
-                + totalSpots + ", status=" + status + "]";
+        return String.format("{matchID: '%s', players: %s, playerOnTurn: '%s', totalSpots: %d, status: '%s'}", matchID,
+                players, playerOnTurn, totalSpots, status);
     }
 }

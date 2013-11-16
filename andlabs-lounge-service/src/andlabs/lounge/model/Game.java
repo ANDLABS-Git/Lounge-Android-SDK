@@ -36,7 +36,7 @@ public class Game implements Serializable {
 
     @Override
     public String toString() {
-        return "Game [gameID=" + gameID + ", gameName=" + gameName + ", matches=" + matches + "]";
+        return String.format("{gameID: '%s', gameName: '%s', matches: %s}", gameID, gameName, matches.values());
     }
 
 }
