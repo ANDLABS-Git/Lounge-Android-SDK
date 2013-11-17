@@ -26,15 +26,17 @@ public class Player implements Serializable {
     // unique player ID
     public String _id;
     // The player's name
-    public String playerID;
+    public String playerName;
     // The game, in which the player is currently checked in
     public String gameID;
     // The match, in which the player is currently checked in
     public String matchID;
+    // marking the local player
+    public boolean isLocal;
 
     @Override
     public String toString() {
-        return String.format("_id: '%s', playerID: '%s', gameID: '%s', matchID: '%s'", _id, playerID, gameID, matchID);
+        return String.format("_id: '%s', playerName: '%s', gameID: '%s', matchID: '%s', isLocal: %b", _id, playerName, gameID, matchID, isLocal);
     }
 
 }

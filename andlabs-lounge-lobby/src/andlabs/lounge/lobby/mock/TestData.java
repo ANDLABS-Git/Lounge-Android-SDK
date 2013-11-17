@@ -15,13 +15,13 @@ public class TestData {
         List<Game> list = new ArrayList<Game>();
 
         Player playerA = new Player();
-        playerA.playerID = "Tommo";
+        playerA.playerName = "Tommo";
 
         Player playerB = new Player();
-        playerB.playerID = "Ninja";
+        playerB.playerName = "Ninja";
 
         Player playerC = new Player();
-        playerC.playerID = "Nico";
+        playerC.playerName = "Nico";
 
         Game game1 = createGame("de.andlabs.gravitywins", "Mol3cool");
         game1.matches.put("111", createMatch(2, playerA));
@@ -44,7 +44,7 @@ public class TestData {
         List<Game> list = new ArrayList<Game>();
 
         Player playerB = new Player();
-        playerB.playerID = "Ninja";
+        playerB.playerName = "Ninja";
 
         Game openGame = createOpenGame("de.andlabs.gravitywins", "Mol3Cool", playerB);
         list.add(openGame);

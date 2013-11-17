@@ -168,7 +168,7 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
         TextView playercount = (TextView) convertView.findViewById(R.id.playercount);
         final Match match = (Match) getChild(groupPosition, childPosition);
         final Game game = (Game) getGroup(groupPosition);
-        hostname.setText(match.players.get(0).playerID);
+        hostname.setText(match.players.get(0).playerName);
         playercount.setText(match.players.size() + "/" + match.totalSpots);
         final LinearLayout joinBtn = (LinearLayout) convertView.findViewById(R.id.joinBtn);
         convertView.findViewById(R.id.joinInProgress).setVisibility(View.INVISIBLE);
@@ -207,12 +207,12 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
         final Match match = (Match) getChild(groupPosition, childPosition);
 
-        player1Label.setText(match.players.get(0).playerID);
+        player1Label.setText(match.players.get(0).playerName);
         player1Beacon.setBackgroundColor(Color.GREEN);
         if (match.players.size() == 2) {
             Player player2 = match.players.get(1);
 
-            player2Label.setText(player2.playerID);
+            player2Label.setText(player2.playerName);
             player2Beacon.setBackgroundColor(Color.GREEN);
         } else {
             player2Beacon.setBackgroundColor(Color.WHITE);

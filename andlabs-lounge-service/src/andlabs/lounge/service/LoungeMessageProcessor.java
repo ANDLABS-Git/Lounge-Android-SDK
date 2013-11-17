@@ -113,14 +113,16 @@ public abstract class LoungeMessageProcessor {
                     if (player == null) {
                         player = new Player();
                         player._id = _id;
-                        player.playerID = jsonObject.getString("playerID");
+                        String playerID = jsonObject.getString("playerID");
+                        if (playerID.equals(mPlayerID)) {
+                            involvedInMatchFlag = true;
+                            // assuming the first player is the one who hosts the match
+                            player.isLocal = index == 0;
+                        }
+                        player.playerName = involvedInMatchFlag ? "You" : playerID;
                         mPlayers.put(_id, player);
                     }
                     players.add(player);
-
-                    if (player.playerID.equals(mPlayerID)) {
-                        involvedInMatchFlag = true;
-                    }
                 }
 
                 // When the game is already known, update the known data, else
@@ -259,12 +261,17 @@ public abstract class LoungeMessageProcessor {
 
 
     private Player addPlayer(JSONObject jsonObject) throws JSONException {
+        boolean involvedInMatchFlag = false;
         String _id = jsonObject.getString("_id");
         Player player = mPlayers.get(_id);
         if (player == null) {
             player = new Player();
             player._id = _id;
-            player.playerID = jsonObject.getString("playerID");
+            String playerID = jsonObject.getString("playerID");
+            if (playerID.equals(mPlayerID)) {
+                involvedInMatchFlag = true;
+            }
+            player.playerName = involvedInMatchFlag ? "You" : playerID;
             mPlayers.put(player._id, player);
         }
         if (jsonObject.has("gameID")) {

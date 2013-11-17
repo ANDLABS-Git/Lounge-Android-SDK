@@ -49,13 +49,13 @@ public class Utils implements LoungeConstants {
         if (info != null) {
             final Intent intent = new Intent();
             intent.setComponent(new ComponentName(info.activityInfo.packageName, info.activityInfo.name));
-            intent.putExtra(EXTRA_IS_HOST, Id.getName(context).equalsIgnoreCase(match.players.get(0).playerID));
-            intent.putExtra(EXTRA_HOST_NAME, match.players.get(0).playerID);
+            intent.putExtra(EXTRA_IS_HOST, match.players.get(0).isLocal);
+            intent.putExtra(EXTRA_HOST_NAME, match.players.get(0).playerName);
             intent.putExtra(EXTRA_MATCH_ID, match.matchID);
 
             final String[] players = new String[match.players.size()];
             for (int i = 0; i < match.players.size(); i++) {
-                players[i] = match.players.get(i).playerID;
+                players[i] = match.players.get(i).playerName;
             }
             intent.putExtra(EXTRA_PLAYER_NAMES, players);
 
