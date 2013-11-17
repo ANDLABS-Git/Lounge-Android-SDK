@@ -118,11 +118,11 @@ public class LobbyListAdapter extends BaseExpandableListAdapter {
 
         int type = getChildType(groupPosition, childPosition);
         if (convertView == null || convertView.getId() != type) {
-            // When it is a new view or not recycleable because its a different
+            // When it is a new view or not recyclable because its a different
             // view type
 
             if (convertView == null || (Integer) convertView.getTag() != type) {
-                // When it is a new view or not recycleable because its a
+                // When it is a new view or not recyclable because its a
                 // different
                 // view type
 
