@@ -26,7 +26,6 @@ import java.util.Map;
 
 import andlabs.lounge.LoungeServiceCallback;
 import andlabs.lounge.LoungeServiceController;
-import andlabs.lounge.lobby.util.Id;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.util.Ln;
 import android.content.Context;

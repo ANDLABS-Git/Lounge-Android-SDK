@@ -20,7 +20,6 @@
 package andlabs.lounge.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Game implements Serializable {
