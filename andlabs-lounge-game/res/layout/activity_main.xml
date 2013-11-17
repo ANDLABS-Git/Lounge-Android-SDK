@@ -36,6 +36,15 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:text="Start Points Game" />
+
+        <Button
+            android:id="@+id/tictactoeGameButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:text="Start TicTacToe Game" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -3,6 +3,7 @@
 
     <string name="app_name">ANDLABS Lounge Games</string>
     <string name="activity_points_name">ANDLABS Points Game</string>
+    <string name="activity_tictactoe_name">ANDLABS TicTacToe Game</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
 

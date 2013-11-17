@@ -29,6 +29,14 @@ public class MainActivity extends Activity {
                 startActivity(new Intent(MainActivity.this, PointsGameActivity.class));
             }
         });
+        Button tictactoeGameButton = (Button) findViewById(R.id.tictactoeGameButton);
+        tictactoeGameButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, TicTacToeGameActivity.class));
+            }
+        });
     }
 
 }
