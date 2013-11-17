@@ -24,6 +24,11 @@ import java.util.ArrayList;
 
 public class Match implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public String matchID;
     public ArrayList<Player> players = new ArrayList<Player>();
 

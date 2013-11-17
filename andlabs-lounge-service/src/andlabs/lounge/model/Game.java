@@ -25,6 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Game implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public String gameID;
     public String gameName;
     boolean isActive;
