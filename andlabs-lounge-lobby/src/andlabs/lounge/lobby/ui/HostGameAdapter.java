@@ -114,12 +114,12 @@ public class HostGameAdapter extends BaseAdapter implements OnItemClickListener 
     }
 
 
-    public String getSelectedItemPackage() {
+    public String getSelectedItemActivity() {
         if (this.mSelectedItem == -1) {
             return null;
         }
 
         final ResolveInfo info = this.mContent.get(this.mSelectedItem);
-        return info.activityInfo.packageName;
+        return info.activityInfo.packageName + "/" + info.activityInfo.name;
     }
 }

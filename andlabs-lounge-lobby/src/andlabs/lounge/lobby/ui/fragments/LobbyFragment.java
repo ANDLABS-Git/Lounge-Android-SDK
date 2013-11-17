@@ -50,7 +50,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class LobbyFragment extends Fragment implements OnChildClickListener {
+public class LobbyFragment extends Fragment {
 
     private ExpandableListView mLobbyList;
     private LobbyListAdapter mLobbyAdapter;
@@ -132,7 +132,40 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
         mLobbyAdapter.setJoinedGames(TestData.getJoinedGames());
         mLobbyAdapter.setOpenGames(TestData.getOpenGames());
-        mLobbyList.setOnChildClickListener(this); // TODO make consistent with host drawer
+        mLobbyList.setOnChildClickListener(new OnChildClickListener() {
+            
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Ln.v(" groupPosition = %d, childPosition = %d", groupPosition, childPosition);
+                Game game = (Game) mLobbyAdapter.getGroup(groupPosition);
+                Match match = (Match) mLobbyAdapter.getChild(groupPosition, childPosition);
+                Ln.d(" game = %s, match = %s", game, match);
+
+                // If the game is open...
+                if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) {
+                    final String gameID = game.gameID;
+                    if (Utils.isGameInstalled(getActivity(), gameID)) { // ...and installed, join it...
+                        mLoungeLobbyController.joinMatch(gameID, match.matchID);
+                    } else { // ...otherwise, open the play store
+                        Utils.openPlay(getActivity(), gameID);
+                    }
+                } else {
+                    if ("running".equalsIgnoreCase(match.status)) {
+                        // If the game is already running, and you are involved
+                        Intent intent = Utils.launchGameApp(getActivity(), game.gameID, match);
+                        if (intent != null) {
+                            getActivity().startActivity(intent);
+                            getActivity().finish();
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), "Game not started yet", Toast.LENGTH_LONG).show();
+                    }
+                }
+                return false;
+            }
+
+        });
+        // TODO make consistent with host drawer
 
         // final SlidingDrawer drawer = (SlidingDrawer) view.findViewById(R.id.slidingDrawer);
         //
@@ -159,7 +192,7 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
             @Override
             public void onClick(View v) {
 
-                mLoungeLobbyController.openMatch(mHostAdapter.getSelectedItemPackage(), mHostAdapter.getSelectedItemName());
+                mLoungeLobbyController.openMatch(mHostAdapter.getSelectedItemActivity(), mHostAdapter.getSelectedItemName());
 
             }
         });
@@ -246,34 +279,4 @@ public class LobbyFragment extends Fragment implements OnChildClickListener {
 
     }
 
-
-    @Override
-    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-        Ln.v(" groupPosition = %d, childPosition = %d", groupPosition, childPosition);
-        Game game = (Game) mLobbyAdapter.getGroup(groupPosition);
-        Match match = (Match) mLobbyAdapter.getChild(groupPosition, childPosition);
-        Ln.d(" game = %s, match = %s", game, match);
-
-        // If the game is open...
-        if ((Integer) v.getTag() == LobbyListAdapter.TYPE_OPENGAME) {
-            final String gameID = game.gameID;
-            if (Utils.isGameInstalled(getActivity(), gameID)) { // ...and installed, join it...
-                mLoungeLobbyController.joinMatch(gameID, match.matchID);
-            } else { // ...otherwise, open the play store
-                Utils.openPlay(getActivity(), gameID);
-            }
-        } else {
-            if ("running".equalsIgnoreCase(match.status)) {
-                // If the game is already running, and you are involved
-                Intent intent = Utils.launchGameApp(getActivity(), game.gameID, match);
-                if (intent != null) {
-                    getActivity().startActivity(intent);
-                    getActivity().finish();
-                }
-            } else {
-                Toast.makeText(getActivity(), "Game not started yet", Toast.LENGTH_LONG).show();
-            }
-        }
-        return false;
-    }
 }

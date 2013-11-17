@@ -69,10 +69,10 @@ public class Utils implements LoungeConstants {
     }
 
 
-    private static ResolveInfo getInstalledGameInfo(Context context, String packageName) {
+    private static ResolveInfo getInstalledGameInfo(Context context, String gameId) {
         for (ResolveInfo info : getInstalledLoungeGames(context)) {
-            Ln.d("getInstalledGameInfo(): packageName = %s (%s)", packageName, info.activityInfo.packageName);
-            if (packageName.equalsIgnoreCase(info.activityInfo.packageName)) {
+            Ln.d("getInstalledGameInfo(): gameId = %s (%s)", gameId, info.activityInfo);
+            if (gameId.equalsIgnoreCase(info.activityInfo.packageName + "/" + info.activityInfo.name)) {
                 return info;
             }
         }
@@ -80,8 +80,8 @@ public class Utils implements LoungeConstants {
     }
 
 
-    public static Drawable getGameIcon(Context context, String packageName) {
-        ResolveInfo info = getInstalledGameInfo(context, packageName);
+    public static Drawable getGameIcon(Context context, String gameId) {
+        ResolveInfo info = getInstalledGameInfo(context, gameId);
         if (info == null) {
             return null;
         } else {
@@ -102,7 +102,7 @@ public class Utils implements LoungeConstants {
         List<ResolveInfo> installedGames = Utils.getInstalledLoungeGames(pContext);
 
         for (ResolveInfo info : installedGames) {
-            if (pGameID.equalsIgnoreCase(info.activityInfo.packageName)) {
+            if (pGameID.equalsIgnoreCase(info.activityInfo.packageName + "/" + info.activityInfo.name)) {
                 return true;
             }
         }
