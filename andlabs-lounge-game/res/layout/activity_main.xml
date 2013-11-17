@@ -13,4 +13,29 @@
         android:layout_height="wrap_content"
         android:text="@string/hello_world" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/loungeLobbyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Start Lounge Lobby" />
+
+        <Button
+            android:id="@+id/pointsGameButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:text="Start Points Game" />
+    </LinearLayout>
+
 </RelativeLayout>

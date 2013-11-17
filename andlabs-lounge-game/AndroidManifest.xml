@@ -19,8 +19,16 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="andlabs.lounge.category.GAME" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="andlabs.lounge.game.PointsGameActivity"
+            android:label="@string/activity_points_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="andlabs.lounge.category.GAME" />
             </intent-filter>
         </activity>
     </application>
