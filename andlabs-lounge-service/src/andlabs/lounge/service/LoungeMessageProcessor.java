@@ -113,15 +113,15 @@ public abstract class LoungeMessageProcessor {
                     if (player == null) {
                         player = new Player();
                         player._id = _id;
-                        String playerID = jsonObject.getString("playerID");
-                        if (playerID.equals(mPlayerID)) {
-                            involvedInMatchFlag = true;
-                            // assuming the first player is the one who hosts the match
-                            player.isLocal = index == 0;
-                        }
-                        player.playerName = involvedInMatchFlag ? "You" : playerID;
                         mPlayers.put(_id, player);
                     }
+                    String playerID = jsonObject.getString("playerID");
+                    if (playerID.equals(mPlayerID)) {
+                        involvedInMatchFlag = true;
+                        // assuming the first player is the one who hosts the match
+                        player.isLocal = index == 0;
+                    }
+                    player.playerName = involvedInMatchFlag ? "You" : playerID;
                     players.add(player);
                 }
 
