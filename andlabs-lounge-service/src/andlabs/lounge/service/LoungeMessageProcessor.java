@@ -119,7 +119,7 @@ public abstract class LoungeMessageProcessor {
                     if (playerID.equals(mPlayerID)) {
                         involvedInMatchFlag = true;
                         // assuming the first player is the one who hosts the match
-                        player.isLocal = index == 0;
+                        player.isHost = index == 0;
                     }
                     player.playerName = involvedInMatchFlag ? "You" : playerID;
                     players.add(player);

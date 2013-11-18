@@ -36,12 +36,12 @@ public class Player implements Serializable {
     public String gameID;
     // The match, in which the player is currently checked in
     public String matchID;
-    // marking the local player
-    public boolean isLocal;
+    // marking the player as a match host
+    public boolean isHost;
 
     @Override
     public String toString() {
-        return String.format("_id: '%s', playerName: '%s', gameID: '%s', matchID: '%s', isLocal: %b", _id, playerName, gameID, matchID, isLocal);
+        return String.format("_id: '%s', playerName: '%s', gameID: '%s', matchID: '%s', isHost: %b", _id, playerName, gameID, matchID, isHost);
     }
 
 }
