@@ -29,7 +29,7 @@ import android.os.Bundle;
 
 public class LoungeGameController {
 
-    private String mPackageId;
+    private String mGameId;
     private LoungeGameCallback mLoungeGameCallback;
     private LoungeGameCallback mIdleLoungeGameController = new LoungeGameCallback();
     private LoungeServiceController mLoungeServiceController = new LoungeServiceController();
@@ -103,7 +103,7 @@ public class LoungeGameController {
 
     public void bindServiceTo(Context pContext) {
         Ln.v("bindServiceTo()");
-        mPackageId = pContext.getApplicationInfo().packageName;
+        mGameId = pContext.getPackageName() + "/" + pContext.getClass().getName();
         mLoungeServiceController.registerCallback(mLoungeServiceCallback);
         mLoungeServiceController.bindServiceTo(pContext);
     }
@@ -131,20 +131,20 @@ public class LoungeGameController {
     public void checkin(String pMatchId) {
         Ln.v("checkin(): pMatchId = %s", pMatchId);
         mCheckinMatchId = pMatchId;  // TODO: move this to messageprocessor
-        mLoungeServiceController.checkin(mPackageId, pMatchId);
+        mLoungeServiceController.checkin(mGameId, pMatchId);
     }
 
 
     public void checkout(String pMatchId) {
         mCheckinMatchId = null;
         Ln.v("checkout(): pMatchId = %s", pMatchId);
-        mLoungeServiceController.checkout(mPackageId,pMatchId);
+        mLoungeServiceController.checkout(mGameId, pMatchId);
     }
 
 
     public void sendGameMove(String pMatchId, Bundle pMoveBundle) {
         Ln.v("sendGameMove(): pMatchId = %s, pMoveBundle = %s", pMatchId, pMoveBundle);
-        mLoungeServiceController.sendGameMove(mPackageId, pMatchId, pMoveBundle);
+        mLoungeServiceController.sendGameMove(mGameId, pMatchId, pMoveBundle);
     }
 
     public void streamGameMessage(String pMatchId, Bundle pMoveBundle) {
@@ -154,7 +154,7 @@ public class LoungeGameController {
     }
     public void closeMatch(String pMatchId) {
         Ln.v("closeMatch(): pMatchId = %s, ",pMatchId);
-        mLoungeServiceController.closeMatch(mPackageId,pMatchId);
+        mLoungeServiceController.closeMatch(mGameId, pMatchId);
     }
 
 }

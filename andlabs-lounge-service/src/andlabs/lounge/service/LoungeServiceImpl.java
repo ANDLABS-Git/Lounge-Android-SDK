@@ -257,20 +257,20 @@ public class LoungeServiceImpl extends LoungeServiceDef.Stub {
     }
 
     @Override
-    public void move(String pPackageId, String pMatchId, Bundle pMoveBundle) {
-        sendMessage("move", pPackageId, pMatchId, pMoveBundle);
+    public void move(String pGameId, String pMatchId, Bundle pMoveBundle) {
+        sendMessage("move", pGameId, pMatchId, pMoveBundle);
     }
 
     @Override
-    public void stream(String pPackageId, String pMatchId, Bundle pMoveBundle) {
-        sendMessage("stream", pPackageId, pMatchId, pMoveBundle);
+    public void stream(String pGameId, String pMatchId, Bundle pMoveBundle) {
+        sendMessage("stream", pGameId, pMatchId, pMoveBundle);
     }
     
     
-    private void sendMessage(String pType, String pPackageId, String pMatchId, Bundle pMoveBundle) {
+    private void sendMessage(String pType, String pGameId, String pMatchId, Bundle pMoveBundle) {
         try {
             // PAYLOAD { gameID: “packageID”, matchID: “matchID”, move: {... } }
-            JSONObject payload = new JSONObject().put("gameID", pPackageId).put("matchID", pMatchId);
+            JSONObject payload = new JSONObject().put("gameID", pGameId).put("matchID", pMatchId);
             JSONObject bundleJson = new JSONObject();
             for (String key : pMoveBundle.keySet()) {
                 bundleJson.put(key, pMoveBundle.get(key));

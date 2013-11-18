@@ -209,10 +209,10 @@ public class LoungeServiceController {
         }.start();
     }
 
-    public void sendGameMove(String pPackageId, String pMatchId, Bundle pMoveBundle) {
-        Ln.v("sendGameMove(): pPackageId = %s, pMatchId = %s, pMoveBundle = %s", pPackageId, pMatchId, pMoveBundle);
+    public void sendGameMove(String pGameId, String pMatchId, Bundle pMoveBundle) {
+        Ln.v("sendGameMove(): pGameId = %s, pMatchId = %s, pMoveBundle = %s", pGameId, pMatchId, pMoveBundle);
         try {
-            mLoungeService.move(pPackageId, pMatchId, pMoveBundle);
+            mLoungeService.move(pGameId, pMatchId, pMoveBundle);
         } catch (RemoteException e) {
             Ln.e(e, "sendGameMove(): caught exception while opening a game move");
         }
