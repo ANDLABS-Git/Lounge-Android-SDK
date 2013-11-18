@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import andlabs.lounge.model.Game;
+import andlabs.lounge.service.LoungeService;
 import andlabs.lounge.service.LoungeServiceDef;
 import andlabs.lounge.util.Ln;
 import android.annotation.SuppressLint;
@@ -136,7 +137,7 @@ public class LoungeServiceController {
     public void bindServiceTo(Context pContext) {
         Ln.v("bindServiceTo()");
         if (mLoungeService == null) {
-            Intent serviceIntent = new Intent("andlabs.lounge.service.START");
+            Intent serviceIntent = new Intent(pContext, LoungeService.class);
             serviceIntent.putExtra("client-messenger", mMessenger);
             pContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE | Context.BIND_DEBUG_UNBIND);
         } else {
