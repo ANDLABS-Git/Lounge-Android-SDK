@@ -93,17 +93,6 @@ public class TicTacToeGameActivity extends Activity {
 
     private String mMatchId;
 
-    private Button f11;
-    private Button f12;
-    private Button f13;
-    private Button f21;
-    private Button f22;
-    private Button f23;
-    private Button f31;
-    private Button f32;
-    private Button f33;
-
-
     private Button[][] field;
 
     private boolean isOnTurn;
@@ -159,28 +148,17 @@ public class TicTacToeGameActivity extends Activity {
         }
 
 
-        f11 = (Button) findViewById(R.id.f11);
-        f12 = (Button) findViewById(R.id.f12);
-        f13 = (Button) findViewById(R.id.f13);
-        f21 = (Button) findViewById(R.id.f21);
-        f22 = (Button) findViewById(R.id.f22);
-        f23 = (Button) findViewById(R.id.f23);
-        f31 = (Button) findViewById(R.id.f31);
-        f32 = (Button) findViewById(R.id.f32);
-        f33 = (Button) findViewById(R.id.f33);
-
-
         field = new Button[3][3];
 
-        field[0][0] = f11;
-        field[0][1] = f12;
-        field[0][2] = f13;
-        field[1][0] = f21;
-        field[1][1] = f22;
-        field[1][2] = f23;
-        field[2][0] = f31;
-        field[2][1] = f32;
-        field[2][2] = f33;
+        field[0][0] = (Button) findViewById(R.id.f11);
+        field[0][1] = (Button) findViewById(R.id.f12);
+        field[0][2] = (Button) findViewById(R.id.f13);
+        field[1][0] = (Button) findViewById(R.id.f21);
+        field[1][1] = (Button) findViewById(R.id.f22);
+        field[1][2] = (Button) findViewById(R.id.f23);
+        field[2][0] = (Button) findViewById(R.id.f31);
+        field[2][1] = (Button) findViewById(R.id.f32);
+        field[2][2] = (Button) findViewById(R.id.f33);
 
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[0].length; j++) {
