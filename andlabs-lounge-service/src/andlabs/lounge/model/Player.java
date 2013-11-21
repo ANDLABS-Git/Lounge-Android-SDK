@@ -41,7 +41,7 @@ public class Player implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("_id: '%s', playerName: '%s', gameID: '%s', matchID: '%s', isHost: %b", _id, playerName, gameID, matchID, isHost);
+        return String.format("{_id: '%s', playerName: '%s', gameID: '%s', matchID: '%s', isHost: %b}", _id, playerName, gameID, matchID, isHost);
     }
 
 }
