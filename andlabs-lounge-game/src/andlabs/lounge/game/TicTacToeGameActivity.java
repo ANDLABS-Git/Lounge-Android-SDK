@@ -162,21 +162,21 @@ public class TicTacToeGameActivity extends Activity {
 
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[0].length; j++) {
-                final Button b = field[i][j];
+                final Button button = field[i][j];
                 final int xPos = i;
                 final int yPos = j;
-                b.setOnClickListener(new OnClickListener() {
+                button.setOnClickListener(new OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
                         if (isOnTurn) {
-                            b.setEnabled(false);
-                            b.setText(playerSign);
+                            button.setEnabled(false);
+                            button.setText(playerSign);
 
-                            Bundle b = new Bundle();
-                            b.putString(MOVE, xPos + ":" + yPos);
-                            b.putString(SIGN, playerSign);
-                            mLoungeGameController.sendGameMove(mMatchId, b);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(MOVE, xPos + ":" + yPos);
+                            bundle.putString(SIGN, playerSign);
+                            mLoungeGameController.sendGameMove(mMatchId, bundle);
                             isOnTurn = !isOnTurn;
                         } else {
                             Toast.makeText(TicTacToeGameActivity.this, "Its not your turn", Toast.LENGTH_SHORT).show();
