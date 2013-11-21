@@ -121,7 +121,7 @@ public abstract class LoungeMessageProcessor {
                         // assuming the first player is the one who hosts the match
                         player.isHost = index == 0;
                     }
-                    player.playerName = involvedInMatchFlag ? "You" : playerID;
+                    player.playerName = playerID.equals(mPlayerID) ? "You" : playerID;
                     players.add(player);
                 }
 
