@@ -69,7 +69,7 @@ public class Utils implements LoungeConstants {
     }
 
 
-    private static ResolveInfo getInstalledGameInfo(Context context, String gameId) {
+    public static ResolveInfo getInstalledGameInfo(Context context, String gameId) {
         for (ResolveInfo info : getInstalledLoungeGames(context)) {
             Ln.d("getInstalledGameInfo(): gameId = %s (%s)", gameId, info.activityInfo);
             if (gameId.equalsIgnoreCase(info.activityInfo.packageName + "/" + info.activityInfo.name)) {

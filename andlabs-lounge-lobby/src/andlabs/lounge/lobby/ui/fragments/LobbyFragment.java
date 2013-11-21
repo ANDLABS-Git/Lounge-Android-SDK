@@ -35,7 +35,9 @@ import andlabs.lounge.lobby.util.parser.PlayParser.PlayListener;
 import andlabs.lounge.model.Game;
 import andlabs.lounge.model.Match;
 import andlabs.lounge.util.Ln;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -192,7 +194,10 @@ public class LobbyFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                mLoungeLobbyController.openMatch(mHostAdapter.getSelectedItemActivity(), mHostAdapter.getSelectedItemName());
+                ResolveInfo info = mHostAdapter.getSelectedItemResolveInfo();
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(info.activityInfo.packageName, info.activityInfo.name));
+                getActivity().startActivity(intent);
 
             }
         });
