@@ -53,16 +53,16 @@ public class TicTacToeGameActivity extends Activity {
             Ln.d("LoungeGameCallback.onGameMessage(): msg = %s", msg);
             if (msg.getBoolean(IS_INIT_DATA)) {
                 if (!isHost) {
-                    isOnTurn=!msg.getBoolean(IS_STARTING);
-                    if(isOnTurn){
-                        subHeader.setText(players[1]+ " is on turn");
-                     }else{
-                         subHeader.setText(players[0]+ " is on turn");
-                     }
-                    
+                    isOnTurn = !msg.getBoolean(IS_STARTING);
+                    if (isOnTurn) {
+                        subHeader.setText(players[1] + " is on turn");
+                    } else {
+                        subHeader.setText(players[0] + " is on turn");
+                    }
+
                 }
-               
-                
+
+
             } else {
 
                 if (msg.getString(SIGN).equalsIgnoreCase(opponent_sign)) {
@@ -73,11 +73,11 @@ public class TicTacToeGameActivity extends Activity {
                     Button b = field[xPos][yPos];
                     b.setText(opponent_sign);
                     b.setEnabled(false);
-                    subHeader.setText(myName+ " is on turn");
-                    
-                }else{
-                    subHeader.setText(opponentName+ " is on turn");
-                    
+                    subHeader.setText(myName + " is on turn");
+
+                } else {
+                    subHeader.setText(opponentName + " is on turn");
+
                 }
             }
         }
@@ -89,7 +89,6 @@ public class TicTacToeGameActivity extends Activity {
         }
 
     };
-
 
 
     private String mMatchId;
@@ -128,36 +127,33 @@ public class TicTacToeGameActivity extends Activity {
         setContentView(R.layout.ttt);
 
         isHost = getIntent().getBooleanExtra(LoungeConstants.EXTRA_IS_HOST, false);
-         players = getIntent().getStringArrayExtra(LoungeConstants.EXTRA_PLAYER_NAMES);
-         
-         
+        players = getIntent().getStringArrayExtra(LoungeConstants.EXTRA_PLAYER_NAMES);
+
 
         ((TextView) findViewById(R.id.header)).setText(players[0] + " vs. " + players[1]);
-        subHeader=(TextView)findViewById(R.id.subheader);
+        subHeader = (TextView) findViewById(R.id.subheader);
 
         if (isHost) {
             playerSign = "X";
             opponent_sign = "O";
             isOnTurn = new Random().nextBoolean();
 
-            myName=players[0];
-            opponentName=players[1];
+            myName = players[0];
+            opponentName = players[1];
             Bundle b = new Bundle();
             b.putBoolean(IS_STARTING, !isOnTurn);
             b.putBoolean(IS_INIT_DATA, true);
             mLoungeGameController.sendGameMove(mMatchId, b);
-            
-            if(isOnTurn){
-               subHeader.setText(players[0]+ " is on turn");
-            }else{
-                subHeader.setText(players[1]+ " is on turn");
-            }
-           
 
+            if (isOnTurn) {
+                subHeader.setText(players[0] + " is on turn");
+            } else {
+                subHeader.setText(players[1] + " is on turn");
+            }
 
         } else {
-            myName=players[1];
-            opponentName=players[0];
+            myName = players[1];
+            opponentName = players[0];
             playerSign = "O";
             opponent_sign = "X";
         }
@@ -195,20 +191,18 @@ public class TicTacToeGameActivity extends Activity {
 
                     @Override
                     public void onClick(View v) {
-                        if(isOnTurn){
-                        b.setEnabled(false);
-                        b.setText(playerSign);
+                        if (isOnTurn) {
+                            b.setEnabled(false);
+                            b.setText(playerSign);
 
-                        Bundle b = new Bundle();
-                        b.putString(MOVE, xPos + ":" + yPos);
-                        b.putString(SIGN, playerSign);
-                        mLoungeGameController.sendGameMove(mMatchId, b);
-                        isOnTurn=!isOnTurn;
-                        }else{
+                            Bundle b = new Bundle();
+                            b.putString(MOVE, xPos + ":" + yPos);
+                            b.putString(SIGN, playerSign);
+                            mLoungeGameController.sendGameMove(mMatchId, b);
+                            isOnTurn = !isOnTurn;
+                        } else {
                             Toast.makeText(TicTacToeGameActivity.this, "Its not your turn", Toast.LENGTH_SHORT).show();
                         }
-                        
-                                
 
                     }
                 });
