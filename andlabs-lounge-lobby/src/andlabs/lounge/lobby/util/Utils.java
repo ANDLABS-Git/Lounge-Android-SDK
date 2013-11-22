@@ -34,13 +34,18 @@ import android.net.Uri;
 
 public class Utils implements LoungeConstants {
 
-    public static final String CATEGORY = "andlabs.lounge.category.GAME";
 
-
-    public static List<ResolveInfo> getInstalledLoungeGames(Context ctx) {
+    public static List<ResolveInfo> getInstalledLoungeConfigurations(Context context) {
         Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(CATEGORY);
-        return ctx.getPackageManager().queryIntentActivities(intent, 0);
+        intent.addCategory(CONFIGURATION_CATEGORY);
+        return context.getPackageManager().queryIntentActivities(intent, 0);
+    }
+
+
+    public static List<ResolveInfo> getInstalledLoungeGames(Context context) {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(GAME_CATEGORY);
+        return context.getPackageManager().queryIntentActivities(intent, 0);
     }
 
 

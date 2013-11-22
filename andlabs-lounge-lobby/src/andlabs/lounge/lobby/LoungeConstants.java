@@ -21,6 +21,9 @@ package andlabs.lounge.lobby;
 
 public interface LoungeConstants {
 
+    public static final String CONFIGURATION_CATEGORY = "andlabs.lounge.category.CONFIGURATION";
+    public static final String GAME_CATEGORY = "andlabs.lounge.category.GAME";
+
     /**
      * Indicates whether this game was hosted by this device
      */

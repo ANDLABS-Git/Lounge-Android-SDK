@@ -48,7 +48,7 @@ public class HostGameAdapter extends BaseAdapter implements OnItemClickListener 
 
     public HostGameAdapter(Context context) {
         mContext = context;
-        mContent = Utils.getInstalledLoungeGames(context);
+        mContent = Utils.getInstalledLoungeConfigurations(context);
         mPackageManager = context.getPackageManager();
     }
 

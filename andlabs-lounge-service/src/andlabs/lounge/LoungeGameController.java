@@ -152,6 +152,12 @@ public class LoungeGameController {
         Ln.v("streamGameMessage(): pMatchId = %s, pMoveBundle = %s", pMatchId, pMoveBundle);
 //        mLoungeServiceController.streamGameMessage(mPackageId, pMatchId, pMoveBundle);
     }
+
+    public void openMatch(String pGameActivity, String pGameName) {
+        Ln.v("openMatch(): pGameActivity = %s, pGameName = %s", pGameActivity, pGameName);
+        mLoungeServiceController.openMatch(mGameId.split("/")[0] + "/" + pGameActivity, pGameName);
+    }
+
     public void closeMatch(String pMatchId) {
         Ln.v("closeMatch(): pMatchId = %s, ",pMatchId);
         mLoungeServiceController.closeMatch(mGameId, pMatchId);
