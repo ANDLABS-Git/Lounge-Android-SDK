@@ -113,7 +113,7 @@ public class TicTacToeGameActivity extends Activity {
         super.onCreate(savedInstanceState);
         mMatchId = getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID);
 
-        setContentView(R.layout.ttt);
+        setContentView(R.layout.activity_tic_tac_toe_game);
 
         isHost = getIntent().getBooleanExtra(LoungeConstants.EXTRA_IS_HOST, false);
         players = getIntent().getStringArrayExtra(LoungeConstants.EXTRA_PLAYER_NAMES);
