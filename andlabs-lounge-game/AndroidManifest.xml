@@ -32,6 +32,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="andlabs.lounge.game.TicTacToeConfigurationActivity"
+            android:label="@string/activity_tictactoe_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="andlabs.lounge.category.CONFIGURATION" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="andlabs.lounge.game.TicTacToeGameActivity"
             android:label="@string/activity_tictactoe_name" >
             <intent-filter>
