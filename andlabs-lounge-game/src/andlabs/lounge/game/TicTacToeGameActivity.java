@@ -51,7 +51,11 @@ public class TicTacToeGameActivity extends Activity {
         @Override
         public void onGameMessage(Bundle msg) {
             Ln.d("LoungeGameCallback.onGameMessage(): msg = %s", msg);
+            
+            //In the beginning it need to be determined who has the first turn.
+            //The host decides that randomly in the beginning and sends it to the other player.
             if (msg.getBoolean(IS_INIT_DATA)) {
+                
                 if (!isHost) {
                     isOnTurn = !msg.getBoolean(IS_STARTING);
                     if (isOnTurn) {
@@ -64,7 +68,8 @@ public class TicTacToeGameActivity extends Activity {
 
 
             } else {
-
+                //this is a normal game move. Only handle it if from the opponent.
+                //own move is being handled in the own click listner
                 if (msg.getString(SIGN).equalsIgnoreCase(opponent_sign)) {
                     String pos = msg.getString(MOVE);
                     int xPos = Integer.parseInt(pos.split(":")[0]);
@@ -76,6 +81,7 @@ public class TicTacToeGameActivity extends Activity {
                     subHeader.setText(myName + " is on turn");
 
                 } else {
+                    //if it was the own players turn just change the label that its the others players turn.
                     subHeader.setText(opponentName + " is on turn");
 
                 }
@@ -111,8 +117,9 @@ public class TicTacToeGameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMatchId = getIntent().getStringExtra(LoungeConstants.EXTRA_MATCH_ID);
-
+        
+      
+        
         setContentView(R.layout.ttt);
 
         isHost = getIntent().getBooleanExtra(LoungeConstants.EXTRA_IS_HOST, false);
@@ -122,30 +129,6 @@ public class TicTacToeGameActivity extends Activity {
         ((TextView) findViewById(R.id.header)).setText(players[0] + " vs. " + players[1]);
         subHeader = (TextView) findViewById(R.id.subheader);
 
-        if (isHost) {
-            playerSign = "X";
-            opponent_sign = "O";
-            isOnTurn = new Random().nextBoolean();
-
-            myName = players[0];
-            opponentName = players[1];
-            Bundle b = new Bundle();
-            b.putBoolean(IS_STARTING, !isOnTurn);
-            b.putBoolean(IS_INIT_DATA, true);
-            mLoungeGameController.sendGameMove(mMatchId, b);
-
-            if (isOnTurn) {
-                subHeader.setText(players[0] + " is on turn");
-            } else {
-                subHeader.setText(players[1] + " is on turn");
-            }
-
-        } else {
-            myName = players[1];
-            opponentName = players[0];
-            playerSign = "O";
-            opponent_sign = "X";
-        }
 
 
         field = new Button[3][3];
@@ -170,6 +153,8 @@ public class TicTacToeGameActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         if (isOnTurn) {
+                            //If its this players turn disable this button and label it with his sign
+                            // andd send it to the other player so they can do the same.
                             button.setEnabled(false);
                             button.setText(playerSign);
 
@@ -179,6 +164,7 @@ public class TicTacToeGameActivity extends Activity {
                             mLoungeGameController.sendGameMove(mMatchId, bundle);
                             isOnTurn = !isOnTurn;
                         } else {
+                            //if it is not his turn don't do anything.
                             Toast.makeText(TicTacToeGameActivity.this, "Its not your turn", Toast.LENGTH_SHORT).show();
                         }
 
@@ -212,6 +198,36 @@ public class TicTacToeGameActivity extends Activity {
         mLoungeGameController.registerCallback(mLoungeGameCallback);
         if (mMatchId != null) {
             mLoungeGameController.checkin(mMatchId);
+        }
+        
+
+        //Define Player Signs. Host is always X but who starts is being decided randomly
+        //by the host and then later send to the other player.
+        if (isHost) {
+            playerSign = "X";
+            opponent_sign = "O";
+            isOnTurn = new Random().nextBoolean();
+
+            myName = players[0];
+            opponentName = players[1];
+            Bundle b = new Bundle();
+            b.putBoolean(IS_STARTING, !isOnTurn);
+            b.putBoolean(IS_INIT_DATA, true);
+            mLoungeGameController.sendGameMove(mMatchId, b);
+
+            if (isOnTurn) {
+                subHeader.setText(players[0] + " is on turn");
+            } else {
+                subHeader.setText(players[1] + " is on turn");
+            }
+
+        } else {
+            //If this player is not the host just initialize the variables and 
+            //wait for the host to tell this player who starts with a gameMove
+            myName = players[1];
+            opponentName = players[0];
+            playerSign = "O";
+            opponent_sign = "X";
         }
     }
 
